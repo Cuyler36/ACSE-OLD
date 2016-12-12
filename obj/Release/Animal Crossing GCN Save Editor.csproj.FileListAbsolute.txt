@@ -1,0 +1,12 @@
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\bin\Release\Animal Crossing GCN Save Editor.exe.config
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\bin\Release\Animal Crossing GCN Save Editor.exe
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\bin\Release\Animal Crossing GCN Save Editor.pdb
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal_Crossing_GCN_Save_Editor.AcreEditor.resources
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal_Crossing_GCN_Save_Editor.Form1.resources
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal_Crossing_GCN_Save_Editor.Inventory_Editor.resources
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal_Crossing_GCN_Save_Editor.Properties.Resources.resources
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal_Crossing_GCN_Save_Editor.TownEditor.resources
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal_Crossing_GCN_Save_Editor.Villager_Editor.resources
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal Crossing GCN Save Editor.csproj.GenerateResource.Cache
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal Crossing GCN Save Editor.exe
+C:\Users\olsen\documents\visual studio 2015\Projects\Animal Crossing GCN Save Editor\Animal Crossing GCN Save Editor\obj\Release\Animal Crossing GCN Save Editor.pdb
