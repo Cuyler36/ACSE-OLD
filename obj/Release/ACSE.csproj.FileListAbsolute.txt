@@ -1,0 +1,2 @@
+C:\Users\olsen\Documents\GitHub\ACSE\ACSE\bin\Release\WindowsApplication.exe.config
+C:\Users\olsen\Documents\GitHub\ACSE\ACSE\bin\Release\ACSE.exe.config
