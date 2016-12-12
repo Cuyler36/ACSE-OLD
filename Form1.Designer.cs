@@ -361,7 +361,7 @@
             this.MaximumSize = new System.Drawing.Size(560, 440);
             this.MinimumSize = new System.Drawing.Size(560, 440);
             this.Name = "Form1";
-            this.Text = "Animal Crossing GCN Save Editor";
+            this.Text = "ACSE";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);

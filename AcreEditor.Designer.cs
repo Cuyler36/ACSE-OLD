@@ -134,7 +134,7 @@
             this.MaximumSize = new System.Drawing.Size(458, 458);
             this.MinimumSize = new System.Drawing.Size(458, 458);
             this.Name = "AcreEditor";
-            this.Text = "AcreEditor";
+            this.Text = "Acre Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AcreEditor_FormClosing);
             this.Load += new System.EventHandler(this.AcreEditor_Load);
             this.Shown += new System.EventHandler(this.AcreEditor_Shown);
