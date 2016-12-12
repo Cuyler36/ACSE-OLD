@@ -17,7 +17,14 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            try
+            {
+                Application.Run(new Form1());
+            }
+            catch (TypeInitializationException e)
+            {
+                MessageBox.Show("Error: " + e.InnerException);
+            }
         }
     }
 }

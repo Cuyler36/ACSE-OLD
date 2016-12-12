@@ -36,13 +36,13 @@ namespace Animal_Crossing_GCN_Save_Editor
             }
         }
 
-        private static void ConvertArray(ref dynamic array)
+        /*private static void ConvertArray(ref dynamic array)
         {
             if (array.GetType().IsArray)
             {
                 Array.Reverse(array);
             }
-        }
+        }*/
 
         private static byte[] ConvertUShortArray(ushort[] array)
         {
@@ -75,7 +75,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             return data;
         }
 
-        public void WriteData(dynamic data, int offset)
+       /* public void WriteData(dynamic data, int offset)
         {
             Writer.Seek(offset, SeekOrigin.Begin);
             Type type = data.GetType();
@@ -104,7 +104,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 }
                 Writer.Write(strBytes);
             }
-        }
+        }*/
 
     }
 }

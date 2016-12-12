@@ -1,0 +1,12 @@
+C:\Users\olsen\Documents\GitHub\ACSE\bin\Debug\WindowsApplication.exe.config
+C:\Users\olsen\Documents\GitHub\ACSE\bin\Debug\WindowsApplication.exe
+C:\Users\olsen\Documents\GitHub\ACSE\bin\Debug\WindowsApplication.pdb
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.AcreEditor.resources
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.Form1.resources
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.Inventory_Editor.resources
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\ACSE.Properties.Resources.resources
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.TownEditor.resources
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.Villager_Editor.resources
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\ACSE.csproj.GenerateResource.Cache
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\WindowsApplication.exe
+C:\Users\olsen\Documents\GitHub\ACSE\obj\Debug\WindowsApplication.pdb

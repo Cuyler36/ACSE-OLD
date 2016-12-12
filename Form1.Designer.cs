@@ -62,8 +62,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "Gamecube Save Files|*.gci|All Files|*.*";
+            this.openFileDialog1.Filter = "Gamecube Save Files (.gci)|*.gci|All Files|*.*";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
             // menuStrip1

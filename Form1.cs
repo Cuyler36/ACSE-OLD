@@ -24,6 +24,8 @@ namespace Animal_Crossing_GCN_Save_Editor
             0x9C, 0x9E, 0xA0, 0xA2, 0xA4
         };
 
+        //ResourceManager rm = new ResourceManager("Animal_Crossing_GCN_Save_Editor.")
+
         public static int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         public static int Data_Start_Offset = 0x26040;
         public static int Town_Name_Offset = 0x9120;
@@ -48,7 +50,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         public static int Islander_Offset = 0x23440;
         public static int BurriedItems_Offset = 0x20F1D; //Actual Start: 0x46F5C (Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
         public static int BurriedItems_Length = 0x3C0; //Actual Size: 0x3C0
-        public static byte[] Blank_Villager = Properties.Resources.blank_Villager;
+        //public static byte[] Blank_Villager = Properties.Resources.blank_Villager;
         
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private FileStream fs;
