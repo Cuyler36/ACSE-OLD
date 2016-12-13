@@ -68,6 +68,8 @@ namespace Animal_Crossing_GCN_Save_Editor
         private House_Editor hEditor;
         List<KeyValuePair<ushort, string>> Shirts = new List<KeyValuePair<ushort, string>>();
         private bool CanSetData = false;
+        private ACString TownName;
+        private ACString Player1Name;
 
         public static DateTime DateFromTimestamp(long timestamp)
         {
@@ -168,14 +170,15 @@ namespace Animal_Crossing_GCN_Save_Editor
             buffer.CopyTo(saveBuffer, offset);
         }
 
-        private string ReadString(int offset, int maxSize)
+        private ACString ReadString(int offset, int maxSize)
         {
             byte[] data = new byte[maxSize];
             for (int i = 0; i < maxSize; i++)
             {
                 data[i] = saveBuffer[offset + i];
             }
-            return System.Text.Encoding.ASCII.GetString(data).Trim();
+            //return System.Text.Encoding.ASCII.GetString(data).Trim();
+            return new ACString(data);
         }
 
         public void WriteString(int offset, string str, int maxSize)
@@ -183,7 +186,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (str.Length <= maxSize)
             {
                 byte[] strBytes = new byte[maxSize];
-                Encoding.ASCII.GetBytes(str).CopyTo(strBytes, 0);
+                ACString.GetBytes(str).CopyTo(strBytes, 0);
                 if (str.Length < maxSize)
                 {
                     for (int i = (str.Length); i <= maxSize - 1; i++)
@@ -192,38 +195,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                     }
                 }
                 ModifyString(offset, strBytes);
-            }
-        }
-
-        public class ACString
-        {
-            Dictionary<byte, string> CharacterDictionary = new Dictionary<byte, string>()
-            {
-                {0x90, "–" },
-                {0xCD, "\n" },
-            };
-            byte[] String_Bytes;
-            string String = "";
-
-            public ACString(byte[] stringBuffer)
-            {
-                String_Bytes = stringBuffer;
-                foreach (byte b in stringBuffer)
-                {
-                    if (CharacterDictionary.ContainsKey(b))
-                        String += CharacterDictionary.FirstOrDefault(o => o.Key == b).Value;
-                    else
-                        String += Encoding.ASCII.GetString(new byte[1] { b });
-                }
-            }
-
-            public byte[] GetBytes()
-            {
-                byte[] stringBytes = Encoding.ASCII.GetBytes(String);
-                for (int i = 0; i < String.Length; i++)
-                    if (CharacterDictionary.ContainsValue(String[i].ToString()))
-                        stringBytes[i] = CharacterDictionary.FirstOrDefault(o => o.Value == String[i].ToString()).Key;
-                return stringBytes;
             }
         }
 
@@ -284,8 +255,10 @@ namespace Animal_Crossing_GCN_Save_Editor
                 comboBox2.Enabled = true;
                 comboBox3.Enabled = true;
                 GetSaveData(0x26040, 0x26000).CopyTo(saveBuffer, 0);
-                townNameTextBox.Text = ReadString(Town_Name_Offset, 0x8);
-                textBox1.Text = ReadString(0x20, 0x8);
+                TownName = ReadString(Town_Name_Offset, 0x8);
+                Player1Name = ReadString(0x20, 0x8);
+                townNameTextBox.Text = TownName.Trim();
+                textBox1.Text = Player1Name.Trim();
                 textBox2.Text = BitConverter.ToUInt32(ReadData(Player1_Bells_Offset, 4), 0).ToString();
                 textBox3.Text = BitConverter.ToUInt32(ReadData(Player1_Debt_Offset, 4), 0).ToString();
                 string heldItemName = ItemData.GetItemName(ReadRawUShort(Player1_Held_Item_Offset, 2)[0]);
@@ -517,10 +490,10 @@ namespace Animal_Crossing_GCN_Save_Editor
                 for (int i = 0; i < 15; i++)
                 {
                     Villagers[i] = new Villager(BitConverter.ToUInt16(new byte[2] { villagerData[(i * 0x988) + 1], villagerData[i * 0x988] }, 0), null, i + 1, villagerData[(i * 0x988) + 0xD],
-                        ReadString(VillagerData_Offset + (i * 0x988) + 0x89D, 10));
+                        ReadString(VillagerData_Offset + (i * 0x988) + 0x89D, 10).Trim());
                     //MessageBox.Show("Villager: " + Villagers[i].Name + " | Personality: " + Villagers[i].Personality + " | Index: " + Villagers[i].Index);
                 }
-                Villagers[15] = new Villager(BitConverter.ToUInt16(new byte[2] { islanderData[1], islanderData[0] }, 0), null, 16, islanderData[0xD], ReadString(Islander_Offset + 0x89D, 10));
+                Villagers[15] = new Villager(BitConverter.ToUInt16(new byte[2] { islanderData[1], islanderData[0] }, 0), null, 16, islanderData[0xD], ReadString(Islander_Offset + 0x89D, 10).Trim());
                 if (vEditor == null || vEditor.IsDisposed)
                     vEditor = new Villager_Editor(Villagers, this);
                 vEditor.Show();

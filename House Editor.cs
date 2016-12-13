@@ -92,5 +92,15 @@ namespace Animal_Crossing_GCN_Save_Editor
                 }
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
     }
 }
