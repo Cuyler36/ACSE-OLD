@@ -48,8 +48,8 @@ namespace Animal_Crossing_GCN_Save_Editor
         public static int IslandData_Offset = 0x22550;
         public static int IslandData_Length = 0x400;
         public static int Islander_Offset = 0x23440;
-        public static int BurriedItems_Offset = 0x20F1D; //Actual Start: 0x46F5C (Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
-        public static int BurriedItems_Length = 0x3C0; //Actual Size: 0x3C0
+        public static int BurriedItems_Offset = 0x20F1D;  //(Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
+        public static int BurriedItems_Length = 0x3C0;
         //public static byte[] Blank_Villager = Properties.Resources.blank_Villager;
         
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -284,13 +284,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                     MessageBox.Show("The file's Checksum was invalid. The Checksum will be updated.");
                     SaveData();
                 }
-                //townEditorForm.Show();
                 inventory = new Inventory(ReadRawUShort(Player1_Pockets[0], 0x1E));
                 CanSetData = true;
-                /*foreach (InventorySlot i in inventory.InventorySlots)
-                {
-                    MessageBox.Show(i.Item.ItemID.ToString("X") + " | " + i.Item.BaseItemID.ToString("X") + " | " + i.Item.Name);
-                }*/
             }
             else
             {
@@ -372,11 +367,6 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                //string[] pocketItemNames = GetNames(Player1_Pockets[0], 15);
-                //for (int i = 0; i <= pocketItemNames.Length - 1; i++)
-                //{
-                //    MessageBox.Show("Pocket #" + (i + 1).ToString() + " Item: " + pocketItemNames[i]);
-                //}
                 if (iEditor == null || iEditor.IsDisposed)
                 {
                     Item[] dresserItems = new Item[3];
@@ -399,13 +389,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 ushort[] secondFloorLayer2 = new ushort[0xF0]; //Temp
                 ushort[] basementLayer1 = ReadRawUShort(House_Addresses[0] + 0x1150, 0x114);
                 ushort[] basementLayer2 = new ushort[0x114];
-                //Dictionary<int, string> houseInfo = HouseData.GetHouseData(data, 8);
-                /*int i = -1;
-                foreach (KeyValuePair<int, string> entry in houseInfo)
-                {
-                    i++;
-                    MessageBox.Show("Item: " + entry.Value + " | X: " + ((i % 4) + 1).ToString() + " Y: " + (Math.Floor((decimal)i / 4) + 1));
-                }*/
+
                 if (hEditor == null || hEditor.IsDisposed)
                     hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, this);
                 hEditor.Show();
@@ -485,10 +469,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                 Dictionary<int, Acre> tileData = acreData.GetAcreTileData(acreTileData);
                 editor.currentAcreData = tileData;
                 editor.Show();
-                /*foreach (KeyValuePair<int, Acre> acre in tileData)
-                {
-                    MessageBox.Show("AcreID: " + acre.Value.AcreID.ToString("X") + " | Name: " + acre.Value.Name);
-                }*/
             }
         }
 

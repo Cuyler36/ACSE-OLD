@@ -143,7 +143,6 @@
             // 
             // comboBox3
             // 
-            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox3.Enabled = false;
             this.comboBox3.FormattingEnabled = true;
             this.comboBox3.Location = new System.Drawing.Point(91, 146);
@@ -163,7 +162,6 @@
             // 
             // comboBox2
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.Enabled = false;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(43, 119);
@@ -203,7 +201,6 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.Enabled = false;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
@@ -215,7 +212,91 @@
             "Golden Net",
             "Golden Axe",
             "Golden Shovel",
-            "Golden Rod"});
+            "Golden Rod",
+            "Axe (Use #1)",
+            "Axe (Use #2)",
+            "Axe (Use #3)",
+            "Axe (Use #4)",
+            "Axe (Use #5)",
+            "Axe (Use #6)",
+            "Axe (Use #7)",
+            "Gelato Umbrella",
+            "Daffodil Parasol",
+            "Berry Umbrella",
+            "Orange Umbrella",
+            "Mod Umbrella",
+            "Petal Parasol",
+            "Ribbon Parasol",
+            "Gingham Parasol",
+            "Plaid Parasol",
+            "Lacy Parasol",
+            "Elegant Umbrella",
+            "Dainty Parasol",
+            "Classic Umbrella",
+            "Nintendo Parasol",
+            "Bumbershoot",
+            "Sunny Parasol",
+            "Batbrella",
+            "Checked Umbrella",
+            "Yellow Umbrella",
+            "Leaf Umbrella",
+            "Lotus Parasol",
+            "Paper Parasol",
+            "Polka Parasol",
+            "Sharp Umbrella",
+            "Twig Parasol",
+            "Noodle Parasol",
+            "Hypno Parasol",
+            "Pastel Parasol",
+            "Retro Umbrella",
+            "Icy Umbrella",
+            "Blue Umbrella",
+            "Flame Umbrella",
+            "Pattern #1 (Umbrella)",
+            "Pattern #2 (Umbrella)",
+            "Pattern #3 (Umbrella)",
+            "Pattern #4 (Umbrella)",
+            "Pattern #5 (Umbrella)",
+            "Pattern #6 (Umbrella)",
+            "Pattern #7 (Umbrella)",
+            "Pattern #8 (Umbrella)",
+            "Red Balloon",
+            "Yellow Balloon",
+            "Blue Balloon",
+            "Green Balloon",
+            "Purple Balloon",
+            "Bunny P. Balloon",
+            "Bunny B. Balloon",
+            "Bunny O. Balloon",
+            "Yellow Pinwheel",
+            "Red Pinwheel",
+            "Tiger Pinwheel",
+            "Green Pinwheel",
+            "Pink Pinwheel",
+            "Striped Pinwheel",
+            "Flower Pinwheel",
+            "Fancy Pinwheel",
+            "Bluebell Fan",
+            "Plum Fan",
+            "Bamboo Fan",
+            "Cloud Fan",
+            "Maple Fan",
+            "Fan Fan",
+            "Flower Fan",
+            "Leaf Fan",
+            "Sickle",
+            "Red Paint",
+            "Orange Paint",
+            "Yellow Paint",
+            "Pale Green Paint",
+            "Green Paint",
+            "Sky Blue Paint",
+            "Blue Paint",
+            "Purple Paint",
+            "Pink Paint",
+            "Black Paint",
+            "White Paint",
+            "Brown Paint"});
             this.comboBox1.Location = new System.Drawing.Point(67, 92);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(113, 21);
