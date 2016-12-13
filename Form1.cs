@@ -65,6 +65,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         private AcreEditor editor;
         private Villager_Editor vEditor;
         private Inventory_Editor iEditor;
+        private House_Editor hEditor;
         List<KeyValuePair<ushort, string>> Shirts = new List<KeyValuePair<ushort, string>>();
         private bool CanSetData = false;
 
@@ -353,7 +354,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (fs != null && textBox3.Text.Length > 0)
             {
                 uint bells = string.IsNullOrEmpty(textBox2.Text) ? 0 : uint.Parse(textBox2.Text);
-                if (bells >= 0 && bells < 100000)
+                if (bells >= 0 && bells <= uint.MaxValue)
                 {
                     SetBells(bells);
                 }
@@ -406,14 +407,23 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                ushort[] data = ReadRawUShort(House_Addresses[0], House1_DataSize);
-                Dictionary<int, string> houseInfo = houseData.GetHouseData(data, 8);
-                int i = -1;
+                int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(House_Addresses[0], 0x114));
+                ushort[] firstFloorLayer1 = ReadRawUShort(House_Addresses[0], HouseData.House_Data_Sizes[firstFloorSize - 1]);
+                ushort[] firstFloorLayer2 = ReadRawUShort(House_Addresses[0] + 0x228, HouseData.House_Data_Sizes[firstFloorSize - 1]);
+                ushort[] secondFloorLayer1 = ReadRawUShort(House_Addresses[0] + 0x8A8, 0xF0);
+                ushort[] secondFloorLayer2 = new ushort[0xF0]; //Temp
+                ushort[] basementLayer1 = ReadRawUShort(House_Addresses[0] + 0x1150, 0x114);
+                ushort[] basementLayer2 = new ushort[0x114];
+                //Dictionary<int, string> houseInfo = HouseData.GetHouseData(data, 8);
+                /*int i = -1;
                 foreach (KeyValuePair<int, string> entry in houseInfo)
                 {
                     i++;
                     MessageBox.Show("Item: " + entry.Value + " | X: " + ((i % 4) + 1).ToString() + " Y: " + (Math.Floor((decimal)i / 4) + 1));
-                }
+                }*/
+                if (hEditor == null || hEditor.IsDisposed)
+                    hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, this);
+                hEditor.Show();
             }
         }
 

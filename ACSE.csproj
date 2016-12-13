@@ -153,6 +153,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="House Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="House Editor.Designer.cs">
+      <DependentUpon>House Editor.cs</DependentUpon>
+    </Compile>
     <Compile Include="HouseData.cs" />
     <Compile Include="Inventory Editor.cs">
       <SubType>Form</SubType>
@@ -188,6 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="House Editor.resx">
+      <DependentUpon>House Editor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Inventory Editor.resx">
       <DependentUpon>Inventory Editor.cs</DependentUpon>

@@ -26,6 +26,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         public static Image getItemPic(int itemsize, int itemsPerRow, Item[] items)
         {
             int width = itemsize * itemsPerRow, height = itemsize * items.Length / itemsPerRow;
+            height = height < 1 ? width : height;
             byte[] bmpData = new byte[4 * ((width) * (height))];
             for (int i = 0; i < items.Length; i++)
             {

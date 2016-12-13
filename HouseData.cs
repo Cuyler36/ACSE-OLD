@@ -13,19 +13,34 @@ namespace Animal_Crossing_GCN_Save_Editor
         private ItemData itemData = new ItemData { };
         static public int[] House_Addresses = new int[4] { 0x2FD60, 0, 0, 0 };
         static public int House1_DataSize = 0xB0;
-        static public byte[] House_Type = new byte[6]
+        static public ushort[] House_Identifiers = new ushort[10]
         {
-            0x00, 0x24, 0x48, 0x00, 0x00, 0x00
+            0x0480, 0x2480, 0x4880, 0x24A0, 0x4890, 0x48A0, 0x6C90, 0x6C80, 0x7000, 0x0000 //StarterHouse, First Upgrade, Expanded Main Room (No Basement), First Upgrade + Basement, Expanded Room + Basement (From Basement), Expanded Room + Basement (From Expanded Room), 2nd Floor (From Expanded Room), 2nd Floor (From Basement), Statue (From Basement)
+        };
+        static public int[] House_MainFloor_Sizes = new int[10]
+        {
+            4, 6, 8, 6, 8, 8, 8, 8, 8, 8
+        };
+        static public int[] House_Basement_Sizes = new int[10]
+        {
+            0, 0, 0, 8, 8, 8, 8, 8, 8, 8
+        };
+        static public int[] House_SecondFloor_Sizes = new int[10]
+        {
+            0, 0, 0, 0, 0, 0, 6, 6, 6, 6
         };
 
-        public Dictionary<int, string> GetHouseData(ushort[] houseBuffer, int houseSize = 8)
+        static public int[] House_Data_Sizes = new int[8]
         {
-            //List<string> houseData = new List<string> { };
-            Dictionary<int, string> data = new Dictionary<int, string> { };
+            0, 0, 0, 0xA0, 0, 0xF0, 0, 0x114
+        };
+
+        public static int GetHouseSize (ushort[] houseBuffer)
+        {
+            //Gonna stick with this for now. Haven't determined what bytes determine what house level you have.
             bool inbounds = false;
             int y = 0;
             int size = 0;
-            int pos = 0;
             bool sizeSet = false;
             for (int x = 0; x < houseBuffer.Length; x++)
             {
@@ -36,37 +51,64 @@ namespace Animal_Crossing_GCN_Save_Editor
                         y++;
                         inbounds = false;
                         sizeSet = (size == 0) ? false : true;
+                        if (sizeSet)
+                            return size;
+                    }
+                    else if (!inbounds)
+                        inbounds = true;
+                }
+                else if (inbounds && y > 0)
+                {
+                    if (!sizeSet)
+                        size++;
+                }
+            }
+            return size;
+        }
+
+        public static Item[] GetHouseData(ushort[] houseBuffer, int size = 0)
+        {
+            List<Item> items = new List<Item>();
+            bool inbounds = false;
+            int y = 0;
+            if (size == 0)
+                size = GetHouseSize(houseBuffer);
+            int pos = 0;
+            for (int x = 0; x < houseBuffer.Length - 1; x++)
+            {
+                if (houseBuffer[x] == 0xFFFE)
+                {
+                    if (inbounds && houseBuffer[x + 1] == 0)
+                    {
+                        y++;
+                        inbounds = false;
                     }
                     else if(!inbounds)
-                    {
                         inbounds = true;
-                    }
                 }
                 else if (inbounds && y > 0)
                 {
                     pos++;
-                    if (!sizeSet)
-                        size++;
                     if (houseBuffer[x] == 0)
-                        data.Add(pos, "Empty");
+                        items.Add(new Item(0));
                     else if (houseBuffer[x] != 0xFFFE && houseBuffer[x] != 0xFE1F && houseBuffer[x] != 0xFE1B)
-                        data.Add(pos, ItemData.GetItemName(houseBuffer[x]));
+                        items.Add(new Item(houseBuffer[x]));
                     else if (houseBuffer[x] == 0xFE1F) //0xFE1F = Barrier/Occupied Space. Left by multispace furniture!
                     {
-                        string name = "Occupied";
+                        ushort itemId = 0xFFFF;
                         int index = pos - size;
-                        if (houseBuffer[x - 1] != 0xFFFE && data.ContainsKey(pos - 1) && data[pos - 1] != "Empty")
-                            name = data[pos - 1];
-                        else if (data.ContainsKey(index) && data[index] != "Empty")
-                            name = data[index];
-                        else if (data.ContainsKey(index - 1) && data[index - 1] != "Empty")
-                            name = data[index - 1];
-                        //MessageBox.Show(pos.ToString());
-                        data.Add(pos, name);
+
+                        if (x > 0 && houseBuffer[x - 1] != 0xFFFE && items.Count >= pos && items[pos - 1].ItemID != 0)
+                            itemId = items[pos - 1].ItemID;
+                        else if (items.Count > index && index >= 0 && items[index].ItemID != 0)
+                            itemId = items[index].ItemID;
+                        else if (index > 0 && items.Count >= index - 1 && items[index - 1].ItemID != 0)
+                            itemId = items[index - 1].ItemID;
+                        items.Add(new Item(itemId));
                     }
                 }
             }
-            return data;
+            return items.ToArray();
         }
 
         public void SetHouseData(ushort[] houseData, int offset, BinaryWriter writer)
