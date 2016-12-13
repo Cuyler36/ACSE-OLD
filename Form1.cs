@@ -183,18 +183,22 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         public void WriteString(int offset, string str, int maxSize)
         {
-            if (str.Length <= maxSize)
+            //if (str.Length <= maxSize)
             {
                 byte[] strBytes = new byte[maxSize];
-                ACString.GetBytes(str).CopyTo(strBytes, 0);
-                if (str.Length < maxSize)
+                byte[] ACStringBytes = ACString.GetBytes(str, maxSize);
+                if (ACStringBytes.Length <= maxSize)
                 {
-                    for (int i = (str.Length); i <= maxSize - 1; i++)
+                    ACStringBytes.CopyTo(strBytes, 0);
+                    if (str.Length < maxSize)
                     {
-                        strBytes[i] = 0x20;
+                        for (int i = (str.Length); i <= maxSize - 1; i++)
+                        {
+                            strBytes[i] = 0x20;
+                        }
                     }
+                    ModifyString(offset, strBytes);
                 }
-                ModifyString(offset, strBytes);
             }
         }
 
@@ -300,8 +304,12 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
+                int maxBytes = StringUtil.StringToMaxChars(townNameTextBox.Text, 8);
+                if (Encoding.UTF8.GetBytes(townNameTextBox.Text.ToCharArray()).Length > maxBytes)
+                    townNameTextBox.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
+
                 string text = townNameTextBox.Text;
-                if (text.Length > 0 && text.Length < 9)
+                if (text.Length > 0)
                 {
                     WriteString(Town_Name_Offset, text, 8);
                     WriteString(Player1_Town_Name, text, 8);
@@ -313,8 +321,12 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
+                int maxBytes = StringUtil.StringToMaxChars(textBox1.Text, 8);
+                if (Encoding.UTF8.GetBytes(textBox1.Text.ToCharArray()).Length > maxBytes)
+                    textBox1.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
+                
                 string text = textBox1.Text;
-                if (text.Length > 0 && text.Length < 9)
+                if (text.Length > 0)
                 {
                     WriteString(0x20, text, 8);
                     //MessageBox.Show(ReadString(0x20, 8));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 
 namespace Animal_Crossing_GCN_Save_Editor
 {
@@ -131,6 +132,28 @@ namespace Animal_Crossing_GCN_Save_Editor
                 {0xA4, "„" },
                 {0xA3, "æ" }
             };
+
+        public static int GetUTF8CharCount(string s)
+        {
+            int i = 0;
+            TextElementEnumerator t = StringInfo.GetTextElementEnumerator(s);
+            while (t.MoveNext())
+                i++;
+            return i;
+        }
+
+        public static int StringToMaxChars(string s, int maxSize)
+        {
+            TextElementEnumerator t = StringInfo.GetTextElementEnumerator(s);
+            int size = 0;
+            int chars = 0;
+            while (t.MoveNext() && chars < maxSize)
+            {
+                chars++;
+                size += Encoding.UTF8.GetBytes(((string)(t.Current)).ToCharArray()).Length;
+            }
+            return size;
+        }
     }
 
     public class ACString
@@ -150,13 +173,23 @@ namespace Animal_Crossing_GCN_Save_Editor
             }
         }
 
-        public static byte[] GetBytes(string String)
+        public static byte[] GetBytes(string String, int maxSize = 0)
         {
-            byte[] stringBytes = Encoding.Unicode.GetBytes(String);
-            for (int i = 0; i < String.Length; i++)
-                if (StringUtil.CharacterDictionary.ContainsValue(String[i].ToString()))
-                    stringBytes[i] = StringUtil.CharacterDictionary.FirstOrDefault(o => o.Value == String[i].ToString()).Key;
-            return stringBytes;
+            byte[] returnedString = new byte[maxSize > 0 ? maxSize : String.Length];
+            TextElementEnumerator t = StringInfo.GetTextElementEnumerator(String);
+            int i = 0;
+            while (t.MoveNext() && i < returnedString.Length)
+            {
+                if (StringUtil.CharacterDictionary.ContainsValue((string)t.Current))
+                    returnedString[i] = StringUtil.CharacterDictionary.FirstOrDefault(o => o.Value == (string)t.Current).Key;
+                else
+                    returnedString[i] = Encoding.UTF8.GetBytes(new char[1] { String[t.ElementIndex] })[0];
+                i++;
+            }
+            for (int x = 0; x < returnedString.Length; x++)
+                if (returnedString[x] == 0 && (maxSize == 0 || (maxSize > 0 && x <= maxSize)))
+                    returnedString[x] = 0x20;
+            return returnedString;
         }
 
         public string Trim()

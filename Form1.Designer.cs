@@ -112,7 +112,7 @@
             // 
             this.townNameTextBox.Enabled = false;
             this.townNameTextBox.Location = new System.Drawing.Point(88, 28);
-            this.townNameTextBox.MaxLength = 8;
+            this.townNameTextBox.MaxLength = 16;
             this.townNameTextBox.Name = "townNameTextBox";
             this.townNameTextBox.Size = new System.Drawing.Size(115, 20);
             this.townNameTextBox.TabIndex = 2;
@@ -284,7 +284,7 @@
             // 
             this.textBox1.Enabled = false;
             this.textBox1.Location = new System.Drawing.Point(50, 20);
-            this.textBox1.MaxLength = 8;
+            this.textBox1.MaxLength = 16;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(130, 20);
             this.textBox1.TabIndex = 0;
