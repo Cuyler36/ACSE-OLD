@@ -181,7 +181,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             return acreData;
         }
 
-        public ushort[] ClearWeeds(ushort[] acreBuffer)
+        public static ushort[] ClearWeeds(ushort[] acreBuffer)
         {
             int WeedsCleared = 0;
             for (int i = 0; i < acreBuffer.Length; i++)
@@ -196,7 +196,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             return acreBuffer;
         }
 
-        public ushort[] ClearTown(ushort[] buffer)
+        public static ushort[] ClearTown(ushort[] buffer)
         {
             int itemsCleared = 0;
             for (int i = 0; i < buffer.Length; i++)
@@ -221,7 +221,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             return "Unknown";
         }
 
-        public Dictionary<int, Acre> GetAcreTileData(ushort[] acreBuffer)
+        public static Dictionary<int, Acre> GetAcreTileData(ushort[] acreBuffer)
         {
             Dictionary<int, Acre> AcreTileData = new Dictionary<int, Acre> { };
             int i = 0;

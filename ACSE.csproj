@@ -146,7 +146,6 @@
     </Compile>
     <Compile Include="Checksum.cs" />
     <Compile Include="DataConverter.cs" />
-    <Compile Include="DrawGrid.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,7 +167,6 @@
     </Compile>
     <Compile Include="Inventory.cs" />
     <Compile Include="ItemData.cs" />
-    <Compile Include="NewSave.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

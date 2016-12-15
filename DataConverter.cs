@@ -7,6 +7,7 @@ using System.IO;
 
 namespace Animal_Crossing_GCN_Save_Editor
 {
+    //TODO: Either use this class or delete it
     class DataConverter
     {
         static BinaryReader Reader = null;
@@ -35,14 +36,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                 FileStream.Close();
             }
         }
-
-        /*private static void ConvertArray(ref dynamic array)
-        {
-            if (array.GetType().IsArray)
-            {
-                Array.Reverse(array);
-            }
-        }*/
 
         private static byte[] ConvertUShortArray(ushort[] array)
         {

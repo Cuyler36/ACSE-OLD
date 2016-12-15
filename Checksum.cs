@@ -36,12 +36,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             return BitConverter.ToUInt16(new byte[2] { buffer[0x13], buffer[0x12] }, 0) == Calculate(buffer);
         }
 
-        public static byte[] Update(byte[] buffer)
+        public static void Update(byte[] buffer)
         {
             byte[] chksumBytes = BitConverter.GetBytes(Calculate(buffer));
             Array.Reverse(chksumBytes);
-            //MessageBox.Show(chksumBytes[0].ToString("X") + chksumBytes[1].ToString("X"));
-            return chksumBytes;
+            chksumBytes.CopyTo(buffer, 0x12);
         }
     }
 }

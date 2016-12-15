@@ -247,7 +247,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 }
         }
 
-        public ushort GetItemID(string itemName)
+        public static ushort GetItemID(string itemName)
         {
             for(int i = 0; i < Item_Names.Length; i++)
             {

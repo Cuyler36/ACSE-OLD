@@ -24,15 +24,13 @@ namespace Animal_Crossing_GCN_Save_Editor
             0x9C, 0x9E, 0xA0, 0xA2, 0xA4
         };
 
-        //ResourceManager rm = new ResourceManager("Animal_Crossing_GCN_Save_Editor.")
-
         public static int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         public static int Data_Start_Offset = 0x26040;
         public static int Town_Name_Offset = 0x9120;
         public static int Player1_Bells_Offset = 0xAC;
         public static int Player1_Town_Name = 0x28;
-        static public int[] House_Addresses = new int[4] { 0x9D20, 0, 0, 0 };
-        static public int House1_DataSize = 0x90;
+        public static int[] House_Addresses = new int[4] { 0x9D20, 0, 0, 0 };
+        public static int House1_DataSize = 0x90;
         public static int AcreData_Offset = 0x137A8;
         public static int AcreData_Size = 0x3C00;
         public static int AcreTile_Offset = 0x173A8;
@@ -50,17 +48,15 @@ namespace Animal_Crossing_GCN_Save_Editor
         public static int Islander_Offset = 0x23440;
         public static int BurriedItems_Offset = 0x20F1D;  //(Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
         public static int BurriedItems_Length = 0x3C0;
+        public static int Nook_Items_Offset = 0x2040E;
         //public static byte[] Blank_Villager = Properties.Resources.blank_Villager;
-        
+
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private FileStream fs;
         private BinaryReader reader;
         private BinaryWriter writer;
         private string fileName;
-        private ItemData itemData = new ItemData { };
-        private HouseData houseData = new HouseData { };
-        private AcreData acreData = new AcreData { };
-        private TownEditor townEditorForm; // = new TownEditor { };
+        private TownEditor townEditorForm;
         private Inventory inventory;
         private AcreEditor editor;
         private Villager_Editor vEditor;
@@ -78,7 +74,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void SaveData()
         {
-            Checksum.Update(saveBuffer).CopyTo(saveBuffer, 0x12);
+            Checksum.Update(saveBuffer);
             fs = new FileStream(fileName, FileMode.Open);
             writer = new BinaryWriter(fs);
             writer.Seek(0x26040, SeekOrigin.Begin);
@@ -177,28 +173,24 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 data[i] = saveBuffer[offset + i];
             }
-            //return System.Text.Encoding.ASCII.GetString(data).Trim();
             return new ACString(data);
         }
 
         public void WriteString(int offset, string str, int maxSize)
         {
-            //if (str.Length <= maxSize)
+            byte[] strBytes = new byte[maxSize];
+            byte[] ACStringBytes = ACString.GetBytes(str, maxSize);
+            if (ACStringBytes.Length <= maxSize)
             {
-                byte[] strBytes = new byte[maxSize];
-                byte[] ACStringBytes = ACString.GetBytes(str, maxSize);
-                if (ACStringBytes.Length <= maxSize)
+                ACStringBytes.CopyTo(strBytes, 0);
+                if (str.Length < maxSize)
                 {
-                    ACStringBytes.CopyTo(strBytes, 0);
-                    if (str.Length < maxSize)
+                    for (int i = (str.Length); i <= maxSize - 1; i++)
                     {
-                        for (int i = (str.Length); i <= maxSize - 1; i++)
-                        {
-                            strBytes[i] = 0x20;
-                        }
+                        strBytes[i] = 0x20;
                     }
-                    ModifyString(offset, strBytes);
                 }
+                ModifyString(offset, strBytes);
             }
         }
 
@@ -251,6 +243,14 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 if (iEditor != null && !iEditor.IsDisposed)
                     iEditor.Dispose();
+                if (vEditor != null && !vEditor.IsDisposed)
+                    vEditor.Dispose();
+                if (editor != null && !editor.IsDisposed)
+                    editor.Dispose();
+                if (hEditor != null && !hEditor.IsDisposed)
+                    hEditor.Dispose();
+                if (townEditorForm != null && !townEditorForm.IsDisposed)
+                    townEditorForm.Dispose();
                 townNameTextBox.Enabled = true;
                 textBox1.Enabled = true;
                 textBox2.Enabled = true;
@@ -275,7 +275,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                 comboBox3.ValueMember = "Key";
                 comboBox3.DisplayMember = "Value";
                 comboBox3.SelectedValue = ReadRawUShort(Player1_Inventory_Background_Offset, 2)[0];
-                editor = new AcreEditor(this);
                 reader.Close();
                 writer.Close();
                 fs.Close();
@@ -286,6 +285,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 }
                 inventory = new Inventory(ReadRawUShort(Player1_Pockets[0], 0x1E));
                 CanSetData = true;
+                //MessageBox.Show(ReadString(0x95DC, 0xC0).String); //0x96A4
             }
             else
             {
@@ -416,32 +416,10 @@ namespace Animal_Crossing_GCN_Save_Editor
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (fs != null)
-            {
-                ushort[] acreInfo = ReadRawUShort(AcreData_Offset, AcreData_Size);
-                ushort[] newAcreData = acreData.ClearWeeds(acreInfo);
-                if (acreInfo.Length == newAcreData.Length)
-                    WriteUShort(newAcreData, AcreData_Offset);
-            }
-        }
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (fs != null)
                 SaveData();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (fs != null)
-            {
-                ushort[] acreInfo = ReadRawUShort(AcreData_Offset, AcreData_Size);
-                ushort[] clearedAcreInfo = acreData.ClearTown(acreInfo);
-                if (acreInfo.Length == clearedAcreInfo.Length)
-                    WriteUShort(clearedAcreInfo, AcreData_Offset);
-            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -454,7 +432,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                     WriteUShort(new ushort[1] { 0 }, Player1_Held_Item_Offset);
                 else
                 {
-                    ushort item = itemData.GetItemID(selectedItem);
+                    ushort item = ItemData.GetItemID(selectedItem);
                     if (item != 0)
                         WriteUShort(new ushort[1] { item }, Player1_Held_Item_Offset);
                 }
@@ -466,7 +444,9 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (fs != null)
             {
                 ushort[] acreTileData = ReadRawUShort(AcreTile_Offset, AcreTile_Size);
-                Dictionary<int, Acre> tileData = acreData.GetAcreTileData(acreTileData);
+                Dictionary<int, Acre> tileData = AcreData.GetAcreTileData(acreTileData);
+                if (editor == null || editor.IsDisposed)
+                    editor = new AcreEditor(this);
                 editor.currentAcreData = tileData;
                 editor.Show();
             }
@@ -502,11 +482,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                 if (selectedShirt != 0)
                     WriteDataRaw(Player1_Shirt_Offset, new byte[3] { (byte)(selectedShirt & 0xFF), 0x24, (byte)(selectedShirt & 0xFF) });
             }
-        }
-
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)

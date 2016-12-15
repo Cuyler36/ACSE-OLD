@@ -36,8 +36,6 @@ namespace Animal_Crossing_GCN_Save_Editor
             "Left Acre", "Right Acre"
         };
 
-        private DrawGrid drawGrid = new DrawGrid { };
-
         public TownEditor(ushort[] items, ushort[] islandItems, ushort[] acreIds, byte[] burriedItemData, Form1 form1)
         {
             form = form1;
@@ -70,7 +68,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 images[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreEditor.AcreImages[Acres[i].AcreID]).ToString());
                 acreImages[i] = new PictureBox();
                 acreImages[i].Size = new Size(128, 128);
-                acreImages[i].Location = new Point(10 + (128 * (i % 5)), 30 + (128 * (i / 5)));
+                acreImages[i].Location = new Point(10 + (128 * (i % 5)), 55 + (128 * (i / 5)));
                 acreImages[i].SizeMode = PictureBoxSizeMode.StretchImage;
                 acreImages[i].BackgroundImage = images[i];
                 acreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
@@ -157,16 +155,6 @@ namespace Animal_Crossing_GCN_Save_Editor
             return acreBitmap;
         }
 
-        private void TownEditor_Load(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            drawGrid.MakeGrid(80, 92, e);
-        }
-
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox2.Checked)
@@ -186,14 +174,25 @@ namespace Animal_Crossing_GCN_Save_Editor
             this.Hide();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //MessageBox.Show(((ComboBox)sender).SelectedValue.ToString());
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             this.Hide();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+                ushort[] acreInfo = form.ReadRawUShort(Form1.AcreData_Offset, Form1.AcreData_Size);
+                ushort[] newAcreData = AcreData.ClearWeeds(acreInfo);
+                if (acreInfo.Length == newAcreData.Length)
+                    form.WriteUShort(newAcreData, Form1.AcreData_Offset);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            ushort[] acreInfo = form.ReadRawUShort(Form1.AcreData_Offset, Form1.AcreData_Size);
+            ushort[] clearedAcreInfo = AcreData.ClearTown(acreInfo);
+            if (acreInfo.Length == clearedAcreInfo.Length)
+                form.WriteUShort(clearedAcreInfo, Form1.AcreData_Offset);
         }
     }
 }
