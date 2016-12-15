@@ -78,8 +78,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                     int X = e.X / (4 * scale);
                     int Y = e.Y / (4 * scale);
                     int index = X + Y * 16;
-                    //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
-                    if (e.Button == MouseButtons.Left)
+                //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
+                if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
                     {
                         //Set Item
                         Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
@@ -88,7 +88,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                             Acres[selectedAcre].SetBuriedInMemory(Acres[selectedAcre].Acre_Items[index], selectedAcre, buriedData, checkBox1.Checked);
                         //Redraw Picturebox
                         acreImages[selectedAcre].Image = GenerateAcreItemsBitmap(Acres[selectedAcre].Acre_Items, selectedAcre);
-                    } else if (e.Button == MouseButtons.Right)
+                    }
+                    else if (e.Button == MouseButtons.Right)
                     {
                         comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
                         checkBox1.Checked = Acres[selectedAcre].Acre_Items[index].Burried;
@@ -106,17 +107,21 @@ namespace Animal_Crossing_GCN_Save_Editor
             comboBox1.ValueMember = "Key";
         }
 
-        private void TownEditor_Shown(object sender, EventArgs e)
+        private void Update_Pictureboxes()
         {
             int x = 0;
             foreach (PictureBox p in acreImages)
             {
                 Bitmap acreImage = GenerateAcreItemsBitmap(Acres[x].Acre_Items, x);
-                //MessageBox.Show((p == null).ToString());
                 p.Image = acreImage;
                 p.BringToFront();
                 x++;
             }
+        }
+
+        private void TownEditor_Shown(object sender, EventArgs e)
+        {
+            Update_Pictureboxes();
         }
 
         //Code from NLSE. Thanks!
@@ -181,18 +186,22 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button4_Click(object sender, EventArgs e)
         {
-                ushort[] acreInfo = form.ReadRawUShort(Form1.AcreData_Offset, Form1.AcreData_Size);
-                ushort[] newAcreData = AcreData.ClearWeeds(acreInfo);
-                if (acreInfo.Length == newAcreData.Length)
-                    form.WriteUShort(newAcreData, Form1.AcreData_Offset);
+            for (int i = 0; i < 30; i++)
+                foreach (WorldItem item in Acres[i].Acre_Items.Where(o => o.Name == "Weed"))
+                    item.ItemID = 0;
+            Update_Pictureboxes();
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            ushort[] acreInfo = form.ReadRawUShort(Form1.AcreData_Offset, Form1.AcreData_Size);
-            ushort[] clearedAcreInfo = AcreData.ClearTown(acreInfo);
-            if (acreInfo.Length == clearedAcreInfo.Length)
-                form.WriteUShort(clearedAcreInfo, Form1.AcreData_Offset);
+            for (int i = 0; i < 30; i++)
+                foreach (WorldItem item in Acres[i].Acre_Items.Where(o => o.ItemID < 0x5000))
+                {
+                    item.ItemID = 0;
+                    item.Name = "Empty";
+                    Acres[i].SetBuriedInMemory(item, i, buriedData, false);
+                }
+            Update_Pictureboxes();
         }
     }
 }
