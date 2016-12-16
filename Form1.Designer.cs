@@ -114,6 +114,7 @@
             this.townNameTextBox.Size = new System.Drawing.Size(115, 20);
             this.townNameTextBox.TabIndex = 2;
             this.townNameTextBox.LostFocus += new System.EventHandler(this.townNameTextBox_TextChanged);
+            this.townNameTextBox.TextChanged += new System.EventHandler(this.townNameTextBox_HandleTextChanged);
             // 
             // groupBox1
             // 

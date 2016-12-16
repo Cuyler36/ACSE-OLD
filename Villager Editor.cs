@@ -90,7 +90,20 @@ namespace Animal_Crossing_GCN_Save_Editor
                 Catchphrases[i].TextChanged += delegate (object sender, EventArgs e)
                 {
                     TextBox b = (TextBox)sender;
-                    if (b.Text.Length < 11)
+                    int maxBytes = StringUtil.StringToMaxChars(b.Text);
+                    if (b.Text.ToCharArray().Length > 8)
+                    {
+                        b.Text = b.Text.Substring(0, 8);
+                        b.SelectionStart = b.Text.Length;
+                        b.SelectionLength = 0;
+                    }
+                    if (Encoding.UTF8.GetBytes(b.Text.ToCharArray()).Length > maxBytes)
+                    {
+                        b.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(b.Text), 0, maxBytes);
+                        b.SelectionStart = b.Text.Length;
+                        b.SelectionLength = 0;
+                    }
+                    if (b.Text.ToCharArray().Length < 11)
                         Villagers[Array.IndexOf(Catchphrases, b)].Catchphrase = b.Text;
                 };
             }

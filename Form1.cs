@@ -274,10 +274,6 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                int maxBytes = StringUtil.StringToMaxChars(townNameTextBox.Text);
-                if (Encoding.UTF8.GetBytes(townNameTextBox.Text.ToCharArray()).Length > maxBytes)
-                    townNameTextBox.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
-
                 string text = townNameTextBox.Text;
                 if (text.Length > 0)
                 {
@@ -287,17 +283,47 @@ namespace Animal_Crossing_GCN_Save_Editor
             }
         }
 
+        private void townNameTextBox_HandleTextChanged(object sender, EventArgs e)
+        {
+            int maxBytes = StringUtil.StringToMaxChars(townNameTextBox.Text);
+            if (townNameTextBox.Text.ToCharArray().Length > 8)
+            {
+                townNameTextBox.Text = townNameTextBox.Text.Substring(0, 8);
+                townNameTextBox.SelectionStart = townNameTextBox.Text.Length;
+                townNameTextBox.SelectionLength = 0;
+            }
+            if (Encoding.UTF8.GetBytes(townNameTextBox.Text.ToCharArray()).Length > maxBytes)
+            {
+                townNameTextBox.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(townNameTextBox.Text), 0, maxBytes);
+                townNameTextBox.SelectionStart = townNameTextBox.Text.Length;
+                townNameTextBox.SelectionLength = 0;
+            }
+        }
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             if (fs != null)
-            {
-                int maxBytes = StringUtil.StringToMaxChars(textBox1.Text);
-                if (Encoding.UTF8.GetBytes(textBox1.Text.ToCharArray()).Length > maxBytes)
-                    textBox1.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
-                
+            {   
                 string text = textBox1.Text;
                 if (text.Length > 0)
                     WriteString(0x20, text, 8);
+            }
+        }
+
+        private void textBox1_HandleTextChanged(object sender, EventArgs e)
+        {
+            int maxBytes = StringUtil.StringToMaxChars(textBox1.Text);
+            if (textBox1.Text.ToCharArray().Length > 8)
+            {
+                textBox1.Text = textBox1.Text.Substring(0, 8);
+                textBox1.SelectionStart = textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
+            }
+            if (Encoding.UTF8.GetBytes(textBox1.Text.ToCharArray()).Length > maxBytes)
+            {
+                textBox1.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
+                textBox1.SelectionStart = textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
             }
         }
 
