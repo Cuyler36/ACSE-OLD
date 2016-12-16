@@ -36,10 +36,10 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         public static Dictionary<ushort, int> AcreImages = new Dictionary<ushort, int>()
         {
-            {0x0345, 10 },
-            {0x0325, 10 },
-            {0x0329, 10 },
-            {0x0349, 10 },
+            {0x0345, 79 },
+            {0x0325, 81 },
+            {0x0329, 80 },
+            {0x0349, 79 },
             {0x0335, 71 },
             {0x0385, 2 },
             {0x0295, 4 },
@@ -114,8 +114,8 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x03E8, 70 }, //Empty (Ocean)
             {0x04B8, 70 }, //Ocean (Half)
             {0x0578, 70 }, //Ocean
-            {0x04A4, 70 }, //Island (Left) (1)
-            {0x04A0, 70 }, //Island (Right (1)
+            {0x04A4, 78 }, //Island (Left) (1)
+            {0x04A0, 77 }, //Island (Right (1)
             {0x057C, 70 }, //Ocean
             {0x04D8, 70 }, //Ocean
             {0x04D4, 70 }, //Ocean
@@ -187,6 +187,17 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x05A4, 77 }, //Island (Right) (2)
             {0x04DC, 70 }, //Ocean
             {0x04B0, 70 }, //Ocean
+            {0x02E9, 28 },
+            {0x026D, 24},
+            {0x017D, 75 },
+            {0x0164, 57 },
+            {0x0204, 36 },
+            {0x01E8, 53 },
+            {0x0220, 11 },
+            {0x03D4, 66 },
+            {0x0560, 70 },
+            {0x05A0, 78 },
+            {0x0594, 77 }
         };
 
         void acreImage_Click(object sender, EventArgs e)

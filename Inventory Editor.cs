@@ -81,7 +81,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void button1_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < 15; i++)
-                form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, Form1.Player1_Pockets[0] + (i * 2));
+                form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, Form1.Player1_Pockets + (i * 2));
 
             //Interesting note about dresser storage:
             //The limitation when storing furniture in it is created by the actual stored location of the items.

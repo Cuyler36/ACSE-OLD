@@ -164,6 +164,17 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x05A4, "Island (Right) (2)" }, //Island (Right) (2)
             {0x04DC, "Ocean (38)" }, //Ocean
             {0x04B0, "Ocean (39)" }, //Ocean
+            {0x02E9, "Lake (Down > Left) (Upper)" },
+            {0x026D, "River (Right) (Upper) /w Bridge" },
+            {0x017D, "River (Right > Down() (Upper)" },
+            {0x0164, "Cliff (Horizontal) (Upper)" },
+            {0x0204, "Cliff (Horizontal) (Upper) w/ Waterfall" },
+            {0x01E8, "Cliff (Right Corner) (Upper)" },
+            {0x0220, "River (Down) (Lower)" },
+            {0x03D4, "Beachfront River w/ Bridge" },
+            {0x0560, "Ocean (40)" },
+            {0x05A0, "Island (Left) (3)" },
+            {0x0594, "Island (Right) (3)" }
         };
         
         private ItemData itemData = new ItemData { };

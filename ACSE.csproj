@@ -131,7 +131,10 @@
     <Content Include="Resources\Images\76.jpg" />
     <Content Include="Resources\Images\77.jpg" />
     <Content Include="Resources\Images\78.jpg" />
+    <None Include="Resources\Images\79.jpg" />
     <Content Include="Resources\Images\8.jpg" />
+    <None Include="Resources\Images\80.jpg" />
+    <None Include="Resources\Images\81.jpg" />
     <Content Include="Resources\Images\9.jpg" />
     <Content Include="Resources\Images\99.jpg" />
     <Content Include="Resources\Images\items_en.txt" />

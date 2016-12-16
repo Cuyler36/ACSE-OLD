@@ -16,21 +16,14 @@ namespace Animal_Crossing_GCN_Save_Editor
     {
 
         public byte[] saveBuffer = new byte[0x26000];
-        public byte[] SaveBuffer { get { return saveBuffer; } set { saveBuffer = value; } }
-
-        public static int[] Player1_Pockets = new int[15] {
-            0x88, 0x8A, 0x8C, 0x8E, 0x90,
-            0x92, 0x94, 0x96, 0x98, 0x9A,
-            0x9C, 0x9E, 0xA0, 0xA2, 0xA4
-        };
 
         public static int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         public static int Data_Start_Offset = 0x26040;
         public static int Town_Name_Offset = 0x9120;
         public static int Player1_Bells_Offset = 0xAC;
         public static int Player1_Town_Name = 0x28;
-        public static int[] House_Addresses = new int[4] { 0x9D20, 0, 0, 0 };
-        public static int House1_DataSize = 0x90;
+        public static int Player1_Pockets = 0x88;
+        public static int[] House_Addresses = new int[4] { 0x9D20, 0, 0, 0 }; //House Carpet & Wallpaper offset: 0x8A0
         public static int AcreData_Offset = 0x137A8;
         public static int AcreData_Size = 0x3C00;
         public static int AcreTile_Offset = 0x173A8;
@@ -95,9 +88,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             byte[] data = new byte[size];
             for (int i = 0; i < size; i++)
-            {
                 data[i] = saveBuffer[offset + i];
-            }
             Array.Reverse(data);
             return data;
         }
@@ -147,9 +138,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             byte[] data = new byte[size];
             for (int i = 0; i < size; i++)
-            {
                 data[i] = saveBuffer[offset + i];
-            }
             return data;
         }
 
@@ -162,9 +151,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             byte[] data = new byte[maxSize];
             for (int i = 0; i < maxSize; i++)
-            {
                 data[i] = saveBuffer[offset + i];
-            }
             return new ACString(data);
         }
 
@@ -176,12 +163,8 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 ACStringBytes.CopyTo(strBytes, 0);
                 if (str.Length < maxSize)
-                {
                     for (int i = (str.Length); i <= maxSize - 1; i++)
-                    {
                         strBytes[i] = 0x20;
-                    }
-                }
                 strBytes.CopyTo(saveBuffer, offset);
             }
         }
@@ -275,7 +258,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                     MessageBox.Show("The file's Checksum was invalid. The Checksum will be updated.");
                     SaveData();
                 }
-                inventory = new Inventory(ReadRawUShort(Player1_Pockets[0], 0x1E));
+                inventory = new Inventory(ReadRawUShort(Player1_Pockets, 0x1E));
                 CanSetData = true;
                 //MessageBox.Show(ReadString(0x95DC, 0xC0).String); //0x96A4
             }
@@ -314,10 +297,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 
                 string text = textBox1.Text;
                 if (text.Length > 0)
-                {
                     WriteString(0x20, text, 8);
-                    //MessageBox.Show(ReadString(0x20, 8));
-                }
             }
         }
 
@@ -327,9 +307,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 uint bells = string.IsNullOrEmpty(textBox2.Text) ? 0 : uint.Parse(textBox2.Text);
                 if (bells >= 0 && bells <= uint.MaxValue)
-                {
                     SetBells(bells);
-                }
             }
         }
 
@@ -364,7 +342,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                     Item[] dresserItems = new Item[3];
                     for (int i = 0; i < 3; i++)
                         dresserItems[i] = new Item(ReadRawUShort(Player1_Dresser_Offsets[i], 2)[0]);
-                    iEditor = new Inventory_Editor(ReadRawUShort(Player1_Pockets[0], 30), dresserItems, this);
+                    iEditor = new Inventory_Editor(ReadRawUShort(Player1_Pockets, 30), dresserItems, this);
                 }
                 iEditor.Show();
             }
@@ -453,12 +431,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                 byte[] islanderData = ReadDataRaw(Islander_Offset, VillagerData_Size / 15);
                 Villager[] Villagers = new Villager[16];
                 for (int i = 0; i < 15; i++)
-                {
-                    Villagers[i] = new Villager(BitConverter.ToUInt16(new byte[2] { villagerData[(i * 0x988) + 1], villagerData[i * 0x988] }, 0), null, i + 1, villagerData[(i * 0x988) + 0xD],
-                        ReadString(VillagerData_Offset + (i * 0x988) + 0x89D, 10).Trim());
-                    //MessageBox.Show("Villager: " + Villagers[i].Name + " | Personality: " + Villagers[i].Personality + " | Index: " + Villagers[i].Index);
-                }
-                Villagers[15] = new Villager(BitConverter.ToUInt16(new byte[2] { islanderData[1], islanderData[0] }, 0), null, 16, islanderData[0xD], ReadString(Islander_Offset + 0x89D, 10).Trim());
+                    Villagers[i] = new Villager(BitConverter.ToUInt16(new byte[2] { villagerData[(i * 0x988) + 1], villagerData[i * 0x988] }, 0), null, i + 1, villagerData[(i * 0x988) + 0xD], ReadString(VillagerData_Offset + (i * 0x988) + 0x89D, 10).Trim());
+                Villagers[15] = new Villager(BitConverter.ToUInt16(new byte[2] { islanderData[1], islanderData[0] }, 0), null, 16, islanderData[0xD], ReadString(Islander_Offset + 0x89D, 10).Trim()); //0x89D + 0x3D = Villager Shirt
                 if (vEditor == null || vEditor.IsDisposed)
                     vEditor = new Villager_Editor(Villagers, this);
                 vEditor.Show();
