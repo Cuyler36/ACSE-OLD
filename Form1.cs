@@ -43,11 +43,13 @@ namespace Animal_Crossing_GCN_Save_Editor
         public static int[] Player1_Dresser_Offsets = new int[3] { 0x9F6E, 0xA196, 0xA3BE }; //0x228 away from each other
         public static int VillagerData_Offset = 0x17438;
         public static int VillagerData_Size = 0x8EF8;
-        public static int IslandData_Offset = 0x22550;
+        public static int IslandData_Offset = 0x22554;
         public static int IslandData_Length = 0x400;
         public static int Islander_Offset = 0x23440;
         public static int BurriedItems_Offset = 0x20F1D;  //(Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
         public static int BurriedItems_Length = 0x3C0;
+        public static int IslandBurriedItems_Offset = 0x23DC9;
+        public static int IslandBurriedItems_Length = 0x40;
         public static int Nook_Items_Offset = 0x2040E;
         //public static byte[] Blank_Villager = Properties.Resources.blank_Villager;
 
@@ -86,16 +88,6 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void WriteData(int offset, byte[] data)
         {
             Array.Reverse(data);
-            data.CopyTo(saveBuffer, offset);
-        }
-
-        private void ModifyData(int offset, byte[] data)
-        {
-            WriteData(offset, data);
-        }
-
-        private void ModifyString(int offset, byte[] data)
-        {
             data.CopyTo(saveBuffer, offset);
         }
 
@@ -190,13 +182,13 @@ namespace Animal_Crossing_GCN_Save_Editor
                         strBytes[i] = 0x20;
                     }
                 }
-                ModifyString(offset, strBytes);
+                strBytes.CopyTo(saveBuffer, offset);
             }
         }
 
         private void SetBells(uint amount)
         {
-            ModifyData(Player1_Bells_Offset, BitConverter.GetBytes(amount));
+            WriteData(Player1_Bells_Offset, BitConverter.GetBytes(amount));
         }
 
         private string[] GetNames(int offset, int count)
@@ -299,7 +291,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                int maxBytes = StringUtil.StringToMaxChars(townNameTextBox.Text, 8);
+                int maxBytes = StringUtil.StringToMaxChars(townNameTextBox.Text);
                 if (Encoding.UTF8.GetBytes(townNameTextBox.Text.ToCharArray()).Length > maxBytes)
                     townNameTextBox.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
 
@@ -316,7 +308,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                int maxBytes = StringUtil.StringToMaxChars(textBox1.Text, 8);
+                int maxBytes = StringUtil.StringToMaxChars(textBox1.Text);
                 if (Encoding.UTF8.GetBytes(textBox1.Text.ToCharArray()).Length > maxBytes)
                     textBox1.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
                 
@@ -409,8 +401,9 @@ namespace Animal_Crossing_GCN_Save_Editor
                 ushort[] islandRawData = ReadRawUShort(IslandData_Offset, IslandData_Length);
                 ushort[] acreTileData = ReadRawUShort(AcreTile_Offset, AcreTile_Size);
                 byte[] burriedItemData = ReadDataRaw(BurriedItems_Offset, BurriedItems_Length);
+                byte[] islandBurriedItemData = ReadDataRaw(IslandBurriedItems_Offset, IslandBurriedItems_Length);
                 if (townEditorForm == null || townEditorForm.IsDisposed)
-                    townEditorForm = new TownEditor(acreRawData, islandRawData, acreTileData, burriedItemData, this);
+                    townEditorForm = new TownEditor(acreRawData, islandRawData, acreTileData, burriedItemData, islandBurriedItemData, this);
                 townEditorForm.Show();
                 
             }

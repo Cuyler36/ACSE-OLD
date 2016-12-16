@@ -16,9 +16,13 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         const int scale = 2;
         PictureBox[] acreImages;
+        PictureBox[] islandAcreImages;
         private Normal_Acre[] Acres;
+        private Island_Acre[] Island_Acres;
         Bitmap[] images = new Bitmap[30];
+        Bitmap[] islandImages = new Bitmap[2];
         byte[] buriedData;
+        byte[] islandBuriedData;
         Form1 form;
 
         public string[] X_Acre_Names =
@@ -36,13 +40,15 @@ namespace Animal_Crossing_GCN_Save_Editor
             "Left Acre", "Right Acre"
         };
 
-        public TownEditor(ushort[] items, ushort[] islandItems, ushort[] acreIds, byte[] burriedItemData, Form1 form1)
+        public TownEditor(ushort[] items, ushort[] islandItems, ushort[] acreIds, byte[] burriedItemData, byte[] islandBurriedItemData, Form1 form1)
         {
             form = form1;
             buriedData = burriedItemData;
+            islandBuriedData = islandBurriedItemData;
             acreImages = new PictureBox[30];
+            islandAcreImages = new PictureBox[2];
             Acres = new Normal_Acre[30];
-            Island_Acre[] Island_Acres = new Island_Acre[2];
+            Island_Acres = new Island_Acre[2];
             int acreIdIndex = 8; //Start at first true acre
             for (int i = 0; i < 30; i++)
             {
@@ -61,17 +67,52 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 ushort[] itemsBuff = new ushort[256];
                 Array.ConstrainedCopy(islandItems, i * 256, itemsBuff, 0, 256);
-                Island_Acres[i] = new Island_Acre(0, i + 1, itemsBuff);
+                Island_Acres[i] = new Island_Acre(acreIds[60 + i], i + 1, itemsBuff, islandBurriedItemData);
+                islandImages[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreEditor.AcreImages[Island_Acres[i].AcreID]).ToString());
+                islandAcreImages[i] = new PictureBox();
+                islandAcreImages[i].Size = new Size(128, 128);
+                islandAcreImages[i].Location = new Point(16 + (128 * (5 + i)), 30);
+                islandAcreImages[i].SizeMode = PictureBoxSizeMode.StretchImage;
+                islandAcreImages[i].BackgroundImage = islandImages[i];
+                islandAcreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
+                islandAcreImages[i].BorderStyle = BorderStyle.FixedSingle;
+                islandAcreImages[i].MouseClick += delegate (object sender, MouseEventArgs e)
+                {
+                    int selectedAcre = Array.IndexOf(islandAcreImages, sender as PictureBox);
+                    int X = e.X / (4 * scale);
+                    int Y = e.Y / (4 * scale);
+                    int index = X + Y * 16;
+                    //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
+                    if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
+                    {
+                        //Set Item
+                        Island_Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
+                        //Set Buried
+                        if ((ushort)comboBox1.SelectedValue >= 0x1000 && (ushort)comboBox1.SelectedValue < 0x5000) //Avoid burying world objects
+                            Island_Acres[selectedAcre].SetBuriedInMemory(Island_Acres[selectedAcre].Acre_Items[index], selectedAcre, islandBuriedData, checkBox1.Checked); //change to add burried data
+                        //Redraw Picturebox
+                        islandAcreImages[selectedAcre].Image = GenerateAcreItemsBitmap(Island_Acres[selectedAcre].Acre_Items, selectedAcre);
+                    }
+                    else if (e.Button == MouseButtons.Right)
+                    {
+                        comboBox1.SelectedValue = Island_Acres[selectedAcre].Acre_Items[index].ItemID;
+                        checkBox1.Checked = Island_Acres[selectedAcre].Acre_Items[index].Burried;
+                        //MessageBox.Show("ItemID: " + Island_Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
+                    }
+                    //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
+                };
+                this.Controls.Add(islandAcreImages[i]);
             }
             for (int i = 0; i < 30; i++)
             {
                 images[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreEditor.AcreImages[Acres[i].AcreID]).ToString());
                 acreImages[i] = new PictureBox();
                 acreImages[i].Size = new Size(128, 128);
-                acreImages[i].Location = new Point(10 + (128 * (i % 5)), 55 + (128 * (i / 5)));
+                acreImages[i].Location = new Point(10 + (128 * (i % 5)), 30 + (128 * (i / 5)));
                 acreImages[i].SizeMode = PictureBoxSizeMode.StretchImage;
                 acreImages[i].BackgroundImage = images[i];
                 acreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
+                acreImages[i].BorderStyle = BorderStyle.FixedSingle;
                 acreImages[i].MouseClick += delegate (object sender, MouseEventArgs e)
                 {
                     int selectedAcre = Array.IndexOf(acreImages, sender as PictureBox);
@@ -96,7 +137,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                     }
                     //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
                 };
-                //MessageBox.Show(acreImages[i].Location.ToString());
                 this.Controls.Add(acreImages[i]);
             }
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
@@ -117,6 +157,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                 p.BringToFront();
                 x++;
             }
+            for (int i = 0; i < 2; i++)
+                islandAcreImages[i].Image = GenerateAcreItemsBitmap(Island_Acres[i].Acre_Items, i);
         }
 
         private void TownEditor_Shown(object sender, EventArgs e)
@@ -163,11 +205,19 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox2.Checked)
+            {
                 for (int i = 0; i < 30; i++)
                     acreImages[i].BackgroundImage = images[i];
+                for (int i = 0; i < 2; i++)
+                    islandAcreImages[i].BackgroundImage = islandImages[i];
+            }
             else
+            {
                 for (int i = 0; i < 30; i++)
                     acreImages[i].BackgroundImage = null;
+                for (int i = 0; i < 2; i++)
+                    islandAcreImages[i].BackgroundImage = null;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -175,7 +225,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             for (int i = 0; i < Acres.Length; i++)
                 for (int x = 0; x < 256; x++)
                     form.WriteUShort(new ushort[1] { Acres[i].Acre_Items[x].ItemID }, Form1.AcreData_Offset + (i * 512) + x * 2);
+            for (int i = 0; i < 2; i++)
+                for (int x = 0; x < 256; x++)
+                    form.WriteUShort(new ushort[1] { Island_Acres[i].Acre_Items[x].ItemID }, Form1.IslandData_Offset + (i * 512) + x * 2);
             form.WriteDataRaw(Form1.BurriedItems_Offset, buriedData);
+            form.WriteDataRaw(Form1.IslandBurriedItems_Offset, islandBuriedData);
             this.Hide();
         }
 

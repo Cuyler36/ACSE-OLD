@@ -133,21 +133,12 @@ namespace Animal_Crossing_GCN_Save_Editor
                 {0xA3, "æ" }
             };
 
-        public static int GetUTF8CharCount(string s)
-        {
-            int i = 0;
-            TextElementEnumerator t = StringInfo.GetTextElementEnumerator(s);
-            while (t.MoveNext())
-                i++;
-            return i;
-        }
-
-        public static int StringToMaxChars(string s, int maxSize)
+        public static int StringToMaxChars(string s)
         {
             TextElementEnumerator t = StringInfo.GetTextElementEnumerator(s);
             int size = 0;
             int chars = 0;
-            while (t.MoveNext() && chars < maxSize)
+            while (t.MoveNext())
             {
                 chars++;
                 size += Encoding.UTF8.GetBytes(((string)(t.Current)).ToCharArray()).Length;

@@ -307,8 +307,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (item.ItemID == 0 || item.ItemID == 0xFFFF)
                 return;
             int burriedDataOffset = GetBuriedLocation(item, acre);
-            int burried = (burriedItemData[burriedDataOffset] >> item.Location.X % 8) & 1;
-            item.Burried = burried == 1;
+            if (burriedDataOffset > -1)
+            {
+                int burried = (burriedItemData[burriedDataOffset] >> item.Location.X % 8) & 1;
+                item.Burried = burried == 1;
+            }
         }
     }
 
@@ -316,7 +319,7 @@ namespace Animal_Crossing_GCN_Save_Editor
     {
         public Island_Acre(ushort acreId, int position, ushort[] items, byte[] burriedItemData = null) : base(acreId, position, items, burriedItemData)
         {
-
+            
         }
     }
 }
