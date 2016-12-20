@@ -32,7 +32,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 int X = i % itemsPerRow;
                 int Y = i / itemsPerRow;
-                Item item = items[i];
+                Item item = items[i] != null ? items[i] : new Item(0);
                 uint itemColor = ItemData.getItemColor(ItemData.getItemType(item.ItemID));
 
                 // Draw image

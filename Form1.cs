@@ -216,6 +216,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             string Game_ID = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(3));
             if (Game_ID == "GAF")
             {
+                this.Text = "ACSE - " + Path.GetFileName(fileName);
                 if (iEditor != null && !iEditor.IsDisposed)
                     iEditor.Dispose();
                 if (vEditor != null && !vEditor.IsDisposed)
@@ -380,11 +381,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(House_Addresses[0], 0x114));
                 ushort[] firstFloorLayer1 = ReadRawUShort(House_Addresses[0], HouseData.House_Data_Sizes[firstFloorSize - 1]);
-                ushort[] firstFloorLayer2 = ReadRawUShort(House_Addresses[0] + 0x228, HouseData.House_Data_Sizes[firstFloorSize - 1]);
+                ushort[] firstFloorLayer2 = ReadRawUShort(House_Addresses[0] + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1]);
                 ushort[] secondFloorLayer1 = ReadRawUShort(House_Addresses[0] + 0x8A8, 0xF0);
-                ushort[] secondFloorLayer2 = new ushort[0xF0]; //Temp
+                ushort[] secondFloorLayer2 = ReadRawUShort(0xA812, 0xAC);
                 ushort[] basementLayer1 = ReadRawUShort(House_Addresses[0] + 0x1150, 0x114);
-                ushort[] basementLayer2 = new ushort[0x114];
+                ushort[] basementLayer2 = ReadRawUShort(0xB0BA, 0xF0);
 
                 if (hEditor == null || hEditor.IsDisposed)
                     hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, this);

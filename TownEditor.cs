@@ -85,6 +85,13 @@ namespace Animal_Crossing_GCN_Save_Editor
                     //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
                     if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
                     {
+                        //Dump Check
+                        if (((ushort)comboBox1.SelectedValue) == 0x583B && (!(Acres[selectedAcre].AcreID == 0x0295 || Acres[selectedAcre].AcreID == 0x0119) || (selectedAcre > 4)))
+                        {
+                            DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.No || result == DialogResult.Cancel)
+                                return;
+                        }
                         //Set Item
                         Island_Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
                         //Set Buried
@@ -128,7 +135,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                         //Dump Check
                         if (((ushort)comboBox1.SelectedValue) == 0x583B && (!(Acres[selectedAcre].AcreID == 0x0295 || Acres[selectedAcre].AcreID == 0x0119) || (selectedAcre > 4)))
                         {
-                            //MessageBox.Show(string.Format("Index: {0} | Name: {1} | AcreID: {2}", selectedAcre, Acres[selectedAcre].Name, Acres[selectedAcre].AcreID.ToString("X")));
                             DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
                             if (result == DialogResult.No || result == DialogResult.Cancel)
                                 return;

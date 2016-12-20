@@ -17,22 +17,15 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             0x0480, 0x2480, 0x4880, 0x24A0, 0x4890, 0x48A0, 0x6C90, 0x6C80, 0x7000, 0x0000 //StarterHouse, First Upgrade, Expanded Main Room (No Basement), First Upgrade + Basement, Expanded Room + Basement (From Basement), Expanded Room + Basement (From Expanded Room), 2nd Floor (From Expanded Room), 2nd Floor (From Basement), Statue (From Basement)
         };
-        static public int[] House_MainFloor_Sizes = new int[10]
-        {
-            4, 6, 8, 6, 8, 8, 8, 8, 8, 8
-        };
-        static public int[] House_Basement_Sizes = new int[10]
-        {
-            0, 0, 0, 8, 8, 8, 8, 8, 8, 8
-        };
-        static public int[] House_SecondFloor_Sizes = new int[10]
-        {
-            0, 0, 0, 0, 0, 0, 6, 6, 6, 6
-        };
 
         static public int[] House_Data_Sizes = new int[8]
         {
-            0, 0, 0, 0xA0, 0, 0xF0, 0, 0x114
+            0, 0, 0, 0x8C, 0, 0xF0, 0, 0x114
+        };
+
+        static public int[] House_Data_Layer2_Sizes = new int[8]
+        {
+            0, 0, 0, 0x68, 0, 0xAC, 0, 0xF0
         };
 
         public static int GetHouseSize (ushort[] houseBuffer)
@@ -78,7 +71,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 if (houseBuffer[x] == 0xFFFE)
                 {
-                    if (inbounds && houseBuffer[x + 1] == 0)
+                    if (inbounds && x + 1 < houseBuffer.Length && houseBuffer[x + 1] == 0)
                     {
                         y++;
                         inbounds = false;
@@ -111,14 +104,29 @@ namespace Animal_Crossing_GCN_Save_Editor
             return items.ToArray();
         }
 
-        public void SetHouseData(ushort[] houseData, int offset, BinaryWriter writer)
+        public static void UpdateHouseData(Item[] houseItems, ushort[] houseBuffer)
         {
-            writer.Seek(offset, SeekOrigin.Begin);
-            foreach (ushort data in houseData)
+            int pos = 0;
+            bool inbounds = false;
+            int y = 0;
+            for (int x = 0; x < houseBuffer.Length; x++)
             {
-                byte[] us = BitConverter.GetBytes(data);
-                Array.Reverse(us);
-                writer.Write(us);
+                if (houseBuffer[x] == 0xFFFE)
+                {
+                    if (inbounds && x + 1 < houseBuffer.Length && houseBuffer[x + 1] == 0)
+                    {
+                        y++;
+                        inbounds = false;
+                    }
+                    else if (!inbounds)
+                        inbounds = true;
+                }
+                else if (inbounds && y > 0)
+                    if (houseBuffer[x] != 0xFFFE && houseBuffer[x] != 0xFE1B)
+                    {
+                        houseBuffer[x] = houseItems[pos].ItemID;
+                        pos++;
+                    }
             }
         }
     }
