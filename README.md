@@ -34,14 +34,17 @@ Refer to the article here: https://wiki.dolphin-emu.org/index.php?title=Ripping_
 
 ### Opening your Save File
 Click on the File button, then click Open and select your save file!
+
 ![Open Save](http://i.imgur.com/A1gAVm6.png)
 
 ### Using the Main Editor Form
 This contains the Players, Town Name, and buttons to access the other editors! Simply change the values of the text/combo boxes to edit them.
+
 ![Main Editor](http://i.imgur.com/v49tNrP.png)
 
 ### Using the Acre Editor Form
 This form allows you to change your acre tiles! There is a 7x10 grid of acre tiles. To select an acre to place, click the "Check Tile" button, then left click on the desired acre. You can also simply click on one of the entries in the acre list to the right of the acre grid. Once selected, a preview image of the selected acre will appear on the bottom right of the screen, along with it's name and AcreID. To place an acre, click on the "Place Tile" button, then just left click over any acre tile on the grid!
+
 ![Acre Editor](http://i.imgur.com/Iaz1uhU.png)
 
 #### Acre Editor Precautions
@@ -54,6 +57,7 @@ Placing/Removing specific acres can damage your town. Here is a list of possible
 
 ### Using the Town Editor Form
 The Town Editor allows you to customize your town to the fullest extent. You can place/move/remove items, buildings, trees, rocks, decorative items, etc! To select an item to place, either select it in the combo box on the top, or right click on an item on the map. The combo box text will then change and the ItemID & buried checkbox should update to the right of it. To place an item, just left click on the map where you want the item placed. You can change whether or not the item is buried (minus outdoor objects like trees & buildings) by checking/unchecking the buried checkbox. You can also toggle the acre background display with the "Show Background" checkbox!
+
 ![Town Editor](http://i.imgur.com/18YlO3K.png)
 
 #### Town Editor Precautions
@@ -65,6 +69,7 @@ As the case was with the Acre Editor, there are specific items you can place/rem
 
 ### Using the Villager Editor Form
 Using the Villager Editor for is fairly safe. There are a few possible game breaking things that will be discussed in the section below. To change a villager, all you have to do is select a different one in the drop down box! It's that easy, really. If you do change a villager, make sure you add the correct house for them in the Town Editor, though! You can also edit their Personality and Catchphrase!
+
 ![Villager Editor](http://i.imgur.com/XylZA3v.png)
 
 #### Village Editor Precautions
@@ -75,6 +80,7 @@ There are a few cases where editing Villagers can cause strange results or break
 
 ### Using the Pocket Editor Form
 Editing your pockets is very safe and probably the easiest part of this editor to grasp. You can place ANY item in your pocket. Items, Buildings, Trees, Rocks, etc. Same as before, right click or change the combo box selection to set the selected item. Left click to place in that spot. This form also contains the Dresser editor (See below section for more info about it.)
+
 ![Pocket Editor](http://i.imgur.com/gbGLTeE.png)
 
 #### Inventory/Pocket Editor Precautions
@@ -83,6 +89,7 @@ There is only one concern when using this editor.
 
 ### Using the House Editor Form
 The House Editor is pretty simple as well. The floors are labeled for you. The top section is the "ground layer", where all furniture that goes on the floor should be placed. The section below it is the "top layer" where items that go on top of tables should be placed. This editor works exactly like the Town/Pocket Editors.
+
 ![House Editor](http://i.imgur.com/upNkKKz.png)
 
 #### House Editor Precautions
@@ -92,6 +99,7 @@ There are only a few precautions:
 
 ### Saving Your Changes
 Until you click File > Save, none of your changes will be commited. You must do this when you are ready to save your game. It will overwrite your old file, so make a backup if you're experimenting!
+
 ![Save File](https://puu.sh/sVpRO/e9a23dc546.png)
 
 ## Other Questions
