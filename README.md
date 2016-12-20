@@ -8,7 +8,7 @@ ACSE is a save editor for the GameCube version of Animal Crossing.
 	* Bells
 	* Debt
 	* Pockets
-	* House (WIP)
+	* House
 * Acre Editing
 * Town Editing
 	* Items
@@ -24,6 +24,7 @@ ACSE is a save editor for the GameCube version of Animal Crossing.
 ### Dolphin Emulator
 To extract save files from Dolphin, on the main form, click Tools > Memcard Manager (GC).
 ![Main Form](http://i.imgur.com/wH5OCQO.png)
+
 Then click on Animal Crossing, and click the Export GCI button.
 ![Memcard Manager](http://i.imgur.com/t2GBonJ.png)
 
