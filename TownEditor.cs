@@ -39,7 +39,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             "Left Acre", "Right Acre"
         };
-
+        //Add messagebox to ask if they want the other half of the sign placed down
         public TownEditor(ushort[] items, ushort[] islandItems, ushort[] acreIds, byte[] burriedItemData, byte[] islandBurriedItemData, Form1 form1)
         {
             form = form1;
@@ -97,6 +97,9 @@ namespace Animal_Crossing_GCN_Save_Editor
                     {
                         comboBox1.SelectedValue = Island_Acres[selectedAcre].Acre_Items[index].ItemID;
                         checkBox1.Checked = Island_Acres[selectedAcre].Acre_Items[index].Burried;
+                        comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
+                        comboBox1.SelectionStart = comboBox1.Text.Length;
+                        comboBox1.SelectionLength = 0;
                         //MessageBox.Show("ItemID: " + Island_Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
                     }
                     //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
@@ -127,7 +130,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                         {
                             //MessageBox.Show(string.Format("Index: {0} | Name: {1} | AcreID: {2}", selectedAcre, Acres[selectedAcre].Name, Acres[selectedAcre].AcreID.ToString("X")));
                             DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
-                            if (result == DialogResult.No)
+                            if (result == DialogResult.No || result == DialogResult.Cancel)
                                 return;
                         }
                         //Set Item
@@ -141,8 +144,10 @@ namespace Animal_Crossing_GCN_Save_Editor
                     else if (e.Button == MouseButtons.Right)
                     {
                         comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
+                        comboBox1.SelectionStart = comboBox1.Text.Length;
+                        comboBox1.SelectionLength = 0;
                         checkBox1.Checked = Acres[selectedAcre].Acre_Items[index].Burried;
-                        label1.Text = "0x" + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X");
+                        label1.Text = "0x" + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X4");
                     }
                     //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
                 };
@@ -274,7 +279,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             try { value = (ushort)comboBox1.SelectedValue; }
             catch { set = true; }
             if (set)
-                label1.Text = "0x" + value.ToString("X");
+                label1.Text = "0x" + value.ToString("X4");
         }
     }
 }

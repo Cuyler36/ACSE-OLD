@@ -22,6 +22,8 @@ namespace Animal_Crossing_GCN_Save_Editor
         };
 
         //Villager Houses are 50XX (Where XX is the Villager Identification Byte) Ex: Mitzi > 5002
+        //0x580A = Train (Front) < Becomes invisible/is removed
+        //0x580B = Train (Caboose) < Causes game to crash
 
         public static List<ushort> acreItemIDs = new List<ushort> {
             0x0005, 0x0006,
@@ -30,11 +32,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             0x0800,
             0x0804, 0x080C, 0x0814, 0x081C, 0x0824, 0x082C, 0x085B,
             0x0861, 0x0867, 0x0868, 0x0079, 0x0802, 0x0078, 0x0069,
-            0x005E, 0x007A, 0x0060, 0x0082,
+            0x005E, 0x007A, 0x0060, 0x0082, 0x005F,
             0x0845, 0x0846, 0x0847, 0x0848, 0x0849, 0x084A, 0x084B,
             0x084C, 0x084D,
             0x0008, 0x0009, 0x000A,
-            0x5808, 0x583B, 0x5843, 0x5809, 0x5804,
+            0x5808, 0x583B, 0x5843, 0x5809, 0x5804, 0x5805, 0x5806, 0x5807,
             0x584A, 0x584D, 0x5825, 0x580C,
             0x0063, 0x0064, 0x0065, 0x0066, 0x0067,
             0x580D, 0x580E, 0x580F,
@@ -48,6 +50,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             0xA012,
             0xFE1D, 0xFE1E,
             0x584E, 0x584F, 0x5851, 0x5850,
+            0x5826, 0x5827, 0x5828, 0x5829, 0x582A, 0x582B, 0x582C,
+            0x582D, 0x582E, 0x582F, 0x5830, 0x5831, 0x5832, 0x5833,
+            0x5834, 0x5835, 0x5836, 0x5837, 0x5838, 0x5839, 0x583A, //583C - 5840
+            0x5845, 0x5846, 0x5847, 0x5848, 0x5849,
+            0x584B, 0x584C,
             0xFFFF
         }; //FE 1D || FE 1E = river? (to the right of the middle of the river) (Possibly shows new bridge locations?)
         public static List<string> acreItemNames = new List<string>
@@ -57,12 +64,12 @@ namespace Animal_Crossing_GCN_Save_Editor
             "Hole",
             "Sapling (Stage 1)",
             "Tree", "Apple Tree (Fruit)", "Orange Tree (Fruit)", "Peach Tree (Fruit)", "Pear Tree (Fruit)", "Cherry Tree(Fruit)", "Palm Tree (Fruit)",
-            "Ceder Tree", "Golden Tree (Golden Shovel)", "Golden Tree", "Tree (Furniture)", "Tree (Growing)", "Ceder Tree (Bells)", "Tree (Bells)",
-            "Tree (Bees)", "Ceder Tree (Bees)", "Tree (Festive Lights)", "Ceder Tree (Festive Lights)",
+            "Cedar Tree", "Golden Tree (Golden Shovel)", "Golden Tree", "Cedar Tree (Furniture)", "Tree (Growing)", "Cedar Tree (Bells)", "Tree (Bells)",
+            "Tree (Bees)", "Cedar Tree (Bees)", "Tree (Festive Lights)", "Cedar Tree (Festive Lights)", "Tree (Furniture)",
             "White Pansies", "Purple Pansies", "Yellow Pansies", "Yellow Cosmos", "Purple Cosmos", "Blue Cosmos", "Red Tulips",
             "White Tulips", "Yellow Tulips",
             "Weed", "Weed", "Weed",
-            "Post Office", "Dump", "Train Station (Left)", "Train Station (Right)", "Nook's Cranny",
+            "Post Office", "Dump", "Train Station (Left)", "Train Station (Right)", "Nook's Cranny", "Nook 'n' Go", "Nookway", "Nookington's",
             "Museum", "Tailor's Shop", "Wishing Well", "Police Station",
             "Rock (Type 1)", "Rock (Type 2)", "Rock (Type 3)", "Rock (Type 4)", "Rock (Type 5)",
             "Waterfall", "Waterfall (Left)", "Waterfall (Right)",
@@ -76,6 +83,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             "Villager Signboard",
             "Possible Bridge Location? (Upper)", "Possible Bridge Location? (Lower)",
             "Island Flag", "Kapp'n w/ Boat", "Islander's House", "Player's Island House",
+            "Crazy Redd's Tent", "Katrina's Tent", "Gracie's Car", "Igloo", "Cherry Festival Table #1", "Cherry Festival Table #2", "Aerobics Radio",
+            "Redd's Stall (Right)", "Redd's Stall (Left)", "Katrina's Shrine (Right)", "Katrina's Shrine (Left)", "Katrina's New Years Table", "New Years Clock (Part 1)", "New Years Clock (Part 2)",
+            "Red Sports Fair Balls", "White Sports Fair Balls", "Red Sports Fair Basket", "White Sports Fair Basket", "Fish Check Stand (Right)", "Fish Check Stand (Left)", "Fish Windsock",
+            "Tortimer's Stand (Groundhog Day)", "Cherry Blossom Festival Table #1", "Cherry Blossom Festival Table #2", "Harvest Festival Table", "Camping Tent",
+            "Suspension Bridge (/)", "Suspension Bridge (\\)",
             "Occupied/Unavailable"
         };
 

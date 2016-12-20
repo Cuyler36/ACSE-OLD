@@ -91,9 +91,9 @@ namespace Animal_Crossing_GCN_Save_Editor
                 {
                     TextBox b = (TextBox)sender;
                     int maxBytes = StringUtil.StringToMaxChars(b.Text);
-                    if (b.Text.ToCharArray().Length > 8)
+                    if (b.Text.ToCharArray().Length > 10)
                     {
-                        b.Text = b.Text.Substring(0, 8);
+                        b.Text = b.Text.Substring(0, 10);
                         b.SelectionStart = b.Text.Length;
                         b.SelectionLength = 0;
                     }

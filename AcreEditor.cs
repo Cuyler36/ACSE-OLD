@@ -17,7 +17,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         int mode = 0;
         ushort currentlySelectedAcre = 0;
-        PictureBox[] acreImages = new PictureBox[72];
+        PictureBox[] acreImages = new PictureBox[70];
         public Dictionary<int, Acre> currentAcreData;
         Form1 form;
 
@@ -197,7 +197,34 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x03D4, 66 },
             {0x0560, 70 },
             {0x05A0, 78 },
-            {0x0594, 77 }
+            {0x0594, 77 },
+            {0x0379, 1 },
+            {0x00E5, 29 },
+            {0x0359, 6 },
+            {0x02C9, 22 },
+            {0x0061, 15 },
+            {0x0214, 34 },
+            {0x0099, 10 },
+            {0x0484, 7 },
+            {0x05A8, 78 },
+            {0x0115, 76},
+            {0x01D1, 26 },
+            {0x027C, 10 },
+            {0x0138, 38 },
+            {0x028C, 10 },
+            {0x0234, 26 },
+            {0x01B4, 53 },
+            {0x0265, 76 },
+            {0x00ED, 26 },
+            {0x0134, 62 },
+            {0x0410, 60 },
+            {0x0098, 10 },
+            {0x03C8, 65 },
+            {0x03F4, 63 },
+            {0x05B0, 67 },
+            {0x0554, 70 },
+            {0x0504, 70 },
+            {0x05B8, 70 },
         };
 
         void acreImage_Click(object sender, EventArgs e)
@@ -205,29 +232,23 @@ namespace Animal_Crossing_GCN_Save_Editor
             PictureBox p = (PictureBox)sender;
             if (mode == 0)
             {
-                foreach (KeyValuePair<ushort, int> data in AcreImages)
+                ushort id = ushort.Parse(p.Name);
+                if (AcreImages.ContainsKey(id))
                 {
-                    if (data.Key == ushort.Parse(p.Name))
-                    {
-                        pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (data.Value).ToString());
-                        currentlySelectedAcre = data.Key;
-                        label2.Text = AcreData.Acres[data.Key];
-                        break;
-                    }
+                    pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreImages[id]).ToString());
+                    currentlySelectedAcre = id;
+                    label2.Text = AcreData.Acres[id];
+                    label3.Text = "0x" + id.ToString("X4");
                 }
             }
             else if (mode == 1 && currentlySelectedAcre != 0)
             {
-                for (int i = 0; i < acreImages.Length; i++)
+                int idx = Array.IndexOf(acreImages, p);
+                if (idx > -1)
                 {
-                    if (p == acreImages[i])
-                    {
-                        p.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + AcreImages[currentlySelectedAcre].ToString());
-                        //currentAcreData[i + 1].AcreID = currentlySelectedAcre;
-                        p.Name = currentlySelectedAcre.ToString();
-                        currentAcreData[i + 1] = new Acre(currentlySelectedAcre, currentAcreData[i + 1].Index);
-                        break;
-                    }
+                    p.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + AcreImages[currentlySelectedAcre].ToString());
+                    p.Name = currentlySelectedAcre.ToString();
+                    currentAcreData[idx + 1] = new Acre(currentlySelectedAcre, currentAcreData[idx + 1].Index);
                 }
             }
         }
@@ -255,11 +276,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                     break;
                 }
             }
-        }
-
-        private void AcreEditor_Load(object sender, EventArgs e)
-        {
-            
         }
 
         private void AcreEditor_FormClosing(object sender, FormClosingEventArgs e)
