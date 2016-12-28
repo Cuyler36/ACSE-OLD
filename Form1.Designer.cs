@@ -60,7 +60,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "Gamecube Save Files (.gci)|*.gci|All Files|*.*";
+            this.openFileDialog1.Filter = "Gamecube Save Files (.gci, .gcs)|*.gci;*.gcs|All Files|*.*";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
             // menuStrip1
@@ -113,8 +113,8 @@
             this.townNameTextBox.Name = "townNameTextBox";
             this.townNameTextBox.Size = new System.Drawing.Size(115, 20);
             this.townNameTextBox.TabIndex = 2;
-            this.townNameTextBox.LostFocus += new System.EventHandler(this.townNameTextBox_TextChanged);
             this.townNameTextBox.TextChanged += new System.EventHandler(this.townNameTextBox_HandleTextChanged);
+            this.townNameTextBox.LostFocus += new System.EventHandler(this.townNameTextBox_TextChanged);
             // 
             // groupBox1
             // 
@@ -367,8 +367,8 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(130, 20);
             this.textBox1.TabIndex = 0;
-            this.textBox1.LostFocus += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_HandleTextChanged);
+            this.textBox1.LostFocus += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button3
             // 

@@ -72,7 +72,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             Checksum.Update(saveBuffer);
             fs = new FileStream(fileName, FileMode.Open);
             writer = new BinaryWriter(fs);
-            writer.Seek(0x26040, SeekOrigin.Begin);
+            writer.Seek(Data_Start_Offset, SeekOrigin.Begin);
             writer.Write(saveBuffer);
             writer.Close();
             fs.Close();
@@ -210,9 +210,17 @@ namespace Animal_Crossing_GCN_Save_Editor
                 fs.Close();
             }
             fileName = openFileDialog1.FileName;
+            string extension = Path.GetExtension(fileName);
             fs = new FileStream(fileName, FileMode.Open);
             reader = new BinaryReader(fs);
             writer = new BinaryWriter(fs);
+            if (extension == ".gcs")
+            {
+                reader.BaseStream.Seek(0x110, SeekOrigin.Begin); //.gcs has 0x110 additional bytes at the beginning, other than that, the save structure is exactly the same
+                Data_Start_Offset += 0x110;
+            }
+            else if (extension == ".gci")
+                Data_Start_Offset = 0x26040;
             string Game_ID = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(3));
             if (Game_ID == "GAF")
             {
@@ -234,7 +242,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 comboBox1.Enabled = true;
                 comboBox2.Enabled = true;
                 comboBox3.Enabled = true;
-                GetSaveData(0x26040, 0x26000).CopyTo(saveBuffer, 0);
+                GetSaveData(Data_Start_Offset, 0x26000).CopyTo(saveBuffer, 0);
                 TownName = ReadString(Town_Name_Offset, 0x8);
                 Player1Name = ReadString(0x20, 0x8);
                 townNameTextBox.Text = TownName.Trim();
