@@ -264,8 +264,9 @@ namespace Animal_Crossing_GCN_Save_Editor
                 fs.Close();
                 if (!Checksum.Verify(saveBuffer))
                 {
-                    MessageBox.Show("The file's Checksum was invalid. The Checksum will be updated.");
-                    SaveData();
+                    DialogResult r = MessageBox.Show("The file's Checksum is invalid. Would you like it to be fixed?", "Invalid File Checksum", MessageBoxButtons.YesNo);
+                    if (r == DialogResult.Yes)
+                        SaveData();
                 }
                 inventory = new Inventory(ReadRawUShort(Player1_Pockets, 0x1E));
                 CanSetData = true;
@@ -400,11 +401,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                 hEditor.Show();
             }
         }
-
-        private static string[] Acre_Names = new string[6]
-        {
-            "A", "B", "C", "D", "E", "F"
-        };
 
         private void button3_Click(object sender, EventArgs e)
         {

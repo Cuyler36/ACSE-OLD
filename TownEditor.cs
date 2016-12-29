@@ -68,7 +68,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                 ushort[] itemsBuff = new ushort[256];
                 Array.ConstrainedCopy(islandItems, i * 256, itemsBuff, 0, 256);
                 Island_Acres[i] = new Island_Acre(acreIds[60 + i], i + 1, itemsBuff, islandBurriedItemData);
-                islandImages[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreEditor.AcreImages[Island_Acres[i].AcreID]).ToString());
+                int acreImg = AcreEditor.AcreImages.ContainsKey(Island_Acres[i].AcreID) ? AcreEditor.AcreImages[Island_Acres[i].AcreID] : 99;
+                islandImages[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 islandAcreImages[i] = new PictureBox();
                 islandAcreImages[i].Size = new Size(128, 128);
                 islandAcreImages[i].Location = new Point(16 + (128 * (5 + i)), 30);
@@ -115,7 +116,8 @@ namespace Animal_Crossing_GCN_Save_Editor
             }
             for (int i = 0; i < 30; i++)
             {
-                images[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreEditor.AcreImages[Acres[i].AcreID]).ToString());
+                int acreImg = AcreEditor.AcreImages.ContainsKey(Acres[i].AcreID) ? AcreEditor.AcreImages[Acres[i].AcreID] : 99;
+                images[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 acreImages[i] = new PictureBox();
                 acreImages[i].Size = new Size(128, 128);
                 acreImages[i].Location = new Point(10 + (128 * (i % 5)), 30 + (128 * (i / 5)));
