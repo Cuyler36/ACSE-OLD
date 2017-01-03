@@ -379,12 +379,12 @@ namespace Animal_Crossing_GCN_Save_Editor
         }
     }
 
-    public class Furniture : WorldItem
+    public class Furniture : Item
     {
         public ushort BaseItemID = 0;
         public int Rotation = 0;
 
-        public Furniture(ushort itemId, int position) : base(itemId, position)
+        public Furniture(ushort itemId) : base(itemId)
         {
             BaseItemID = (ushort)(ItemID - (ItemID % 4));
             if (ItemData.Furniture_IDs.Contains(BaseItemID))
@@ -400,6 +400,11 @@ namespace Animal_Crossing_GCN_Save_Editor
                 Rotation = degrees;
                 ItemID = (ushort)(BaseItemID + (degrees / 90));
             }
+        }
+
+        public bool IsFurniture()
+        {
+            return ItemData.Furniture_IDs.Contains(BaseItemID);
         }
     }
 

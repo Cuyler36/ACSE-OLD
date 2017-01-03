@@ -202,6 +202,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x0554, "Ocean (41)" },
             {0x0504, "Ocean (42)" },
             {0x05B8, "Ocean (43)" },
+            {0x0101, "River (Down) (Upper) /w Stone Bridge" },
+            {0x0180, "River (Left > Down) (Lower)" },
+            {0x022C, "River (Down > Right) (Lower)" },
+            {0x0280, "Empty Acre (Lower) (8)" },
+            {0x04C4, "Ocean (44)" },
         };
         
         private ItemData itemData = new ItemData { };

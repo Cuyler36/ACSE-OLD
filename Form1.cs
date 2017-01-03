@@ -60,7 +60,8 @@ namespace Animal_Crossing_GCN_Save_Editor
         List<KeyValuePair<ushort, string>> Shirts = new List<KeyValuePair<ushort, string>>();
         private bool CanSetData = false;
         private ACString TownName;
-        private ACString Player1Name;
+        private Player[] Players = new Player[4];
+        private ComboBox[] Faces = new ComboBox[4];
 
         public static DateTime DateFromTimestamp(long timestamp)
         {
@@ -78,13 +79,13 @@ namespace Animal_Crossing_GCN_Save_Editor
             fs.Close();
         }
 
-        private void WriteData(int offset, byte[] data)
+        public void WriteData(int offset, byte[] data)
         {
             Array.Reverse(data);
             data.CopyTo(saveBuffer, offset);
         }
 
-        private byte[] ReadData(int offset, int size)
+        public byte[] ReadData(int offset, int size)
         {
             byte[] data = new byte[size];
             for (int i = 0; i < size; i++)
@@ -93,7 +94,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             return data;
         }
 
-        private ushort[] ReadUShort(int offset, int size)
+        public ushort[] ReadUShort(int offset, int size)
         {
             ushort[] data = new ushort[size];
             byte[] byteData = ReadData(offset, size);
@@ -147,7 +148,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             buffer.CopyTo(saveBuffer, offset);
         }
 
-        private ACString ReadString(int offset, int maxSize)
+        public ACString ReadString(int offset, int maxSize)
         {
             byte[] data = new byte[maxSize];
             for (int i = 0; i < maxSize; i++)
@@ -200,6 +201,15 @@ namespace Animal_Crossing_GCN_Save_Editor
             openFileDialog1.ShowDialog();
         }
 
+        private void setControlsEnabled(bool val, Control container)
+        {
+            foreach (Control c in container.Controls)
+                if (c is Panel || c is GroupBox)
+                    setControlsEnabled(val, c);
+                else
+                    c.Enabled = true;
+        }
+
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             CanSetData = false;
@@ -217,7 +227,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (extension == ".gcs")
             {
                 reader.BaseStream.Seek(0x110, SeekOrigin.Begin); //.gcs has 0x110 additional bytes at the beginning, other than that, the save structure is exactly the same
-                Data_Start_Offset += 0x110;
+                Data_Start_Offset = 0x26040 + 0x110;
             }
             else if (extension == ".gci")
                 Data_Start_Offset = 0x26040;
@@ -235,30 +245,120 @@ namespace Animal_Crossing_GCN_Save_Editor
                     hEditor.Dispose();
                 if (townEditorForm != null && !townEditorForm.IsDisposed)
                     townEditorForm.Dispose();
-                townNameTextBox.Enabled = true;
-                textBox1.Enabled = true;
-                textBox2.Enabled = true;
-                textBox3.Enabled = true;
-                comboBox1.Enabled = true;
-                comboBox2.Enabled = true;
-                comboBox3.Enabled = true;
+                setControlsEnabled(true, this);
                 GetSaveData(Data_Start_Offset, 0x26000).CopyTo(saveBuffer, 0);
                 TownName = ReadString(Town_Name_Offset, 0x8);
-                Player1Name = ReadString(0x20, 0x8);
+                Player Player1 = new Player(0, this);
+                Player Player2 = new Player(1, this);
+                Player Player3 = new Player(2, this);
+                Player Player4 = new Player(3, this);
                 townNameTextBox.Text = TownName.Trim();
-                textBox1.Text = Player1Name.Trim();
-                textBox2.Text = BitConverter.ToUInt32(ReadData(Player1_Bells_Offset, 4), 0).ToString();
-                textBox3.Text = BitConverter.ToUInt32(ReadData(Player1_Debt_Offset, 4), 0).ToString();
-                string heldItemName = ItemData.GetItemName(ReadRawUShort(Player1_Held_Item_Offset, 2)[0]);
-                comboBox1.Text = string.IsNullOrEmpty(heldItemName) ? "(None)" : heldItemName;
-                comboBox2.DataSource = new BindingSource(Shirts, null);
-                comboBox2.ValueMember = "Key";
-                comboBox2.DisplayMember = "Value";
-                comboBox2.SelectedValue = ReadRawUShort(Player1_Shirt_Offset + 1, 2)[0];
-                comboBox3.DataSource = new BindingSource(Shirts, null);
-                comboBox3.ValueMember = "Key";
-                comboBox3.DisplayMember = "Value";
-                comboBox3.SelectedValue = ReadRawUShort(Player1_Inventory_Background_Offset, 2)[0];
+
+                player1Name.Text = Player1.Name.Trim();
+                player1Bells.Text = Player1.Bells.ToString();
+                try { player1Debt.Text = Player1.Debt.ToString(); } catch { } //This line throws a null exception for some reason????
+                player1HeldItem.Text = Player1.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
+                player1Shirt.DataSource = new BindingSource(Shirts, null);
+                player1Shirt.ValueMember = "Key";
+                player1Shirt.DisplayMember = "Value";
+                player1Shirt.SelectedValue = Player1.Shirt.ItemID;
+                player1Background.DataSource = new BindingSource(Shirts, null);
+                player1Background.ValueMember = "Key";
+                player1Background.DisplayMember = "Value";
+                player1Background.SelectedValue = Player1.Inventory_Background.ItemID;
+                player1Face.DataSource = Player1.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                player1Face.ValueMember = "Key";
+                player1Face.DisplayMember = "Value";
+                player1Face.SelectedValue = Player1.Face;
+                player1Gender.Text = Player1.Gender == 0 ? "Male" : "Female";
+                player1HeldItem.Text = Player1.Held_Item.ItemID == 0 ? "(None)" : Player1.Held_Item.Name;
+
+                player2Shirt.DataSource = new BindingSource(Shirts, null);
+                player2Shirt.ValueMember = "Key";
+                player2Shirt.DisplayMember = "Value";
+                player2Shirt.SelectedValue = Player2.Shirt.ItemID;
+                player2Background.DataSource = new BindingSource(Shirts, null);
+                player2Background.ValueMember = "Key";
+                player2Background.DisplayMember = "Value";
+                player2Background.SelectedValue = Player2.Inventory_Background.ItemID;
+                player2Face.DataSource = Player2.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                player2Face.ValueMember = "Key";
+                player2Face.DisplayMember = "Value";
+                player2Face.SelectedValue = Player2.Face;
+                player2Gender.Text = Player2.Gender == 0 ? "Male" : "Female";
+                player2Name.Text = Player2.Name;
+                player2Bells.Text = Player2.Bells.ToString();
+                player2Debt.Text = Player2.Debt.ToString();
+                player2HeldItem.Text = Player2.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
+                if (string.IsNullOrEmpty(Player2.Name.Trim()))
+                {
+                    player2Shirt.Enabled = false;
+                    player2Background.Enabled = false;
+                    player2Name.Enabled = false;
+                    player2Bells.Enabled = false;
+                    player2Debt.Enabled = false;
+                    player2HeldItem.Enabled = false;
+                    player2Face.Enabled = false;
+                    player2Gender.Enabled = false;
+                }
+
+                player3Shirt.DataSource = new BindingSource(Shirts, null);
+                player3Shirt.ValueMember = "Key";
+                player3Shirt.DisplayMember = "Value";
+                player3Shirt.SelectedValue = Player3.Shirt.ItemID;
+                player3Background.DataSource = new BindingSource(Shirts, null);
+                player3Background.ValueMember = "Key";
+                player3Background.DisplayMember = "Value";
+                player3Background.SelectedValue = Player3.Inventory_Background.ItemID;
+                player3Face.DataSource = Player3.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                player3Face.ValueMember = "Key";
+                player3Face.DisplayMember = "Value";
+                player3Face.SelectedValue = Player3.Face;
+                player3Gender.Text = Player3.Gender == 0 ? "Male" : "Female";
+                player3Name.Text = Player3.Name;
+                player3Bells.Text = Player3.Bells.ToString();
+                player3Debt.Text = Player3.Debt.ToString();
+                player3HeldItem.Text = Player3.Held_Item.ItemID == 0 ? "(None)" : Player3.Held_Item.Name;
+                if (string.IsNullOrEmpty(Player3.Name.Trim()))
+                {
+                    player3Shirt.Enabled = false;
+                    player3Background.Enabled = false;
+                    player3Name.Enabled = false;
+                    player3Bells.Enabled = false;
+                    player3Debt.Enabled = false;
+                    player3HeldItem.Enabled = false;
+                    player3Face.Enabled = false;
+                    player3Gender.Enabled = false;
+                }
+
+                player4Shirt.DataSource = new BindingSource(Shirts, null);
+                player4Shirt.ValueMember = "Key";
+                player4Shirt.DisplayMember = "Value";
+                player4Shirt.SelectedValue = Player4.Shirt.ItemID;
+                player4Background.DataSource = new BindingSource(Shirts, null);
+                player4Background.ValueMember = "Key";
+                player4Background.DisplayMember = "Value";
+                player4Face.DataSource = Player4.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                player4Face.ValueMember = "Key";
+                player4Face.DisplayMember = "Value";
+                player4Face.SelectedValue = Player4.Face;
+                player4Gender.Text = Player4.Gender == 0 ? "Male" : "Female";
+                player4Background.SelectedValue = Player4.Inventory_Background.ItemID;
+                player4Name.Text = Player4.Name;
+                player4Bells.Text = Player4.Bells.ToString();
+                player4Debt.Text = Player4.Debt.ToString();
+                player4HeldItem.Text = Player4.Held_Item.ItemID == 0 ? "(None)" : Player4.Held_Item.Name;
+                if (string.IsNullOrEmpty(Player4.Name.Trim()))
+                {
+                    player4Shirt.Enabled = false;
+                    player4Background.Enabled = false;
+                    player4Name.Enabled = false;
+                    player4Bells.Enabled = false;
+                    player4Debt.Enabled = false;
+                    player4HeldItem.Enabled = false;
+                    player4Face.Enabled = false;
+                    player4Gender.Enabled = false;
+                }
                 reader.Close();
                 writer.Close();
                 fs.Close();
@@ -269,6 +369,14 @@ namespace Animal_Crossing_GCN_Save_Editor
                         SaveData();
                 }
                 inventory = new Inventory(ReadRawUShort(Player1_Pockets, 0x1E));
+                Players[0] = Player1;
+                Players[1] = Player2;
+                Players[2] = Player3;
+                Players[3] = Player4;
+                Faces[0] = player1Face;
+                Faces[1] = player2Face;
+                Faces[2] = player3Face;
+                Faces[3] = player4Face;
                 CanSetData = true;
                 //MessageBox.Show(ReadString(0x95DC, 0xC0).String); //0x96A4
             }
@@ -288,7 +396,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                 if (text.Length > 0)
                 {
                     WriteString(Town_Name_Offset, text, 8);
-                    WriteString(Player1_Town_Name, text, 8);
+                    foreach (Player p in Players)
+                        p.Town_Name = text.Trim();
                 }
             }
         }
@@ -314,7 +423,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {   
-                string text = textBox1.Text;
+                string text = player1Name.Text;
                 if (text.Length > 0)
                     WriteString(0x20, text, 8);
             }
@@ -322,28 +431,31 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void textBox1_HandleTextChanged(object sender, EventArgs e)
         {
-            int maxBytes = StringUtil.StringToMaxChars(textBox1.Text);
-            if (textBox1.Text.ToCharArray().Length > 8)
+            int maxBytes = StringUtil.StringToMaxChars(player1Name.Text);
+            if (player1Name.Text.ToCharArray().Length > 8)
             {
-                textBox1.Text = textBox1.Text.Substring(0, 8);
-                textBox1.SelectionStart = textBox1.Text.Length;
-                textBox1.SelectionLength = 0;
+                player1Name.Text = player1Name.Text.Substring(0, 8);
+                player1Name.SelectionStart = player1Name.Text.Length;
+                player1Name.SelectionLength = 0;
             }
-            if (Encoding.UTF8.GetBytes(textBox1.Text.ToCharArray()).Length > maxBytes)
+            if (Encoding.UTF8.GetBytes(player1Name.Text.ToCharArray()).Length > maxBytes)
             {
-                textBox1.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(textBox1.Text), 0, maxBytes);
-                textBox1.SelectionStart = textBox1.Text.Length;
-                textBox1.SelectionLength = 0;
+                player1Name.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(player1Name.Text), 0, maxBytes);
+                player1Name.SelectionStart = player1Name.Text.Length;
+                player1Name.SelectionLength = 0;
             }
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            if (fs != null && textBox3.Text.Length > 0)
+            TextBox senderComboBox = (TextBox)sender;
+            if (fs != null && player1Debt.Text.Length > 0)
             {
-                uint bells = string.IsNullOrEmpty(textBox2.Text) ? 0 : uint.Parse(textBox2.Text);
+                uint bells = string.IsNullOrEmpty(player1Bells.Text) ? 0 : uint.Parse(player1Bells.Text);
+                int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
                 if (bells >= 0 && bells <= uint.MaxValue)
-                    SetBells(bells);
+                    Players[player - 1].Bells = bells;
+                //SetBells(bells);
             }
         }
 
@@ -355,11 +467,14 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            if (fs != null && textBox3.Text.Length > 0)
+            TextBox senderComboBox = (TextBox)sender;
+            if (fs != null && player1Debt.Text.Length > 0)
             {
-                uint debt = string.IsNullOrEmpty(textBox3.Text) ? 0 : uint.Parse(textBox3.Text);
+                int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
+                uint debt = string.IsNullOrEmpty(senderComboBox.Text) ? 0 : uint.Parse(senderComboBox.Text);
                 if (debt >= 0 && debt <= uint.MaxValue)
-                    WriteData(Player1_Debt_Offset, BitConverter.GetBytes(debt));
+                    Players[player - 1].Debt = debt;
+                    //WriteData(Player1_Debt_Offset, BitConverter.GetBytes(debt));
             }
         }
 
@@ -373,14 +488,19 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                if (iEditor == null || iEditor.IsDisposed)
+                Button b = (Button)sender;
+                int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
+                if (!string.IsNullOrEmpty(Players[player - 1].Name.Trim()))
                 {
-                    Item[] dresserItems = new Item[3];
-                    for (int i = 0; i < 3; i++)
-                        dresserItems[i] = new Item(ReadRawUShort(Player1_Dresser_Offsets[i], 2)[0]);
-                    iEditor = new Inventory_Editor(ReadRawUShort(Player1_Pockets, 30), dresserItems, this);
+                    if (iEditor == null || iEditor.IsDisposed)
+                    {
+                        /*Item[] dresserItems = new Item[3];
+                        for (int i = 0; i < 3; i++)
+                            dresserItems[i] = new Item(ReadRawUShort(Player1_Dresser_Offsets[i], 2)[0]);*/
+                        iEditor = new Inventory_Editor(Players[player - 1].Inventory, this);
+                    }
+                    iEditor.Show();
                 }
-                iEditor.Show();
             }
         }
 
@@ -388,17 +508,22 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (fs != null)
             {
-                int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(House_Addresses[0], 0x114));
-                ushort[] firstFloorLayer1 = ReadRawUShort(House_Addresses[0], HouseData.House_Data_Sizes[firstFloorSize - 1]);
-                ushort[] firstFloorLayer2 = ReadRawUShort(House_Addresses[0] + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1]);
-                ushort[] secondFloorLayer1 = ReadRawUShort(House_Addresses[0] + 0x8A8, 0xF0);
-                ushort[] secondFloorLayer2 = ReadRawUShort(0xA812, 0xAC);
-                ushort[] basementLayer1 = ReadRawUShort(House_Addresses[0] + 0x1150, 0x114);
-                ushort[] basementLayer2 = ReadRawUShort(0xB0BA, 0xF0);
+                Button b = (Button)sender;
+                int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
+                if (!string.IsNullOrEmpty(Players[player - 1].Name.Trim()))
+                {
+                    int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(Players[player - 1].House_Data_Offset, 0x114));
+                    ushort[] firstFloorLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1]);
+                    ushort[] firstFloorLayer2 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1]);
+                    ushort[] secondFloorLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0);
+                    ushort[] secondFloorLayer2 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC);
+                    ushort[] basementLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x1150, 0x114);
+                    ushort[] basementLayer2 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x139A, 0xF0);
 
-                if (hEditor == null || hEditor.IsDisposed)
-                    hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, this);
-                hEditor.Show();
+                    if (hEditor == null || hEditor.IsDisposed)
+                        hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, Players[player - 1].House_Data_Offset, this);
+                    hEditor.Show();
+                }
             }
         }
 
@@ -421,7 +546,12 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (fs != null)
+            {
+                foreach (Player p in Players)
+                    if (!string.IsNullOrEmpty(p.Name.Trim()))
+                        p.Write();
                 SaveData();
+            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -430,14 +560,8 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 ComboBox senderComboBox = (ComboBox)sender;
                 string selectedItem = senderComboBox.Text;
-                if (selectedItem == "(None)")
-                    WriteUShort(new ushort[1] { 0 }, Player1_Held_Item_Offset);
-                else
-                {
-                    ushort item = ItemData.GetItemID(selectedItem);
-                    if (item != 0)
-                        WriteUShort(new ushort[1] { item }, Player1_Held_Item_Offset);
-                }
+                int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
+                Players[player - 1].Held_Item = new Item(selectedItem == "(None)" ? (ushort)0 : ItemData.GetItemID(selectedItem));
             }
         }
 
@@ -474,11 +598,18 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (saveBuffer != null && CanSetData)
             {
+                ComboBox c = (ComboBox)sender;
                 ushort selectedShirt = 0;
-                try { selectedShirt = (ushort)comboBox2.SelectedValue; }
+                try { selectedShirt = (ushort)c.SelectedValue; }
                 catch { }
+                int player = -1;
                 if (selectedShirt != 0)
-                    WriteDataRaw(Player1_Shirt_Offset, new byte[3] { (byte)(selectedShirt & 0xFF), 0x24, (byte)(selectedShirt & 0xFF) });
+                {
+                    player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                    if (player > -1)
+                        Players[player - 1].Shirt = new Item(selectedShirt);
+                }
+                    //WriteDataRaw(Player1_Shirt_Offset, new byte[3] { (byte)(selectedShirt & 0xFF), 0x24, (byte)(selectedShirt & 0xFF) });
             }
         }
 
@@ -486,11 +617,40 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             if (saveBuffer != null && CanSetData)
             {
+                ComboBox c = (ComboBox)sender;
                 ushort selectedShirt = 0;
-                try { selectedShirt = (ushort)comboBox3.SelectedValue; }
+                try { selectedShirt = (ushort)c.SelectedValue; }
                 catch { }
+                int player = -1;
                 if (selectedShirt != 0)
-                    WriteUShort(new ushort[1] { selectedShirt }, Player1_Inventory_Background_Offset);
+                {
+                    player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                    if (player > -1)
+                        Players[player - 1].Inventory_Background = new Item(selectedShirt);
+                }
+                //WriteUShort(new ushort[1] { selectedShirt }, Player1_Inventory_Background_Offset);
+            }
+        }
+
+        private void gender_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CanSetData)
+            {
+                ComboBox c = (ComboBox)sender;
+                int player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                Players[player - 1].Gender = c.Text == "Male" ? (byte)0 : (byte)1;
+                Faces[player - 1].DataSource = c.Text == "Male" ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                Faces[player - 1].SelectedIndex = Players[player - 1].Face;
+            }
+        }
+
+        private void face_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CanSetData)
+            {
+                ComboBox c = (ComboBox)sender;
+                int player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                Players[player - 1].Face = (byte)c.SelectedValue;
             }
         }
     }

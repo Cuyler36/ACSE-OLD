@@ -226,20 +226,10 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox2.Checked)
-            {
-                for (int i = 0; i < 30; i++)
-                    acreImages[i].BackgroundImage = images[i];
-                for (int i = 0; i < 2; i++)
-                    islandAcreImages[i].BackgroundImage = islandImages[i];
-            }
-            else
-            {
-                for (int i = 0; i < 30; i++)
-                    acreImages[i].BackgroundImage = null;
-                for (int i = 0; i < 2; i++)
-                    islandAcreImages[i].BackgroundImage = null;
-            }
+            for (int i = 0; i < 30; i++)
+                acreImages[i].BackgroundImage = checkBox2.Checked ? images[i] : null;
+            for (int i = 0; i < 2; i++)
+                islandAcreImages[i].BackgroundImage = checkBox2.Checked ? islandImages[i] : null;
         }
 
         private void button1_Click(object sender, EventArgs e)

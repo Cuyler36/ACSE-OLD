@@ -225,6 +225,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x0554, 70 },
             {0x0504, 70 },
             {0x05B8, 70 },
+            {0x0101, 12 },
+            {0x0180, 18 },
+            {0x022C, 29 },
+            {0x0280, 10 },
+            {0x04C4, 70 },
         };
 
         void acreImage_Click(object sender, EventArgs e)
@@ -326,9 +331,8 @@ namespace Animal_Crossing_GCN_Save_Editor
         {
             ushort[] acreData = new ushort[currentAcreData.Count];
             foreach (KeyValuePair<int, Acre> acre in currentAcreData)
-            {
                 acreData[acre.Key - 1] = acre.Value.AcreID;
-            }
+
             form.WriteUShort(acreData, Form1.AcreTile_Offset);
             this.Hide();
         }

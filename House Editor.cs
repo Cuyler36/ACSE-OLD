@@ -15,11 +15,13 @@ namespace Animal_Crossing_GCN_Save_Editor
         Form1 form;
         int FirstFloorSize = 4;
         List<ushort[]> House_Data;
-        List<Item[]> Items = new List<Item[]>();
+        List<Furniture[]> Items = new List<Furniture[]>();
+        int House_Offset = 0;
 
-        public House_Editor(List<ushort[]> houseData, Form1 form1)
+        public House_Editor(List<ushort[]> houseData, int houseOffset, Form1 form1)
         {
             InitializeComponent();
+            House_Offset = houseOffset;
             House_Data = houseData;
             FirstFloorSize = HouseData.GetHouseSize(houseData[0]);
             form = form1;
@@ -72,11 +74,11 @@ namespace Animal_Crossing_GCN_Save_Editor
                 else
                 {
                     int z = 0;
-                    Items.Add(new Item[(Layers[i].Size.Width / 16) * (Layers[i].Size.Width / 16)]);
+                    Items.Add(new Furniture[(Layers[i].Size.Width / 16) * (Layers[i].Size.Width / 16)]);
                     for (int x = 0; x < House_Data[i].Length; x++)
                         if (x % 16 < (Layers[i].Size.Width / 16) && z < Items[i].Length)
                         {
-                            Items[i][z] = new Item(House_Data[i][x] == 0xFE1F ? (ushort)0xFFFF : House_Data[i][x]);
+                            Items[i][z] = new Furniture(House_Data[i][x] == 0xFE1F ? (ushort)0xFFFF : House_Data[i][x]);
                             z++;
                         }
                 }
@@ -102,13 +104,16 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (Items.Count > idx && Items[idx].Length > index)
             {
                 if (e.Button == MouseButtons.Right) // Read
-                    comboBox1.SelectedValue = Items[idx][index].ItemID;
+                {
+                    comboBox1.SelectedValue = Items[idx][index].IsFurniture() ? Items[idx][index].BaseItemID : Items[idx][index].ItemID;
+                    label1.Text = "0x" + ((ushort)comboBox1.SelectedValue).ToString("X4");
+                }
                 else if (comboBox1.SelectedValue != null) // Write
                 {
                     if (idx % 2 == 1 && (ushort)comboBox1.SelectedValue != 0 && Items[idx - 1][index].ItemID == 0)
                         MessageBox.Show("Placing Furniture on top of nothing will result in it appearing on the floor. If you want this item to be on something, place an item in the above picturebox at the same location!", "Funriture Warning");
-                        
-                    Items[idx][index] = new Item((ushort)comboBox1.SelectedValue);
+
+                    Items[idx][index] = new Furniture((ushort)comboBox1.SelectedValue);
                     s.Image = Inventory.getItemPic(16, s.Size.Width / 16, Items[idx]);
                 }
             }
@@ -116,7 +121,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
 
         private int[] house_Data_Offsets = new int[6]
@@ -130,7 +135,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 HouseData.UpdateHouseData(Items[i], House_Data[i]);
                 if (i % 2 == 0)
-                    form.WriteUShort(House_Data[i], Form1.House_Addresses[0] + house_Data_Offsets[i]);
+                    form.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
                 else
                 {
                     int pos = 0;
@@ -140,10 +145,10 @@ namespace Animal_Crossing_GCN_Save_Editor
                             House_Data[i][idx] = Items[i][pos].ItemID;
                             pos++;
                         }
-                    form.WriteUShort(House_Data[i], Form1.House_Addresses[0] + house_Data_Offsets[i]);
+                    form.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
                 }
             }
-            this.Hide();
+            this.Close();
         }
     }
 }

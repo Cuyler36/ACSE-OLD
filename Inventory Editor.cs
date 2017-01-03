@@ -17,15 +17,15 @@ namespace Animal_Crossing_GCN_Save_Editor
         Inventory Pockets;
         Item[] Dresser;
 
-        public Inventory_Editor(ushort[] inventoryData, Item[] dresserItems, Form1 form1)
+        public Inventory_Editor(Inventory inventory, Form1 form1)
         {
             InitializeComponent();
-            InventoryData = inventoryData;
+            //InventoryData = inventoryData;
             form = form1;
-            Dresser = dresserItems;
-            Pockets = new Inventory(inventoryData);
+            //Dresser = dresserItems;
+            Pockets = inventory;
             pictureBox1.Image = Inventory.getItemPic(16, 5, Pockets.Items);
-            pictureBox2.Image = Inventory.getItemPic(16, 3, dresserItems);
+           // pictureBox2.Image = Inventory.getItemPic(16, 3, dresserItems);
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
             comboBox1.DataSource = bs;
             comboBox1.DisplayMember = "Value";
@@ -53,7 +53,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
             var s = (sender as PictureBox);
             bool pocket = s == pictureBox1;
-            bool dresser = s == pictureBox2;
+            bool dresser = false;//s == pictureBox2;
 
             if (e.Button == MouseButtons.Right) // Read
             {
@@ -80,22 +80,22 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 15; i++)
-                form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, Form1.Player1_Pockets + (i * 2));
+            //for (int i = 0; i < 15; i++)
+                //form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, Form1.Player1_Pockets + (i * 2));
 
             //Interesting note about dresser storage:
             //The limitation when storing furniture in it is created by the actual stored location of the items.
             //They're stored "ontop of" the dresser. Since they don't have 3D sprites themselves, they're invisible.
             //Using the editor to place furniture inside of the dresser causes the stacked item glitch used by many speed runners.
 
-            for (int i = 0; i < 3; i++)
-                form.WriteUShort(new ushort[1] { Dresser[i].ItemID }, Form1.Player1_Dresser_Offsets[i]);
-            this.Hide();
+            //for (int i = 0; i < 3; i++)
+                //form.WriteUShort(new ushort[1] { Dresser[i].ItemID }, Form1.Player1_Dresser_Offsets[i]);
+            this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
     }
 }

@@ -59,9 +59,9 @@ namespace Animal_Crossing_GCN_Save_Editor
             return size;
         }
 
-        public static Item[] GetHouseData(ushort[] houseBuffer, int size = 0)
+        public static Furniture[] GetHouseData(ushort[] houseBuffer, int size = 0)
         {
-            List<Item> items = new List<Item>();
+            List<Furniture> items = new List<Furniture>();
             bool inbounds = false;
             int y = 0;
             if (size == 0)
@@ -83,9 +83,9 @@ namespace Animal_Crossing_GCN_Save_Editor
                 {
                     pos++;
                     if (houseBuffer[x] == 0)
-                        items.Add(new Item(0));
+                        items.Add(new Furniture(0));
                     else if (houseBuffer[x] != 0xFFFE && houseBuffer[x] != 0xFE1F && houseBuffer[x] != 0xFE1B)
-                        items.Add(new Item(houseBuffer[x]));
+                        items.Add(new Furniture(houseBuffer[x]));
                     else if (houseBuffer[x] == 0xFE1F) //0xFE1F = Barrier/Occupied Space. Left by multispace furniture!
                     {
                         ushort itemId = 0xFFFF;
@@ -97,14 +97,14 @@ namespace Animal_Crossing_GCN_Save_Editor
                             itemId = items[index].ItemID;
                         else if (index > 0 && items.Count >= index - 1 && items[index - 1].ItemID != 0)
                             itemId = items[index - 1].ItemID;
-                        items.Add(new Item(itemId));
+                        items.Add(new Furniture(itemId));
                     }
                 }
             }
             return items.ToArray();
         }
 
-        public static void UpdateHouseData(Item[] houseItems, ushort[] houseBuffer)
+        public static void UpdateHouseData(Furniture[] houseItems, ushort[] houseBuffer)
         {
             int pos = 0;
             bool inbounds = false;

@@ -52,6 +52,14 @@ namespace Animal_Crossing_GCN_Save_Editor
             b.UnlockBits(bData);
             return b;
         }
+
+        public ushort[] GetItemIDs()
+        {
+            ushort[] ids = new ushort[15];
+            for (int i = 0; i < 15; i++)
+                ids[i] = Items[i].ItemID;
+            return ids;
+        }
     }
 
     public class InventorySlot
