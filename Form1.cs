@@ -323,6 +323,19 @@ namespace Animal_Crossing_GCN_Save_Editor
                 Player Player3 = new Player(2, this);
                 Player Player4 = new Player(3, this);
 
+                List<PictureBox> temp = new List<PictureBox>();
+                foreach (PictureBox p in this.Controls.OfType<PictureBox>())
+                    temp.Add(p);
+                foreach (PictureBox p in temp)
+                {
+                    Bitmap i = (Bitmap)p.Image;
+                    p.Image = null;
+                    this.Controls.Remove(p);
+                    p.Dispose();
+                    i.Dispose();
+                }
+                temp.Clear();
+
                 addPatternBoxes(Player1, groupBox1);
                 if (Player2.Exists)
                     addPatternBoxes(Player2, groupBox2);

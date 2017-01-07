@@ -166,12 +166,28 @@ namespace Animal_Crossing_GCN_Save_Editor
             /*if (Pattern_Bitmap != null && PatternData.Palette_Data.Count >= Palette + 1)
             {
                 List<byte[]> Block_Data = new List<byte[]>();
+                List<byte[]> Corrected_Data = new List<byte[]>();
+                for (int i = 0; i < 32; i++)
+                    Corrected_Data.Add(new byte[16]);
                 byte[] Bitmap_Data = (byte[])(new ImageConverter().ConvertTo(Pattern_Bitmap, typeof(byte[])));
                 for (int block = 0; block < 32; block++)
                 {
                     byte[] Block = new byte[16];
                     Array.ConstrainedCopy(Bitmap_Data, block * 16, Block, 0, 16);
                     Block_Data.Add(Block);
+                }
+                int pos = 0;
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int y = 0; y < 4; y++)
+                    {
+                        for (int x = 0; x < 16; x++)
+                        {
+                            byte data = Block_Data[i * 4 + x / 4][x % 4 + y * 4];
+                            Buffer.BlockCopy(BitConverter.GetBytes(PatternData.Palette_Data[Palette][data - 1]), 0, patternBitmapBuffer, pos * 4, 4);
+                            pos += 2;
+                        }
+                    }
                 }
                 List<byte[]> Sorted_Block_Data = new List<byte[]>()
                 {
