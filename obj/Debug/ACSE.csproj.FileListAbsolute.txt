@@ -24,3 +24,5 @@ C:\Users\olsen\Documents\GitHub\ACSE\ACSE\bin\Debug\ACSE.pdb
 C:\Users\olsen\Documents\GitHub\ACSE\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.House_Editor.resources
 C:\Users\olsen\Documents\GitHub\ACSE\ACSE\obj\Debug\ACSE.exe
 C:\Users\olsen\Documents\GitHub\ACSE\ACSE\obj\Debug\ACSE.pdb
+C:\Users\olsen\Documents\GitHub\ACSE\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.PatternNameForm.resources
+C:\Users\olsen\Documents\GitHub\ACSE\ACSE\obj\Debug\Animal_Crossing_GCN_Save_Editor.PatternPaletteForm.resources

@@ -62,6 +62,10 @@ namespace Animal_Crossing_GCN_Save_Editor
         private ACString TownName;
         private Player[] Players = new Player[4];
         private ComboBox[] Faces = new ComboBox[4];
+        private string patternSaveLoc;
+        private Bitmap currentPattern;
+        //Temp
+        private PictureBox[] Player1Patterns = new PictureBox[8];
 
         public static DateTime DateFromTimestamp(long timestamp)
         {
@@ -210,6 +214,72 @@ namespace Animal_Crossing_GCN_Save_Editor
                     c.Enabled = true;
         }
 
+        private void exportClick(object sender, EventArgs e)
+        {
+            MenuItem m = (MenuItem)sender;
+            ContextMenu menu = (ContextMenu)m.Parent;
+            PictureBox pattern = (PictureBox)menu.SourceControl;
+            currentPattern = (Bitmap)pattern.Image;
+            saveFileDialog1.FileName = pattern.Name;
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void renameClick(object sender, EventArgs e, Pattern p, ToolTip t)
+        {
+            MenuItem m = (MenuItem)sender;
+            ContextMenu menu = (ContextMenu)m.Parent;
+            PictureBox pattern = (PictureBox)menu.SourceControl;
+            currentPattern = (Bitmap)pattern.Image;
+            PatternNameForm f = new PatternNameForm(p, pattern, t);
+            f.Show();
+        }
+
+        private void paletteClick(object sender, EventArgs e, Pattern p)
+        {
+            MenuItem m = (MenuItem)sender;
+            ContextMenu menu = (ContextMenu)m.Parent;
+            PictureBox pattern = (PictureBox)menu.SourceControl;
+            PatternPaletteForm f = new PatternPaletteForm(p, pattern);
+            f.Show();
+        }
+
+        private void saveFileDialog1_OK (object sender, CancelEventArgs e)
+        {
+            patternSaveLoc = ((SaveFileDialog)sender).FileName;
+            if (currentPattern != null)
+                currentPattern.Save(patternSaveLoc, System.Drawing.Imaging.ImageFormat.Bmp);
+        }
+
+        private void addPatternBoxes(Player p, Control playerBox)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                Pattern pattern = p.Patterns[i];
+                PictureBox b = new PictureBox();
+                b.Name = pattern.Name; //string.Format("player{0}Pattern{1}", p.Index, i);
+                b.Image = pattern.Pattern_Bitmap;
+                b.Size = new Size(32, 32);
+                b.Location = new Point(playerBox.Location.X + 19 + 38 * (i % 4), playerBox.Location.Y + playerBox.Size.Height + 10 + 38 * (i / 4));
+                ToolTip t = new ToolTip();
+                t.SetToolTip(b, pattern.Name);
+                t.ShowAlways = true;
+                ContextMenu cm = new ContextMenu();
+                MenuItem rename = new MenuItem("Rename");
+                MenuItem palette = new MenuItem("Set Palette");
+                MenuItem import = new MenuItem("Import (WIP)");
+                MenuItem export = new MenuItem("Export");
+                cm.MenuItems.Add(rename);
+                cm.MenuItems.Add(palette);
+                cm.MenuItems.Add(import);
+                cm.MenuItems.Add(export);
+                b.ContextMenu = cm;
+                export.Click += exportClick;
+                rename.Click += new EventHandler((sender, e) => renameClick(sender, e, pattern, t));
+                palette.Click += new EventHandler((sender, e) => paletteClick(sender, e, pattern));
+                this.Controls.Add(b);
+            }
+        }
+
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             CanSetData = false;
@@ -252,6 +322,15 @@ namespace Animal_Crossing_GCN_Save_Editor
                 Player Player2 = new Player(1, this);
                 Player Player3 = new Player(2, this);
                 Player Player4 = new Player(3, this);
+
+                addPatternBoxes(Player1, groupBox1);
+                if (Player2.Exists)
+                    addPatternBoxes(Player2, groupBox2);
+                if (Player3.Exists)
+                    addPatternBoxes(Player3, groupBox3);
+                if (Player4.Exists)
+                    addPatternBoxes(Player4, groupBox4);
+
                 townNameTextBox.Text = TownName.Trim();
 
                 player1Name.Text = Player1.Name.Trim();
@@ -290,7 +369,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 player2Bells.Text = Player2.Bells.ToString();
                 player2Debt.Text = Player2.Debt.ToString();
                 player2HeldItem.Text = Player2.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
-                if (string.IsNullOrEmpty(Player2.Name.Trim()))
+                if (!Player2.Exists)
                 {
                     player2Shirt.Enabled = false;
                     player2Background.Enabled = false;
@@ -319,7 +398,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 player3Bells.Text = Player3.Bells.ToString();
                 player3Debt.Text = Player3.Debt.ToString();
                 player3HeldItem.Text = Player3.Held_Item.ItemID == 0 ? "(None)" : Player3.Held_Item.Name;
-                if (string.IsNullOrEmpty(Player3.Name.Trim()))
+                if (!Player3.Exists)
                 {
                     player3Shirt.Enabled = false;
                     player3Background.Enabled = false;
@@ -348,7 +427,7 @@ namespace Animal_Crossing_GCN_Save_Editor
                 player4Bells.Text = Player4.Bells.ToString();
                 player4Debt.Text = Player4.Debt.ToString();
                 player4HeldItem.Text = Player4.Held_Item.ItemID == 0 ? "(None)" : Player4.Held_Item.Name;
-                if (string.IsNullOrEmpty(Player4.Name.Trim()))
+                if (!Player4.Exists)
                 {
                     player4Shirt.Enabled = false;
                     player4Background.Enabled = false;
@@ -399,6 +478,8 @@ namespace Animal_Crossing_GCN_Save_Editor
                     foreach (Player p in Players)
                         p.Town_Name = text.Trim();
                 }
+                //Pattern testPattern = new Pattern(0x18C0, this); //0x1260
+                //pictureBox1.Image = testPattern.Pattern_Bitmap;
             }
         }
 
@@ -422,27 +503,30 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             if (fs != null)
-            {   
-                string text = player1Name.Text;
-                if (text.Length > 0)
-                    WriteString(0x20, text, 8);
+            {
+                TextBox t = (TextBox)sender;
+                int player = int.Parse(new string(t.Name.Where(Char.IsDigit).ToArray()));
+                if (t.Text.Length > 0)
+                    Players[player - 1].Name = t.Text;
+                    //WriteString(0x20, text, 8);
             }
         }
 
         private void textBox1_HandleTextChanged(object sender, EventArgs e)
         {
-            int maxBytes = StringUtil.StringToMaxChars(player1Name.Text);
-            if (player1Name.Text.ToCharArray().Length > 8)
+            TextBox t = (TextBox)sender;
+            int maxBytes = StringUtil.StringToMaxChars(t.Text);
+            if (t.Text.ToCharArray().Length > 8)
             {
-                player1Name.Text = player1Name.Text.Substring(0, 8);
-                player1Name.SelectionStart = player1Name.Text.Length;
-                player1Name.SelectionLength = 0;
+                t.Text = t.Text.Substring(0, 8);
+                t.SelectionStart = t.Text.Length;
+                t.SelectionLength = 0;
             }
-            if (Encoding.UTF8.GetBytes(player1Name.Text.ToCharArray()).Length > maxBytes)
+            if (Encoding.UTF8.GetBytes(t.Text.ToCharArray()).Length > maxBytes)
             {
-                player1Name.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(player1Name.Text), 0, maxBytes);
-                player1Name.SelectionStart = player1Name.Text.Length;
-                player1Name.SelectionLength = 0;
+                t.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(t.Text), 0, maxBytes);
+                t.SelectionStart = t.Text.Length;
+                t.SelectionLength = 0;
             }
         }
 
@@ -490,7 +574,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 Button b = (Button)sender;
                 int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
-                if (!string.IsNullOrEmpty(Players[player - 1].Name.Trim()))
+                if (Players[player - 1].Exists)
                 {
                     if (iEditor == null || iEditor.IsDisposed)
                     {
@@ -510,7 +594,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 Button b = (Button)sender;
                 int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
-                if (!string.IsNullOrEmpty(Players[player - 1].Name.Trim()))
+                if (Players[player - 1].Exists)
                 {
                     int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(Players[player - 1].House_Data_Offset, 0x114));
                     ushort[] firstFloorLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1]);
@@ -548,7 +632,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             if (fs != null)
             {
                 foreach (Player p in Players)
-                    if (!string.IsNullOrEmpty(p.Name.Trim()))
+                    if (p.Exists)
                         p.Write();
                 SaveData();
             }

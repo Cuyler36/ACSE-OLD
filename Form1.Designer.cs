@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -115,6 +116,9 @@
             this.label24 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
             this.player4Name = new System.Windows.Forms.TextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -215,7 +219,7 @@
             this.player1Face.Name = "player1Face";
             this.player1Face.Size = new System.Drawing.Size(137, 21);
             this.player1Face.TabIndex = 25;
-            this.player1Face.SelectedIndexChanged += new System.EventHandler(face_SelectedIndexChanged);
+            this.player1Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
             // player1Background
             // 
@@ -544,7 +548,7 @@
             this.player2Face.Name = "player2Face";
             this.player2Face.Size = new System.Drawing.Size(137, 21);
             this.player2Face.TabIndex = 21;
-            this.player2Face.SelectedIndexChanged += new System.EventHandler(face_SelectedIndexChanged);
+            this.player2Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
             // player2Background
             // 
@@ -798,6 +802,8 @@
             this.player2Name.Name = "player2Name";
             this.player2Name.Size = new System.Drawing.Size(130, 20);
             this.player2Name.TabIndex = 0;
+            this.player2Name.TextChanged += new System.EventHandler(this.textBox1_HandleTextChanged);
+            this.player2Name.LostFocus += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // groupBox3
             // 
@@ -834,7 +840,7 @@
             this.player3Face.Name = "player3Face";
             this.player3Face.Size = new System.Drawing.Size(137, 21);
             this.player3Face.TabIndex = 21;
-            this.player3Face.SelectedIndexChanged += new System.EventHandler(face_SelectedIndexChanged);
+            this.player3Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
             // player3Background
             // 
@@ -1088,6 +1094,8 @@
             this.player3Name.Name = "player3Name";
             this.player3Name.Size = new System.Drawing.Size(130, 20);
             this.player3Name.TabIndex = 0;
+            this.player3Name.TextChanged += new System.EventHandler(this.textBox1_HandleTextChanged);
+            this.player3Name.LostFocus += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // groupBox4
             // 
@@ -1124,7 +1132,7 @@
             this.player4Face.Name = "player4Face";
             this.player4Face.Size = new System.Drawing.Size(137, 21);
             this.player4Face.TabIndex = 17;
-            this.player4Face.SelectedIndexChanged += new System.EventHandler(face_SelectedIndexChanged);
+            this.player4Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
             // label27
             // 
@@ -1378,12 +1386,30 @@
             this.player4Name.Name = "player4Name";
             this.player4Name.Size = new System.Drawing.Size(130, 20);
             this.player4Name.TabIndex = 0;
+            this.player4Name.TextChanged += new System.EventHandler(this.textBox1_HandleTextChanged);
+            this.player4Name.LostFocus += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.ShowAlways = true;
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "bmp";
+            this.saveFileDialog1.Filter = "Bitmap Image (*.bmp) | *.bmp | JPG Image (*.jpg)|*.jpg";
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_OK);
+            // 
+            // openFileDialog2
+            // 
+            this.openFileDialog2.DefaultExt = "bmp";
+            this.openFileDialog2.FileName = "openFileDialog2";
+            this.openFileDialog2.Filter = "Bitmap Image (*.bmp) | *.bmp";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(795, 329);
+            this.ClientSize = new System.Drawing.Size(795, 407);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -1503,6 +1529,9 @@
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.ComboBox player4Gender;
         private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog2;
     }
 }
 

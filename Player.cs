@@ -100,6 +100,8 @@ namespace Animal_Crossing_GCN_Save_Editor
         public uint Identifier;
         public int House_Number = 0;
         public int House_Data_Offset = 0;
+        public Pattern[] Patterns = new Pattern[8];
+        public bool Exists = false;
 
         public Player(int idx, Form1 form1)
         {
@@ -113,7 +115,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             int offset = 0x20 + Index * Player_Length;
             Name = form.ReadString(offset + 0, 8).Trim();
             Town_Name = form.ReadString(offset + 0x8, 8).Trim();
-            Identifier = BitConverter.ToUInt32(form.ReadData(offset + 0x10, 4), 0);
+            Identifier = BitConverter.ToUInt32(form.ReadData(offset + 0x10, 4), 0); //First two are player identifier bytes. Second two bytes are town identifier bytes.
             Gender = form.ReadData(offset + 0x14, 1)[0];
             Face = form.ReadData(offset + 0x15, 1)[0];
             Inventory = new Inventory(form.ReadRawUShort(offset + 0x68, 0x1E));
@@ -122,8 +124,11 @@ namespace Animal_Crossing_GCN_Save_Editor
             Held_Item = new Item(form.ReadRawUShort(offset + 0x4A4, 2)[0]);
             Inventory_Background = new Item(form.ReadRawUShort(offset + 0x1084, 2)[0]);
             Shirt = new Item(form.ReadRawUShort(offset + 0x1089 + 1, 2)[0]);
+            for (int i = 0; i < 8; i++)
+                Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);
             House_Number = GetHouse();
             House_Data_Offset = 0x9CF8 + (House_Number - 1) * 0x26B0 + 0x28;
+            Exists = Identifier != 0xFFFFFFFF;
         }
 
         public void Write()
@@ -139,6 +144,9 @@ namespace Animal_Crossing_GCN_Save_Editor
             form.WriteUShort(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
             form.WriteUShort(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
             form.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
+            foreach (Pattern p in Patterns)
+                p.Write();
+                //Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);
         }
 
         public int GetHouse()

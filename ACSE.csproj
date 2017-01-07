@@ -170,6 +170,19 @@
     </Compile>
     <Compile Include="Inventory.cs" />
     <Compile Include="ItemData.cs" />
+    <Compile Include="Pattern.cs" />
+    <Compile Include="PatternNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PatternNameForm.Designer.cs">
+      <DependentUpon>PatternNameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatternPaletteForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PatternPaletteForm.Designer.cs">
+      <DependentUpon>PatternPaletteForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,6 +215,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Inventory Editor.resx">
       <DependentUpon>Inventory Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatternNameForm.resx">
+      <DependentUpon>PatternNameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatternPaletteForm.resx">
+      <DependentUpon>PatternPaletteForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx" />
     <EmbeddedResource Include="TownEditor.resx">
