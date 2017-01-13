@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Animal_Crossing_GCN_Save_Editor.Properties {
+namespace ACSE.Properties {
     using System;
     
     

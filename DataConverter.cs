@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     //TODO: Either use this class or delete it
     class DataConverter

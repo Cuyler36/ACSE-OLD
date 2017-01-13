@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     public class Inventory
     {

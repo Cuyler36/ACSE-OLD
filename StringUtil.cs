@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Globalization;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     class StringUtil
     {

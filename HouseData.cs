@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     class HouseData
     {

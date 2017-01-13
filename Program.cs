@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     static class Program
     {

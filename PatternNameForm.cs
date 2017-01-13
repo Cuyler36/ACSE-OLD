@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     public partial class PatternNameForm : Form
     {

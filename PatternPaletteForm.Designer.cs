@@ -1,4 +1,4 @@
-﻿namespace Animal_Crossing_GCN_Save_Editor
+﻿namespace ACSE
 {
     partial class PatternPaletteForm
     {

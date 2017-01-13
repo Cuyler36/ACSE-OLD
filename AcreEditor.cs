@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     public partial class AcreEditor : Form
     {

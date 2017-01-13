@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     class AcreData
     {
@@ -331,16 +331,23 @@ namespace Animal_Crossing_GCN_Save_Editor
         public void SetBuriedInMemory(WorldItem item, int acre, byte[] burriedItemData, bool buried)
         {
             int buriedLocation = GetBuriedLocation(item, acre);
-            int mask = 1 << (item.Location.X % 8);
-            int isBuried = (burriedItemData[buriedLocation] >> item.Location.X % 8) & 1;
-            if (isBuried == 0 && buried)
+            if (buriedLocation > -1)
             {
-                burriedItemData[buriedLocation] = (burriedItemData[buriedLocation] |= (byte)mask);
-                item.Burried = true;
+                int mask = 1 << (item.Location.X % 8);
+                int isBuried = (burriedItemData[buriedLocation] >> item.Location.X % 8) & 1;
+                if (isBuried == 0 && buried)
+                {
+                    burriedItemData[buriedLocation] = (burriedItemData[buriedLocation] |= (byte)mask);
+                    item.Burried = true;
+                }
+                else if (isBuried == 1 && !buried)
+                {
+                    burriedItemData[buriedLocation] = (burriedItemData[buriedLocation] &= (byte)~mask);
+                    item.Burried = false;
+                }
             }
-            else if (isBuried == 1 && !buried)
+            else
             {
-                burriedItemData[buriedLocation] = (burriedItemData[buriedLocation] &= (byte)~mask);
                 item.Burried = false;
             }
         }
@@ -355,14 +362,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                 int burried = (burriedItemData[burriedDataOffset] >> item.Location.X % 8) & 1;
                 item.Burried = burried == 1;
             }
-        }
-    }
-
-    public class Island_Acre : Normal_Acre
-    {
-        public Island_Acre(ushort acreId, int position, ushort[] items, byte[] burriedItemData = null) : base(acreId, position, items, burriedItemData)
-        {
-            
         }
     }
 }

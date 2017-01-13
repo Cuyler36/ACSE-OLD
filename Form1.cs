@@ -5,34 +5,24 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System.Resources;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     public partial class Form1 : Form
     {
-
         public byte[] saveBuffer = new byte[0x26000];
 
+        #region Offsets
         public static int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         public static int Data_Start_Offset = 0x26040;
         public static int Town_Name_Offset = 0x9120;
-        public static int Player1_Bells_Offset = 0xAC;
-        public static int Player1_Town_Name = 0x28;
-        public static int Player1_Pockets = 0x88;
-        public static int[] House_Addresses = new int[4] { 0x9D20, 0, 0, 0 }; //House Carpet & Wallpaper offset: 0x8A0
+        //House Carpet & Wallpaper offset: 0x8A0
         public static int AcreData_Offset = 0x137A8;
         public static int AcreData_Size = 0x3C00;
         public static int AcreTile_Offset = 0x173A8;
         public static int AcreTile_Size = 0x8C;
-        public static int Player1_Held_Item_Offset = 0x4C4;
-        public static int Player1_Inventory_Background_Offset = 0x10A4;
-        public static int Player1_Debt_Offset = 0xB0;
-        public static int Player1_House_Size_Offset = 0x9D12;
-        public static int Player1_Shirt_Offset = 0x10A9;
         public static int[] Player1_Dresser_Offsets = new int[3] { 0x9F6E, 0xA196, 0xA3BE }; //0x228 away from each other
         public static int VillagerData_Offset = 0x17438;
         public static int VillagerData_Size = 0x8EF8;
@@ -44,15 +34,15 @@ namespace Animal_Crossing_GCN_Save_Editor
         public static int IslandBurriedItems_Offset = 0x23DC9;
         public static int IslandBurriedItems_Length = 0x40;
         public static int Nook_Items_Offset = 0x2040E;
-        //public static byte[] Blank_Villager = Properties.Resources.blank_Villager;
+        #endregion Offsets
 
+        #region Variables
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private FileStream fs;
         private BinaryReader reader;
         private BinaryWriter writer;
         private string fileName;
         private TownEditor townEditorForm;
-        private Inventory inventory;
         private AcreEditor editor;
         private Villager_Editor vEditor;
         private Inventory_Editor iEditor;
@@ -64,8 +54,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         private ComboBox[] Faces = new ComboBox[4];
         private string patternSaveLoc;
         private Bitmap currentPattern;
-        //Temp
-        private PictureBox[] Player1Patterns = new PictureBox[8];
+        #endregion Variables
 
         public static DateTime DateFromTimestamp(long timestamp)
         {
@@ -79,6 +68,12 @@ namespace Animal_Crossing_GCN_Save_Editor
             writer = new BinaryWriter(fs);
             writer.Seek(Data_Start_Offset, SeekOrigin.Begin);
             writer.Write(saveBuffer);
+            if (Properties.Settings.Default.SecondSave)
+            {
+                writer.Seek(0x4C040, SeekOrigin.Begin);
+                writer.Write(saveBuffer);
+                MessageBox.Show("Wrote to Second Save!");
+            }
             writer.Close();
             fs.Close();
         }
@@ -172,22 +167,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                         strBytes[i] = 0x20;
                 strBytes.CopyTo(saveBuffer, offset);
             }
-        }
-
-        private void SetBells(uint amount)
-        {
-            WriteData(Player1_Bells_Offset, BitConverter.GetBytes(amount));
-        }
-
-        private string[] GetNames(int offset, int count)
-        {
-            string[] names = new string[count];
-            for (int i = 0; i < count; i++)
-            {
-                ushort itemID = BitConverter.ToUInt16(ReadData(offset + (i * 2), 2), 0);
-                names[i] = ItemData.GetItemName(itemID);
-            }
-            return names;
         }
 
         public Form1()
@@ -301,8 +280,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             }
             else if (extension == ".gci")
                 Data_Start_Offset = 0x26040;
-            string Game_ID = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(3));
-            if (Game_ID == "GAF")
+            if (System.Text.Encoding.UTF8.GetString(reader.ReadBytes(3)) == "GAF")
             {
                 this.Text = "ACSE - " + Path.GetFileName(fileName);
                 if (iEditor != null && !iEditor.IsDisposed)
@@ -348,7 +326,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
                 player1Name.Text = Player1.Name.Trim();
                 player1Bells.Text = Player1.Bells.ToString();
-                try { player1Debt.Text = Player1.Debt.ToString(); } catch { } //This line throws a null exception for some reason????
+                player1Debt.Text = Player1.Debt.ToString();
                 player1HeldItem.Text = Player1.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
                 player1Shirt.DataSource = new BindingSource(Shirts, null);
                 player1Shirt.ValueMember = "Key";
@@ -460,7 +438,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                     if (r == DialogResult.Yes)
                         SaveData();
                 }
-                inventory = new Inventory(ReadRawUShort(Player1_Pockets, 0x1E));
                 Players[0] = Player1;
                 Players[1] = Player2;
                 Players[2] = Player3;
@@ -482,7 +459,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void townNameTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 string text = townNameTextBox.Text;
                 if (text.Length > 0)
@@ -491,8 +468,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                     foreach (Player p in Players)
                         p.Town_Name = text.Trim();
                 }
-                //Pattern testPattern = new Pattern(0x18C0, this); //0x1260
-                //pictureBox1.Image = testPattern.Pattern_Bitmap;
             }
         }
 
@@ -515,13 +490,12 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 TextBox t = (TextBox)sender;
                 int player = int.Parse(new string(t.Name.Where(Char.IsDigit).ToArray()));
                 if (t.Text.Length > 0)
                     Players[player - 1].Name = t.Text;
-                    //WriteString(0x20, text, 8);
             }
         }
 
@@ -546,13 +520,12 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             TextBox senderComboBox = (TextBox)sender;
-            if (fs != null && player1Debt.Text.Length > 0)
+            if (CanSetData && player1Debt.Text.Length > 0)
             {
-                uint bells = string.IsNullOrEmpty(player1Bells.Text) ? 0 : uint.Parse(player1Bells.Text);
+                uint bells = senderComboBox.Text.Any(char.IsDigit) ? uint.Parse(senderComboBox.Text) : 0;
                 int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
                 if (bells >= 0 && bells <= uint.MaxValue)
                     Players[player - 1].Bells = bells;
-                //SetBells(bells);
             }
         }
 
@@ -565,13 +538,12 @@ namespace Animal_Crossing_GCN_Save_Editor
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             TextBox senderComboBox = (TextBox)sender;
-            if (fs != null && player1Debt.Text.Length > 0)
+            if (CanSetData && player1Debt.Text.Length > 0)
             {
                 int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
-                uint debt = string.IsNullOrEmpty(senderComboBox.Text) ? 0 : uint.Parse(senderComboBox.Text);
+                uint debt = senderComboBox.Text.Any(char.IsDigit) ? uint.Parse(senderComboBox.Text) : 0;
                 if (debt >= 0 && debt <= uint.MaxValue)
                     Players[player - 1].Debt = debt;
-                    //WriteData(Player1_Debt_Offset, BitConverter.GetBytes(debt));
             }
         }
 
@@ -583,7 +555,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 Button b = (Button)sender;
                 int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
@@ -603,7 +575,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 Button b = (Button)sender;
                 int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
@@ -626,7 +598,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 ushort[] acreRawData = ReadRawUShort(AcreData_Offset, AcreData_Size);
                 ushort[] islandRawData = ReadRawUShort(IslandData_Offset, IslandData_Length);
@@ -642,7 +614,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 foreach (Player p in Players)
                     if (p.Exists)
@@ -664,7 +636,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button6_Click(object sender, EventArgs e)
         {
-            if (fs != null)
+            if (CanSetData)
             {
                 ushort[] acreTileData = ReadRawUShort(AcreTile_Offset, AcreTile_Size);
                 Dictionary<int, Acre> tileData = AcreData.GetAcreTileData(acreTileData);
@@ -677,7 +649,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void button7_Click(object sender, EventArgs e)
         {
-            if (saveBuffer != null)
+            if (CanSetData)
             {
                 byte[] villagerData = ReadDataRaw(VillagerData_Offset, VillagerData_Size);
                 byte[] islanderData = ReadDataRaw(Islander_Offset, VillagerData_Size / 15);
@@ -693,7 +665,7 @@ namespace Animal_Crossing_GCN_Save_Editor
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (saveBuffer != null && CanSetData)
+            if (CanSetData)
             {
                 ComboBox c = (ComboBox)sender;
                 ushort selectedShirt = 0;
@@ -706,13 +678,12 @@ namespace Animal_Crossing_GCN_Save_Editor
                     if (player > -1)
                         Players[player - 1].Shirt = new Item(selectedShirt);
                 }
-                    //WriteDataRaw(Player1_Shirt_Offset, new byte[3] { (byte)(selectedShirt & 0xFF), 0x24, (byte)(selectedShirt & 0xFF) });
             }
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (saveBuffer != null && CanSetData)
+            if (CanSetData)
             {
                 ComboBox c = (ComboBox)sender;
                 ushort selectedShirt = 0;
@@ -725,7 +696,6 @@ namespace Animal_Crossing_GCN_Save_Editor
                     if (player > -1)
                         Players[player - 1].Inventory_Background = new Item(selectedShirt);
                 }
-                //WriteUShort(new ushort[1] { selectedShirt }, Player1_Inventory_Background_Offset);
             }
         }
 
@@ -749,6 +719,11 @@ namespace Animal_Crossing_GCN_Save_Editor
                 int player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
                 Players[player - 1].Face = (byte)c.SelectedValue;
             }
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new SettingsForm().Show();
         }
     }
 }

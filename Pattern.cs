@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     /// <summary>
     /// Pattern Data Write-up
@@ -89,6 +89,40 @@ namespace Animal_Crossing_GCN_Save_Editor
                 0xFFEE7B7B, 0xFFD51818, 0xFFF69418, 0xFFE6E652, 0xFF006A00, 0xFF39B439, 0xFF0039B4, 0xFF399CFF, 0xFF940094, 0xFFFF6AFF, 0xFF944108, 0xFFEE9C5A, 0xFFFFC594, 0xFF000000, 0xFFFFFFFF
             },
         };
+
+        private Color ColorFromUInt32(uint color)
+        {
+            return Color.FromArgb(0xFF, (byte)(color >> 16), (byte)(color >> 8), (byte)(color));
+        }
+
+        public uint ClosestColor(uint color, int palette)
+        {
+            uint closestColor = Palette_Data[palette][0];
+            double diff = double.MaxValue;
+            Color c = ColorFromUInt32(color);
+            float targetHue = c.GetHue();
+            float targetSat = c.GetSaturation();
+            float targetBri = c.GetBrightness();
+
+            foreach (uint validColor in Palette_Data[palette])
+            {
+                Color checkColor = ColorFromUInt32(validColor);
+                float currentHue = checkColor.GetHue();
+                float currentSat = checkColor.GetSaturation();
+                float currentBri = checkColor.GetBrightness();
+                int t = (int)color;
+
+                double currentDiff = Math.Pow(targetHue - currentHue, 2) + Math.Pow(targetSat - currentSat, 2) + Math.Pow(targetBri - currentBri, 2);
+
+                if (currentDiff < diff)
+                {
+                    diff = currentDiff;
+                    closestColor = validColor;
+                }
+            }
+
+            return closestColor;
+        }
     }
 
     public class Pattern

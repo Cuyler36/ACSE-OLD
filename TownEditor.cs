@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     public partial class TownEditor : Form
     {
@@ -18,7 +18,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         PictureBox[] acreImages;
         PictureBox[] islandAcreImages;
         private Normal_Acre[] Acres;
-        private Island_Acre[] Island_Acres;
+        private Normal_Acre[] Island_Acres;
         Bitmap[] images = new Bitmap[30];
         Bitmap[] islandImages = new Bitmap[2];
         byte[] buriedData;
@@ -48,7 +48,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             acreImages = new PictureBox[30];
             islandAcreImages = new PictureBox[2];
             Acres = new Normal_Acre[30];
-            Island_Acres = new Island_Acre[2];
+            Island_Acres = new Normal_Acre[2];
             int acreIdIndex = 8; //Start at first true acre
             for (int i = 0; i < 30; i++)
             {
@@ -67,7 +67,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {
                 ushort[] itemsBuff = new ushort[256];
                 Array.ConstrainedCopy(islandItems, i * 256, itemsBuff, 0, 256);
-                Island_Acres[i] = new Island_Acre(acreIds[60 + i], i + 1, itemsBuff, islandBurriedItemData);
+                Island_Acres[i] = new Normal_Acre(acreIds[60 + i], i + 1, itemsBuff, islandBurriedItemData);
                 int acreImg = AcreEditor.AcreImages.ContainsKey(Island_Acres[i].AcreID) ? AcreEditor.AcreImages[Island_Acres[i].AcreID] : 99;
                 islandImages[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 islandAcreImages[i] = new PictureBox();
@@ -174,13 +174,29 @@ namespace Animal_Crossing_GCN_Save_Editor
             int x = 0;
             foreach (PictureBox p in acreImages)
             {
+                if (p.Image != null)
+                {
+                    Bitmap old = (Bitmap)p.Image;
+                    p.Image = null;
+                    old.Dispose();
+                    old = null;
+                }
                 Bitmap acreImage = GenerateAcreItemsBitmap(Acres[x].Acre_Items, x);
                 p.Image = acreImage;
                 p.BringToFront();
                 x++;
             }
             for (int i = 0; i < 2; i++)
+            {
+                if (islandAcreImages[i].Image != null)
+                {
+                    Bitmap old = (Bitmap)islandAcreImages[i].Image;
+                    islandAcreImages[i].Image = null;
+                    old.Dispose();
+                    old = null;
+                }
                 islandAcreImages[i].Image = GenerateAcreItemsBitmap(Island_Acres[i].Acre_Items, i);
+            }
         }
 
         private void TownEditor_Shown(object sender, EventArgs e)
@@ -275,7 +291,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             ushort value = 0;
             bool set = true;
             try { value = (ushort)comboBox1.SelectedValue; }
-            catch { set = true; }
+            catch { set = false; }
             if (set)
                 label1.Text = "0x" + value.ToString("X4");
         }

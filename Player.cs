@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Animal_Crossing_GCN_Save_Editor
+namespace ACSE
 {
     class Player
     {
@@ -46,7 +46,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             {0x20, "Lloyd Face" }
         };
 
-        public static Dictionary<byte, string> Female_Faces = new Dictionary<byte, string>()
+        public static Dictionary<byte, string> Female_Faces = new Dictionary<byte, string>() //Can switch these to simple arrays, if wanted.
         {
             {0x00, "Female Full Black Eyes (Pink Hair)" },
             {0x01, "Female Black Squinty Eyes (Purple Hair)" },
@@ -101,6 +101,7 @@ namespace Animal_Crossing_GCN_Save_Editor
         public int House_Number = 0;
         public int House_Data_Offset = 0;
         public Pattern[] Patterns = new Pattern[8];
+        public bool Reset = false;
         public bool Exists = false;
 
         public Player(int idx, Form1 form1)
@@ -109,6 +110,12 @@ namespace Animal_Crossing_GCN_Save_Editor
             Index = idx;
             Read();
         }
+
+        //Town Identifier is: 0x30 0x??
+        //Player Identifier is: 0xF0 0x??
+        //Villager Identifier is: 0xE0 0x??
+        //Can Look up resetti values, if wanted.
+        //Documented ones: 0x250C | 0xAE8A | 0x85A6
 
         public void Read()
         {
@@ -124,6 +131,7 @@ namespace Animal_Crossing_GCN_Save_Editor
             Held_Item = new Item(form.ReadRawUShort(offset + 0x4A4, 2)[0]);
             Inventory_Background = new Item(form.ReadRawUShort(offset + 0x1084, 2)[0]);
             Shirt = new Item(form.ReadRawUShort(offset + 0x1089 + 1, 2)[0]);
+            Reset = form.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
             for (int i = 0; i < 8; i++)
                 Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);
             House_Number = GetHouse();
@@ -144,9 +152,12 @@ namespace Animal_Crossing_GCN_Save_Editor
             form.WriteUShort(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
             form.WriteUShort(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
             form.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
+
+            if (Properties.Settings.Default.StopResetti)
+                form.WriteUShort(new ushort[] { 0 }, offset + 0x10F6);
+
             foreach (Pattern p in Patterns)
                 p.Write();
-                //Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);
         }
 
         public int GetHouse()
