@@ -36,12 +36,12 @@ Refer to the article here: https://wiki.dolphin-emu.org/index.php?title=Ripping_
 ### Opening your Save File
 Click on the File button, then click Open and select your save file!
 
-![Open Save](http://i.imgur.com/A1gAVm6.png)
+![Open Save](https://puu.sh/toNcf/998c395bf9.png)
 
 ### Using the Main Editor Form
-This contains the Players, Town Name, and buttons to access the other editors! Simply change the values of the text/combo boxes to edit them.
+This contains the Players, Patterns, Town Name, and buttons to access the other editors! Simply change the values of the text/combo boxes to edit them.
 
-![Main Editor](http://i.imgur.com/v49tNrP.png)
+![Main Editor](https://puu.sh/toMRD/90910ec782.png)
 
 ### Using the Acre Editor Form
 This form allows you to change your acre tiles! There is a 7x10 grid of acre tiles. To select an acre to place, click the "Check Tile" button, then left click on the desired acre. You can also simply click on one of the entries in the acre list to the right of the acre grid. Once selected, a preview image of the selected acre will appear on the bottom right of the screen, along with it's name and AcreID. To place an acre, click on the "Place Tile" button, then just left click over any acre tile on the grid!
