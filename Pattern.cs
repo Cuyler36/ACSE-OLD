@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -90,12 +91,12 @@ namespace ACSE
             },
         };
 
-        private Color ColorFromUInt32(uint color)
+        private static Color ColorFromUInt32(uint color)
         {
             return Color.FromArgb(0xFF, (byte)(color >> 16), (byte)(color >> 8), (byte)(color));
         }
 
-        public uint ClosestColor(uint color, int palette)
+        public static byte ClosestColor(uint color, int palette)
         {
             uint closestColor = Palette_Data[palette][0];
             double diff = double.MaxValue;
@@ -110,7 +111,6 @@ namespace ACSE
                 float currentHue = checkColor.GetHue();
                 float currentSat = checkColor.GetSaturation();
                 float currentBri = checkColor.GetBrightness();
-                int t = (int)color;
 
                 double currentDiff = Math.Pow(targetHue - currentHue, 2) + Math.Pow(targetSat - currentSat, 2) + Math.Pow(targetBri - currentBri, 2);
 
@@ -121,7 +121,7 @@ namespace ACSE
                 }
             }
 
-            return closestColor;
+            return (byte)(Array.IndexOf(Palette_Data[palette], closestColor) + 1);
         }
     }
 
@@ -129,7 +129,8 @@ namespace ACSE
     {
         private Form1 form;
         private int Offset = 0;
-        private byte[] patternBitmapBuffer = new byte[4 * 32 * 32];
+        public byte[] patternBitmapBuffer = new byte[4 * 32 * 32];
+        public byte[] rawPatternArray;
         public string Name;
         public byte Palette;
         public Bitmap Pattern_Bitmap;
@@ -139,6 +140,57 @@ namespace ACSE
             Offset = patternOffset;
             form = form1;
             Read();
+        }
+
+        public void GeneratePatternBitmapFromImport(byte[] buffer)
+        {
+            int pos = 0;
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                byte RightPixel = (byte)(buffer[i] & 0x0F);
+                byte LeftPixel = (byte)((buffer[i] & 0xF0) >> 4);
+                Buffer.BlockCopy(BitConverter.GetBytes(PatternData.Palette_Data[Palette][LeftPixel - 1]), 0, patternBitmapBuffer, pos * 4, 4);
+                Buffer.BlockCopy(BitConverter.GetBytes(PatternData.Palette_Data[Palette][RightPixel - 1]), 0, patternBitmapBuffer, (pos + 1) * 4, 4);
+                pos += 2;
+            }
+            Pattern_Bitmap = new Bitmap(32, 32, PixelFormat.Format32bppArgb);
+            BitmapData bitmapData = Pattern_Bitmap.LockBits(new Rectangle(0, 0, 32, 32), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            System.Runtime.InteropServices.Marshal.Copy(patternBitmapBuffer, 0, bitmapData.Scan0, patternBitmapBuffer.Length);
+            Pattern_Bitmap.UnlockBits(bitmapData);
+            rawPatternArray = buffer;
+        }
+
+        public byte[] ConvertImport()
+        {
+            byte[] correctedBuffer = new byte[512];
+            if (rawPatternArray != null)
+            {
+                List<byte[]> Block_Data = new List<byte[]>();
+                for (int i = 0; i < 32; i ++)
+                {
+                    byte[] block = new byte[16];
+                    for (int x = 0; x < 4; x++)
+                    {
+                        int pos = (i % 4) * 4 + (i / 4) * 64 + x * 16;
+                        Array.ConstrainedCopy(rawPatternArray, pos, block, x * 4, 4);
+                    }
+                    Block_Data.Add(block);
+                }
+                List<byte[]> Sorted_Blocks = new List<byte[]>()
+                {
+                    Block_Data[0], Block_Data[4], Block_Data[1], Block_Data[5], //0, 1, 2, 3|
+                    Block_Data[2], Block_Data[6], Block_Data[3], Block_Data[7], //4, 5, 6, 7|
+                    Block_Data[8], Block_Data[12], Block_Data[9], Block_Data[13], //8, 9, 10, 11|
+                    Block_Data[10], Block_Data[14], Block_Data[11], Block_Data[15], //12, 13, 14, 15|
+                    Block_Data[16], Block_Data[20], Block_Data[17], Block_Data[21], //16, 17, 18, 19
+                    Block_Data[18], Block_Data[22], Block_Data[19], Block_Data[23], //20, 21, 22, 23
+                    Block_Data[24], Block_Data[28], Block_Data[25], Block_Data[29], //24, 25, 26, 27
+                    Block_Data[26], Block_Data[30], Block_Data[27], Block_Data[31], //28, 29, 30, 31
+                };
+                for (int i = 0; i < 32; i++)
+                    Sorted_Blocks[i].CopyTo(correctedBuffer, i * 16);
+            }
+            return correctedBuffer;
         }
 
         public void GeneratePatternBitmap()
@@ -197,46 +249,8 @@ namespace ACSE
         {
             form.WriteString(Offset, Name, 0x10);
             form.WriteData(Offset + 0x10, new byte[] { Palette });
-            /*if (Pattern_Bitmap != null && PatternData.Palette_Data.Count >= Palette + 1)
-            {
-                List<byte[]> Block_Data = new List<byte[]>();
-                List<byte[]> Corrected_Data = new List<byte[]>();
-                for (int i = 0; i < 32; i++)
-                    Corrected_Data.Add(new byte[16]);
-                byte[] Bitmap_Data = (byte[])(new ImageConverter().ConvertTo(Pattern_Bitmap, typeof(byte[])));
-                for (int block = 0; block < 32; block++)
-                {
-                    byte[] Block = new byte[16];
-                    Array.ConstrainedCopy(Bitmap_Data, block * 16, Block, 0, 16);
-                    Block_Data.Add(Block);
-                }
-                int pos = 0;
-                for (int i = 0; i < 8; i++)
-                {
-                    for (int y = 0; y < 4; y++)
-                    {
-                        for (int x = 0; x < 16; x++)
-                        {
-                            byte data = Block_Data[i * 4 + x / 4][x % 4 + y * 4];
-                            Buffer.BlockCopy(BitConverter.GetBytes(PatternData.Palette_Data[Palette][data - 1]), 0, patternBitmapBuffer, pos * 4, 4);
-                            pos += 2;
-                        }
-                    }
-                }
-                List<byte[]> Sorted_Block_Data = new List<byte[]>()
-                {
-                    Block_Data[0], Block_Data[4], Block_Data[1], Block_Data[5], //0, 1, 2, 3|
-                    Block_Data[2], Block_Data[6], Block_Data[3], Block_Data[7], //4, 5, 6, 7|
-                    Block_Data[8], Block_Data[12], Block_Data[9], Block_Data[13], //8, 9, 10, 11|
-                    Block_Data[10], Block_Data[14], Block_Data[11], Block_Data[15], //12, 13, 14, 15|
-                    Block_Data[16], Block_Data[20], Block_Data[17], Block_Data[21], //16, 17, 18, 19
-                    Block_Data[18], Block_Data[22], Block_Data[19], Block_Data[23], //20, 21, 22, 23
-                    Block_Data[24], Block_Data[28], Block_Data[25], Block_Data[29], //24, 25, 26, 27
-                    Block_Data[26], Block_Data[30], Block_Data[27], Block_Data[31], //28, 29, 30, 31
-                };
-                //Finish this
-                //Do not forget, Blocks may be ordered, but still have to reverse the order corrections made in the for loop
-            }*/
+            if (rawPatternArray != null)
+                form.WriteDataRaw(Offset + 0x20, ConvertImport());
         }
     }
 }

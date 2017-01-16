@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -54,6 +55,7 @@ namespace ACSE
         private ComboBox[] Faces = new ComboBox[4];
         private string patternSaveLoc;
         private Bitmap currentPattern;
+        private CancelEventHandler importHandler;
         #endregion Variables
 
         public static DateTime DateFromTimestamp(long timestamp)
@@ -107,7 +109,7 @@ namespace ACSE
 
         public ushort[] ReadRawUShort(int offset, int size)
         {
-            ushort[] data = new ushort[(int)Math.Ceiling((decimal)size / 2)];
+            ushort[] data = new ushort[size / 2];
             byte[] rawData = ReadDataRaw(offset, size);
             for (int i = 0; i < rawData.Length; i += 2)
             {
@@ -222,11 +224,50 @@ namespace ACSE
             f.Show();
         }
 
+        private void importClick(object sender, EventArgs e, Pattern p)
+        {
+            MenuItem m = (MenuItem)sender;
+            ContextMenu menu = (ContextMenu)m.Parent;
+            PictureBox pattern = (PictureBox)menu.SourceControl;
+            importHandler = new CancelEventHandler((s, ex) => openFileDialog2_OK(s, ex, p, pattern));
+            openFileDialog2.FileOk += importHandler;
+            openFileDialog2.ShowDialog();
+        }
+
+        private void openFileDialog2_OK (object sender, CancelEventArgs e, Pattern p, PictureBox box)
+        {
+            openFileDialog2.FileOk -= importHandler;
+            OpenFileDialog f = (OpenFileDialog)sender;
+            if (f.FileName != null)
+            {
+                Image fileImage = Image.FromFile(f.FileName);
+                if (fileImage.Width == 32 && fileImage.Height == 32 && (fileImage.PixelFormat == PixelFormat.Format32bppRgb || fileImage.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    byte[] bitmapBytes = new byte[4096];
+                    Array.ConstrainedCopy((byte[])(new ImageConverter().ConvertTo((Bitmap)fileImage, typeof(byte[]))), 54, bitmapBytes, 0, 4096);
+                    byte[] convertedBytes = new byte[512]; //32bit argb > 2 Nibble palette
+                    byte[] reversedBuffer = new byte[512];
+                    int x = 0;
+                    for (int i = 0; i < bitmapBytes.Length; i += 8)
+                    {
+                        convertedBytes[x] = (byte)((PatternData.ClosestColor(BitConverter.ToUInt32(bitmapBytes, i), p.Palette) << 4) + PatternData.ClosestColor(BitConverter.ToUInt32(bitmapBytes, i + 4), p.Palette));
+                        x++;
+                    }
+                    for (int i = 0; i < 512; i += 16)
+                        Buffer.BlockCopy(convertedBytes, 512 - i - 16, reversedBuffer, i, 16);
+                    p.GeneratePatternBitmapFromImport(reversedBuffer);
+                    box.Image = p.Pattern_Bitmap;
+                }
+                else
+                    MessageBox.Show("Imported images can only be 32x32, 32-bit Bitmaps. The supported formats are 32bppArgb and 32bppRgb.");
+            }
+        }
+
         private void saveFileDialog1_OK (object sender, CancelEventArgs e)
         {
             patternSaveLoc = ((SaveFileDialog)sender).FileName;
             if (currentPattern != null)
-                currentPattern.Save(patternSaveLoc, System.Drawing.Imaging.ImageFormat.Bmp);
+                currentPattern.Save(patternSaveLoc, ImageFormat.Bmp);
         }
 
         private void addPatternBoxes(Player p, Control playerBox)
@@ -245,7 +286,7 @@ namespace ACSE
                 ContextMenu cm = new ContextMenu();
                 MenuItem rename = new MenuItem("Rename");
                 MenuItem palette = new MenuItem("Set Palette");
-                MenuItem import = new MenuItem("Import (WIP)");
+                MenuItem import = new MenuItem("Import");
                 MenuItem export = new MenuItem("Export");
                 cm.MenuItems.Add(rename);
                 cm.MenuItems.Add(palette);
@@ -253,6 +294,7 @@ namespace ACSE
                 cm.MenuItems.Add(export);
                 b.ContextMenu = cm;
                 export.Click += exportClick;
+                import.Click += new EventHandler((sender, e) => importClick(sender, e, pattern));
                 rename.Click += new EventHandler((sender, e) => renameClick(sender, e, pattern, t));
                 palette.Click += new EventHandler((sender, e) => paletteClick(sender, e, pattern));
                 this.Controls.Add(b);
@@ -447,7 +489,6 @@ namespace ACSE
                 Faces[2] = player3Face;
                 Faces[3] = player4Face;
                 CanSetData = true;
-                //MessageBox.Show(ReadString(0x95DC, 0xC0).String); //0x96A4
             }
             else
             {

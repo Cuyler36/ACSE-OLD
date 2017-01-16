@@ -21,13 +21,9 @@ namespace ACSE
         {
             uint checksum = 0;
             for (int i = 0; i < 0x12; i += 2)
-            {
                 checksum += (uint)(buffer[i] << 8) + buffer[i + 1];
-            }
             for (int i = 0x14; i < buffer.Length - 1; i += 2)
-            {
                 checksum += (uint)(buffer[i] << 8) + buffer[i + 1];
-            }
             return (ushort)-checksum;
         }
 
