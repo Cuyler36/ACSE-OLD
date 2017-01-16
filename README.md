@@ -101,7 +101,7 @@ There are only a few precautions:
 ### Saving Your Changes
 Until you click File > Save, none of your changes will be commited. You must do this when you are ready to save your game. It will overwrite your old file, so make a backup if you're experimenting!
 
-![Save File](https://puu.sh/sVpRO/e9a23dc546.png)
+![Save File](https://puu.sh/toNoF/0a84b27f2c.png)
 
 ## Other Questions
 Message me on Reddit (Cuyler_36) or on Github. I will do my best to help you with whatever you may need.
