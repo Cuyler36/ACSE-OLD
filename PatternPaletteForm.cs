@@ -26,7 +26,7 @@ namespace ACSE
         private void button1_Click(object sender, EventArgs e)
         {
             Pattern.Palette = (comboBox1.SelectedIndex > -1 && comboBox1.SelectedIndex < 0x10) ? (byte)comboBox1.SelectedIndex : Pattern.Palette;
-            Pattern.GeneratePatternBitmap();
+            Pattern.AdjustPalette();
             Box.Image = Pattern.Pattern_Bitmap;
             this.Close();
         }

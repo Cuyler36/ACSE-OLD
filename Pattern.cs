@@ -193,6 +193,14 @@ namespace ACSE
             return correctedBuffer;
         }
 
+        public void AdjustPalette()
+        {
+            if (rawPatternArray == null)
+                GeneratePatternBitmap();
+            else
+                GeneratePatternBitmapFromImport(rawPatternArray);
+        }
+
         public void GeneratePatternBitmap()
         {
             byte[] patternRawData = form.ReadDataRaw(Offset + 0x20, 0x200);

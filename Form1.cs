@@ -224,17 +224,17 @@ namespace ACSE
             f.Show();
         }
 
-        private void importClick(object sender, EventArgs e, Pattern p)
+        private void importClick(object sender, EventArgs e, Pattern p, ToolTip t)
         {
             MenuItem m = (MenuItem)sender;
             ContextMenu menu = (ContextMenu)m.Parent;
             PictureBox pattern = (PictureBox)menu.SourceControl;
-            importHandler = new CancelEventHandler((s, ex) => openFileDialog2_OK(s, ex, p, pattern));
+            importHandler = new CancelEventHandler((s, ex) => openFileDialog2_OK(s, ex, p, pattern, t));
             openFileDialog2.FileOk += importHandler;
             openFileDialog2.ShowDialog();
         }
 
-        private void openFileDialog2_OK (object sender, CancelEventArgs e, Pattern p, PictureBox box)
+        private void openFileDialog2_OK (object sender, CancelEventArgs e, Pattern p, PictureBox box, ToolTip t)
         {
             openFileDialog2.FileOk -= importHandler;
             OpenFileDialog f = (OpenFileDialog)sender;
@@ -256,6 +256,9 @@ namespace ACSE
                     for (int i = 0; i < 512; i += 16)
                         Buffer.BlockCopy(convertedBytes, 512 - i - 16, reversedBuffer, i, 16);
                     p.GeneratePatternBitmapFromImport(reversedBuffer);
+                    string pathName = Path.GetFileNameWithoutExtension(f.FileName);
+                    p.Name = pathName.Length > 16 ? pathName.Substring(0, 16) : pathName;
+                    t.SetToolTip(box, p.Name);
                     box.Image = p.Pattern_Bitmap;
                 }
                 else
@@ -294,7 +297,7 @@ namespace ACSE
                 cm.MenuItems.Add(export);
                 b.ContextMenu = cm;
                 export.Click += exportClick;
-                import.Click += new EventHandler((sender, e) => importClick(sender, e, pattern));
+                import.Click += new EventHandler((sender, e) => importClick(sender, e, pattern, t));
                 rename.Click += new EventHandler((sender, e) => renameClick(sender, e, pattern, t));
                 palette.Click += new EventHandler((sender, e) => paletteClick(sender, e, pattern));
                 this.Controls.Add(b);
@@ -322,9 +325,9 @@ namespace ACSE
             }
             else if (extension == ".gci")
                 Data_Start_Offset = 0x26040;
-            if (System.Text.Encoding.UTF8.GetString(reader.ReadBytes(3)) == "GAF")
+            if (Encoding.UTF8.GetString(reader.ReadBytes(3)) == "GAF")
             {
-                this.Text = "ACSE - " + Path.GetFileName(fileName);
+                Text = "ACSE - " + Path.GetFileName(fileName);
                 if (iEditor != null && !iEditor.IsDisposed)
                     iEditor.Dispose();
                 if (vEditor != null && !vEditor.IsDisposed)
@@ -344,13 +347,13 @@ namespace ACSE
                 Player Player4 = new Player(3, this);
 
                 List<PictureBox> temp = new List<PictureBox>();
-                foreach (PictureBox p in this.Controls.OfType<PictureBox>())
+                foreach (PictureBox p in Controls.OfType<PictureBox>())
                     temp.Add(p);
                 foreach (PictureBox p in temp)
                 {
                     Bitmap i = (Bitmap)p.Image;
                     p.Image = null;
-                    this.Controls.Remove(p);
+                    Controls.Remove(p);
                     p.Dispose();
                     i.Dispose();
                 }
