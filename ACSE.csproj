@@ -59,6 +59,7 @@
     <Content Include="AC Save Editor Logo.ico" />
     <Content Include="Resources\Images\1.jpg" />
     <Content Include="Resources\Images\10.jpg" />
+    <None Include="Resources\Images\100.jpg" />
     <Content Include="Resources\Images\11.jpg" />
     <Content Include="Resources\Images\12.jpg" />
     <Content Include="Resources\Images\13.jpg" />

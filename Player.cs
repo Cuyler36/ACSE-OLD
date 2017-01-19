@@ -130,7 +130,7 @@ namespace ACSE
             Debt = BitConverter.ToUInt32(form.ReadData(offset + 0x90, 4), 0);
             Held_Item = new Item(form.ReadRawUShort(offset + 0x4A4, 2)[0]);
             Inventory_Background = new Item(form.ReadRawUShort(offset + 0x1084, 2)[0]);
-            Shirt = new Item(form.ReadRawUShort(offset + 0x1089 + 1, 2)[0]);
+            Shirt = new Item(form.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
             Reset = form.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
             for (int i = 0; i < 8; i++)
                 Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);

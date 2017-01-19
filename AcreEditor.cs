@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Text;
@@ -14,12 +16,13 @@ namespace ACSE
 {
     public partial class AcreEditor : Form
     {
-
-        int mode = 0;
         ushort currentlySelectedAcre = 0;
-        PictureBox[] acreImages = new PictureBox[70];
+        private PictureBox[] acreImages = new PictureBox[70];
         public Dictionary<int, Acre> currentAcreData;
-        Form1 form;
+        private Form1 form;
+        private ImageList imageList;
+        private TreeView treeView1;
+        private int[] treeViewIconIndex;
 
         public static Dictionary<ushort, int> CliffAcres = new Dictionary<ushort, int>()
         {
@@ -150,7 +153,7 @@ namespace ACSE
             {0x0598, 78 }, //Island (Left) (2)
             {0x04D0, 70 }, //Ocean (Half Empty)
             {0x03E4, 70 }, //Ocean (Empty)
-            {0x0000, 10 }, //No Data
+            {0x0000, 100 }, //No Data
             {0x04A8, 70 }, //Ocean
             {0x04CC, 70 }, //Ocean
             {0x04C8, 70 }, //Ocean
@@ -230,28 +233,49 @@ namespace ACSE
             {0x022C, 29 },
             {0x0280, 10 },
             {0x04C4, 70 },
+            {0x01FD, 13 }, 
+            {0x00CC, 49 },
+            {0x00A8, 59 },
+            {0x03D0, 66 },
+            {0x055C, 70 },
+            {0x059C, 77 },
+            {0x0299, 4 },
+            {0x027D, 10 },
+            {0x0188, 60 },
+            {0x0114, 76 },
+            {0x03C0, 65 },
+            {0x054C, 70 },
+            {0x04B4, 70 },
+            {0x02BD, 5 },
+            {0x0368, 9},
+            {0x00E0, 23 },
+            {0x01C0, 23 },
+            {0x00EC, 26 },
+            {0x00E4, 30 },
+            {0x0230, 75 },
+            {0x0408, 63 },
+            {0x0540, 70 },
+            {0x0060, 15 },
         };
 
-        void acreImage_Click(object sender, EventArgs e)
+        void acreImage_Click(object sender, MouseEventArgs e)
         {
             PictureBox p = (PictureBox)sender;
-            if (mode == 0)
+            if (e.Button == MouseButtons.Right)
             {
                 ushort id = ushort.Parse(p.Name);
-                if (AcreImages.ContainsKey(id))
-                {
-                    pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreImages[id]).ToString());
-                    currentlySelectedAcre = id;
-                    label2.Text = AcreData.Acres[id];
-                    label3.Text = "0x" + id.ToString("X4");
-                }
+                bool acreExists = AcreImages.ContainsKey(id);
+                pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (acreExists ? AcreImages[id] : 99).ToString());
+                label2.Text = acreExists ? AcreData.Acres[id] : "Unknown Acre";
+                currentlySelectedAcre = id;
+                label3.Text = "0x" + id.ToString("X4");
             }
-            else if (mode == 1 && currentlySelectedAcre != 0)
+            else if (e.Button == MouseButtons.Left && currentlySelectedAcre != 0)
             {
                 int idx = Array.IndexOf(acreImages, p);
                 if (idx > -1)
                 {
-                    p.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + AcreImages[currentlySelectedAcre].ToString());
+                    p.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreImages.ContainsKey(currentlySelectedAcre) ? AcreImages[currentlySelectedAcre].ToString() : "99"));
                     p.Name = currentlySelectedAcre.ToString();
                     currentAcreData[idx + 1] = new Acre(currentlySelectedAcre, currentAcreData[idx + 1].Index);
                 }
@@ -262,31 +286,158 @@ namespace ACSE
         {
             this.form = form;
             InitializeComponent();
-            foreach (KeyValuePair<ushort, string> data in AcreData.Acres)
+            imageList = new ImageList();
+            imageList.ImageSize = new Size(24, 24);
+            List<int> iconIndex = new List<int>();
+            for (int i = 1; i < 68; i++)
             {
-                listBox1.Items.Add(data.Value);
-            }    
+                imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
+                iconIndex.Add(i);
+            }
+            for (int i = 70; i < 82; i++)
+            {
+                imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
+                iconIndex.Add(i);
+            }
+            for (int i = 99; i < 101; i++)
+            {
+                imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
+                iconIndex.Add(i);
+            }
+
+            treeViewIconIndex = iconIndex.ToArray();
+            iconIndex.Clear();
+            populate_TreeView();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void setSelectedAcre(KeyValuePair<ushort, string> acre)
         {
-            string acreName = listBox1.SelectedItem.ToString();
-            foreach (KeyValuePair<ushort, string> data in AcreData.Acres)
+            if (AcreData.Acres.Contains(acre))
             {
-                if (data.Value == acreName)
-                {
-                    pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreImages[data.Key]).ToString());
-                    currentlySelectedAcre = data.Key;
-                    label2.Text = data.Value;
-                    break;
-                }
+                ushort acreId = acre.Key;
+                pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreImages[acreId]).ToString());
+                currentlySelectedAcre = acreId;
+                label2.Text = acre.Value;
+                label3.Text = "0x" + acreId.ToString("X4");
             }
         }
 
-        private void AcreEditor_FormClosing(object sender, FormClosingEventArgs e)
+        private void treeNode_Selected(object sender, TreeViewEventArgs e)
         {
-            this.Hide();
-            e.Cancel = true;
+            TreeNode node = treeView1.SelectedNode;
+
+            if (node != null && treeView1.Nodes.IndexOf(node) == -1)
+            {
+                setSelectedAcre((KeyValuePair<ushort, string>)node.Tag);
+            }
+        }
+
+        private void populate_TreeView()
+        {
+            treeView1 = new TreeView();
+            treeView1.ItemHeight = 26;
+            treeView1.Size = new Size(261, 329);
+            treeView1.Location = new Point(250, 42);
+            this.Controls.Add(treeView1);
+
+            treeView1.BeginUpdate();
+            treeView1.ImageList = imageList;
+            treeView1.Nodes.Clear();
+
+            TreeNode borderAcres = new TreeNode("Border Acres");
+            borderAcres.ImageIndex = 68;
+            borderAcres.SelectedImageIndex = 68;
+            TreeNode grassAcres = new TreeNode("Grass Acres");
+            grassAcres.ImageIndex = 9;
+            grassAcres.SelectedImageIndex = 9;
+            TreeNode cliffAcres = new TreeNode("Cliff/Ramp Acres");
+            cliffAcres.ImageIndex = 57;
+            cliffAcres.SelectedImageIndex = 57;
+            TreeNode riverAcres = new TreeNode("River/Lake Acres");
+            riverAcres.ImageIndex = 10;
+            riverAcres.SelectedImageIndex = 10;
+            TreeNode specialAcres = new TreeNode("Special Acres");
+            specialAcres.ImageIndex = 8;
+            specialAcres.SelectedImageIndex = 8;
+            TreeNode beachAcres = new TreeNode("Beachfront Acres");
+            beachAcres.ImageIndex = 62;
+            beachAcres.SelectedImageIndex = 62;
+            TreeNode oceanAcres = new TreeNode("Ocean Acres");
+            oceanAcres.ImageIndex = 67;
+            oceanAcres.SelectedImageIndex = 67;
+            TreeNode islandAcres = new TreeNode("Island Acres");
+            islandAcres.ImageIndex = 75;
+            islandAcres.SelectedImageIndex = 75;
+            TreeNode miscAcres = new TreeNode("Miscellaneous");
+            miscAcres.ImageIndex = 80;
+            miscAcres.SelectedImageIndex = 80;
+
+            treeView1.Nodes.Add(borderAcres);
+            treeView1.Nodes.Add(grassAcres);
+            treeView1.Nodes.Add(cliffAcres);
+            treeView1.Nodes.Add(riverAcres);
+            treeView1.Nodes.Add(specialAcres);
+            treeView1.Nodes.Add(beachAcres);
+            treeView1.Nodes.Add(oceanAcres);
+            treeView1.Nodes.Add(islandAcres);
+            treeView1.Nodes.Add(miscAcres);
+
+            foreach (KeyValuePair<ushort, string> acre in AcreData.Acres)
+            {
+                TreeNode acreNode = new TreeNode(acre.Value);
+                acreNode.ImageIndex = Array.IndexOf(treeViewIconIndex, AcreImages[acre.Key]);
+                acreNode.SelectedImageIndex = acreNode.ImageIndex;
+                acreNode.Tag = acre;
+
+                if (acre.Value.Contains("Border"))
+                    treeView1.Nodes[0].Nodes.Add(acreNode);
+                else if (acre.Value.Contains("Empty"))
+                    treeView1.Nodes[1].Nodes.Add(acreNode);
+                else if (acre.Value.Contains("Cliff") || acre.Value.Contains("Ramp"))
+                    treeView1.Nodes[2].Nodes.Add(acreNode);
+                else if ((acre.Value.Contains("River") || acre.Value.Contains("Lake")) && !acre.Value.Contains("Beachfront"))
+                    treeView1.Nodes[3].Nodes.Add(acreNode);
+                else if (acre.Value.Contains("Nook's Acre") || acre.Value.Contains("Post Office") || acre.Value.Contains("Dump") || acre.Value.Contains("Train Station") || acre.Value.Contains("Tailor's Shop") || acre.Value.Contains("Museum") || acre.Value.Contains("Police Station") || acre.Value.Contains("Wishing Well") || acre.Value.Contains("Player Houses"))
+                    treeView1.Nodes[4].Nodes.Add(acreNode);
+                else if (acre.Value.Contains("Beachfront"))
+                    treeView1.Nodes[5].Nodes.Add(acreNode);
+                else if (acre.Value.Contains("Ocean"))
+                    treeView1.Nodes[6].Nodes.Add(acreNode);
+                else if (acre.Value.Contains("Island"))
+                    treeView1.Nodes[7].Nodes.Add(acreNode);
+                else
+                    treeView1.Nodes[8].Nodes.Add(acreNode);
+            }
+
+            treeView1.AfterSelect += new TreeViewEventHandler(treeNode_Selected);
+
+            treeView1.EndUpdate();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                textBox1_FocusLost(sender, null);
+        }
+
+        private void textBox1_FocusLost(object sender, EventArgs e)
+        {
+            TextBox s = (TextBox)sender;
+            ushort acreId = 0;
+            if (s.Text.Contains("0x"))
+                s.Text.Replace("0x", "");
+            ushort.TryParse(s.Text, NumberStyles.AllowHexSpecifier, null, out acreId);
+            if (acreId < 0x600)
+            {
+                bool acreDataExists = AcreData.Acres.ContainsKey(acreId);
+                pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (acreDataExists ? (AcreImages[acreId]).ToString() : "99"));
+                string acreInfo = "Unknown Acre";
+                if (acreDataExists)
+                    AcreData.Acres.TryGetValue(acreId, out acreInfo);
+                label2.Text = acreInfo;
+                label3.Text = "0x" + acreId.ToString("X4");
+                currentlySelectedAcre = acreId;
+            }
         }
 
         private void AcreEditor_Shown(object sender, EventArgs e)
@@ -306,25 +457,15 @@ namespace ACSE
                 acreImages[i].Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (imageNumber).ToString());
                 acreImages[i].Location = new Point(xOffset + (i % 7) * 33 + (1 + (i % 7)), y + yOffset);
                 acreImages[i].Name = data.Value.AcreID.ToString();
-                acreImages[i].Click += new EventHandler(acreImage_Click);
+                acreImages[i].MouseClick += new MouseEventHandler(acreImage_Click);
                 this.Controls.Add(acreImages[i]);
                 i++;
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            mode = 0;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            mode = 1;
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -334,7 +475,7 @@ namespace ACSE
                 acreData[acre.Key - 1] = acre.Value.AcreID;
 
             form.WriteUShort(acreData, Form1.AcreTile_Offset);
-            this.Hide();
+            this.Close();
         }
 
     }
