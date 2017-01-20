@@ -53,7 +53,7 @@ namespace ACSE
             for (int i = 0; i < 30; i++)
             {
                 //MessageBox.Show(acreIds[acreIdIndex].ToString("X"));
-                if (AcreEditor.CliffAcres.ContainsKey(acreIds[acreIdIndex]))
+                if (AcreData.CliffAcres.ContainsKey(acreIds[acreIdIndex]))
                     acreIdIndex += 3;
                 else
                     acreIdIndex++;
@@ -68,7 +68,7 @@ namespace ACSE
                 ushort[] itemsBuff = new ushort[256];
                 Array.ConstrainedCopy(islandItems, i * 256, itemsBuff, 0, 256);
                 Island_Acres[i] = new Normal_Acre(acreIds[60 + i], i + 1, itemsBuff, islandBurriedItemData);
-                int acreImg = AcreEditor.AcreImages.ContainsKey(Island_Acres[i].AcreID) ? AcreEditor.AcreImages[Island_Acres[i].AcreID] : 99;
+                int acreImg = AcreData.AcreImages.ContainsKey(Island_Acres[i].AcreID) ? AcreData.AcreImages[Island_Acres[i].AcreID] : 99;
                 islandImages[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 islandAcreImages[i] = new PictureBox();
                 islandAcreImages[i].Size = new Size(128, 128);
@@ -116,7 +116,7 @@ namespace ACSE
             }
             for (int i = 0; i < 30; i++)
             {
-                int acreImg = AcreEditor.AcreImages.ContainsKey(Acres[i].AcreID) ? AcreEditor.AcreImages[Acres[i].AcreID] : 99;
+                int acreImg = AcreData.AcreImages.ContainsKey(Acres[i].AcreID) ? AcreData.AcreImages[Acres[i].AcreID] : 99;
                 images[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 acreImages[i] = new PictureBox();
                 acreImages[i].Size = new Size(128, 128);

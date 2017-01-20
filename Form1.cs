@@ -685,8 +685,7 @@ namespace ACSE
                 ushort[] acreTileData = ReadRawUShort(AcreTile_Offset, AcreTile_Size);
                 Dictionary<int, Acre> tileData = AcreData.GetAcreTileData(acreTileData);
                 if (editor == null || editor.IsDisposed)
-                    editor = new AcreEditor(this);
-                editor.currentAcreData = tileData;
+                    editor = new AcreEditor(this, tileData);
                 editor.Show();
             }
         }
