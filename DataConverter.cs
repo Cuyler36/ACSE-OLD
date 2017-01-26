@@ -67,37 +67,5 @@ namespace ACSE
             Array.Reverse(data);
             return data;
         }
-
-       /* public void WriteData(dynamic data, int offset)
-        {
-            Writer.Seek(offset, SeekOrigin.Begin);
-            Type type = data.GetType();
-            if (type == typeof(int) || type == typeof(ushort))
-            {
-                byte[] dataBytes = BitConverter.GetBytes(data);
-                Array.Reverse(dataBytes);
-                Writer.Write(dataBytes);
-            }
-            else if (type == typeof(byte[]))
-            {
-                Array.Reverse(data);
-                Writer.Write(data);
-            }
-            else if (type == typeof(ushort[]))
-            {
-                Writer.Write(ConvertUShortArray(data));
-            }
-            else if (type == typeof(string))
-            {
-                byte[] strBytes = new byte[8];
-                Encoding.ASCII.GetBytes(data).CopyTo(strBytes, 0);
-                for (int i = (data.Length); i <= 8 - 1; i++)
-                {
-                    strBytes[i] = 0x20;
-                }
-                Writer.Write(strBytes);
-            }
-        }*/
-
     }
 }

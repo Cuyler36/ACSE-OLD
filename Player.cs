@@ -89,8 +89,8 @@ namespace ACSE
         public string Name;
         public string Town_Name;
         public Inventory Inventory;
-        public uint Bells;
-        public uint Debt;
+        public uint Bells = 0;
+        public uint Debt = 0;
         public Item Held_Item;
         public Item Shirt;
         public Item Inventory_Background;
@@ -100,6 +100,7 @@ namespace ACSE
         public uint Identifier;
         public int House_Number = 0;
         public int House_Data_Offset = 0;
+        public uint Savings = 0;
         public Pattern[] Patterns = new Pattern[8];
         public bool Reset = false;
         public bool Exists = false;
@@ -132,6 +133,7 @@ namespace ACSE
             Inventory_Background = new Item(form.ReadRawUShort(offset + 0x1084, 2)[0]);
             Shirt = new Item(form.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
             Reset = form.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
+            Savings = BitConverter.ToUInt32(form.ReadData(offset + 0x122C, 4), 0);
             for (int i = 0; i < 8; i++)
                 Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);
             House_Number = GetHouse();
@@ -155,6 +157,8 @@ namespace ACSE
 
             if (Properties.Settings.Default.StopResetti)
                 form.WriteUShort(new ushort[] { 0 }, offset + 0x10F6);
+
+            form.WriteData(offset + 0x122C, BitConverter.GetBytes(Savings));
 
             foreach (Pattern p in Patterns)
                 p.Write();

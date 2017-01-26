@@ -210,6 +210,12 @@
     <Compile Include="TownEditor.Designer.cs">
       <DependentUpon>TownEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="TuneEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuneEditorForm.Designer.cs">
+      <DependentUpon>TuneEditorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Villager Editor.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -35,9 +35,12 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.townNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.player1Savings = new System.Windows.Forms.TextBox();
+            this.label34 = new System.Windows.Forms.Label();
             this.player1Face = new System.Windows.Forms.ComboBox();
             this.player1Background = new System.Windows.Forms.ComboBox();
             this.label32 = new System.Windows.Forms.Label();
@@ -60,7 +63,9 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.player2Savings = new System.Windows.Forms.TextBox();
             this.player2Face = new System.Windows.Forms.ComboBox();
+            this.label35 = new System.Windows.Forms.Label();
             this.player2Background = new System.Windows.Forms.ComboBox();
             this.label30 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -79,7 +84,9 @@
             this.label13 = new System.Windows.Forms.Label();
             this.player2Name = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.player3Savings = new System.Windows.Forms.TextBox();
             this.player3Face = new System.Windows.Forms.ComboBox();
+            this.label36 = new System.Windows.Forms.Label();
             this.player3Background = new System.Windows.Forms.ComboBox();
             this.label28 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -98,7 +105,9 @@
             this.label19 = new System.Windows.Forms.Label();
             this.player3Name = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.player4Savings = new System.Windows.Forms.TextBox();
             this.player4Face = new System.Windows.Forms.ComboBox();
+            this.label37 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.player4Gender = new System.Windows.Forms.ComboBox();
             this.label26 = new System.Windows.Forms.Label();
@@ -119,7 +128,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -155,16 +163,23 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -188,6 +203,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.player1Savings);
+            this.groupBox1.Controls.Add(this.label34);
             this.groupBox1.Controls.Add(this.player1Face);
             this.groupBox1.Controls.Add(this.player1Background);
             this.groupBox1.Controls.Add(this.label32);
@@ -208,16 +225,36 @@
             this.groupBox1.Controls.Add(this.player1Name);
             this.groupBox1.Location = new System.Drawing.Point(17, 55);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(186, 262);
+            this.groupBox1.Size = new System.Drawing.Size(186, 282);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Player1";
+            // 
+            // player1Savings
+            // 
+            this.player1Savings.Enabled = false;
+            this.player1Savings.Location = new System.Drawing.Point(50, 89);
+            this.player1Savings.MaxLength = 9;
+            this.player1Savings.Name = "player1Savings";
+            this.player1Savings.Size = new System.Drawing.Size(130, 20);
+            this.player1Savings.TabIndex = 27;
+            this.player1Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
+            this.player1Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(6, 92);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(35, 13);
+            this.label34.TabIndex = 26;
+            this.label34.Text = "Bank:";
             // 
             // player1Face
             // 
             this.player1Face.Enabled = false;
             this.player1Face.FormattingEnabled = true;
-            this.player1Face.Location = new System.Drawing.Point(43, 200);
+            this.player1Face.Location = new System.Drawing.Point(43, 220);
             this.player1Face.Name = "player1Face";
             this.player1Face.Size = new System.Drawing.Size(137, 21);
             this.player1Face.TabIndex = 25;
@@ -227,7 +264,7 @@
             // 
             this.player1Background.Enabled = false;
             this.player1Background.FormattingEnabled = true;
-            this.player1Background.Location = new System.Drawing.Point(91, 146);
+            this.player1Background.Location = new System.Drawing.Point(91, 166);
             this.player1Background.Name = "player1Background";
             this.player1Background.Size = new System.Drawing.Size(89, 21);
             this.player1Background.TabIndex = 13;
@@ -236,7 +273,7 @@
             // label32
             // 
             this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(6, 203);
+            this.label32.Location = new System.Drawing.Point(6, 223);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(34, 13);
             this.label32.TabIndex = 24;
@@ -245,7 +282,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 149);
+            this.label7.Location = new System.Drawing.Point(6, 169);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(86, 13);
             this.label7.TabIndex = 12;
@@ -258,7 +295,7 @@
             this.player1Gender.Items.AddRange(new object[] {
             "Male",
             "Female"});
-            this.player1Gender.Location = new System.Drawing.Point(50, 173);
+            this.player1Gender.Location = new System.Drawing.Point(50, 193);
             this.player1Gender.Name = "player1Gender";
             this.player1Gender.Size = new System.Drawing.Size(130, 21);
             this.player1Gender.TabIndex = 23;
@@ -268,7 +305,7 @@
             // 
             this.player1Shirt.Enabled = false;
             this.player1Shirt.FormattingEnabled = true;
-            this.player1Shirt.Location = new System.Drawing.Point(43, 119);
+            this.player1Shirt.Location = new System.Drawing.Point(43, 139);
             this.player1Shirt.Name = "player1Shirt";
             this.player1Shirt.Size = new System.Drawing.Size(137, 21);
             this.player1Shirt.TabIndex = 11;
@@ -277,7 +314,7 @@
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 176);
+            this.label33.Location = new System.Drawing.Point(6, 196);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(45, 13);
             this.label33.TabIndex = 22;
@@ -286,7 +323,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 122);
+            this.label6.Location = new System.Drawing.Point(6, 142);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(31, 13);
             this.label6.TabIndex = 10;
@@ -410,7 +447,7 @@
             "Black Paint",
             "White Paint",
             "Brown Paint"});
-            this.player1HeldItem.Location = new System.Drawing.Point(67, 92);
+            this.player1HeldItem.Location = new System.Drawing.Point(67, 112);
             this.player1HeldItem.Name = "player1HeldItem";
             this.player1HeldItem.Size = new System.Drawing.Size(113, 21);
             this.player1HeldItem.TabIndex = 7;
@@ -419,7 +456,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 95);
+            this.label4.Location = new System.Drawing.Point(6, 115);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 6;
@@ -427,7 +464,7 @@
             // 
             // player1House
             // 
-            this.player1House.Location = new System.Drawing.Point(105, 233);
+            this.player1House.Location = new System.Drawing.Point(111, 253);
             this.player1House.Name = "player1House";
             this.player1House.Size = new System.Drawing.Size(75, 23);
             this.player1House.TabIndex = 5;
@@ -437,7 +474,7 @@
             // 
             // player1Inventory
             // 
-            this.player1Inventory.Location = new System.Drawing.Point(6, 233);
+            this.player1Inventory.Location = new System.Drawing.Point(12, 253);
             this.player1Inventory.Name = "player1Inventory";
             this.player1Inventory.Size = new System.Drawing.Size(75, 23);
             this.player1Inventory.TabIndex = 4;
@@ -517,7 +554,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.player2Savings);
             this.groupBox2.Controls.Add(this.player2Face);
+            this.groupBox2.Controls.Add(this.label35);
             this.groupBox2.Controls.Add(this.player2Background);
             this.groupBox2.Controls.Add(this.label30);
             this.groupBox2.Controls.Add(this.label8);
@@ -537,26 +576,46 @@
             this.groupBox2.Controls.Add(this.player2Name);
             this.groupBox2.Location = new System.Drawing.Point(209, 55);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(186, 262);
+            this.groupBox2.Size = new System.Drawing.Size(186, 282);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Player2";
+            // 
+            // player2Savings
+            // 
+            this.player2Savings.Enabled = false;
+            this.player2Savings.Location = new System.Drawing.Point(50, 89);
+            this.player2Savings.MaxLength = 9;
+            this.player2Savings.Name = "player2Savings";
+            this.player2Savings.Size = new System.Drawing.Size(130, 20);
+            this.player2Savings.TabIndex = 29;
+            this.player2Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
+            this.player2Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
             // 
             // player2Face
             // 
             this.player2Face.Enabled = false;
             this.player2Face.FormattingEnabled = true;
-            this.player2Face.Location = new System.Drawing.Point(43, 200);
+            this.player2Face.Location = new System.Drawing.Point(43, 220);
             this.player2Face.Name = "player2Face";
             this.player2Face.Size = new System.Drawing.Size(137, 21);
             this.player2Face.TabIndex = 21;
             this.player2Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(6, 92);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(35, 13);
+            this.label35.TabIndex = 28;
+            this.label35.Text = "Bank:";
+            // 
             // player2Background
             // 
             this.player2Background.Enabled = false;
             this.player2Background.FormattingEnabled = true;
-            this.player2Background.Location = new System.Drawing.Point(91, 146);
+            this.player2Background.Location = new System.Drawing.Point(91, 166);
             this.player2Background.Name = "player2Background";
             this.player2Background.Size = new System.Drawing.Size(89, 21);
             this.player2Background.TabIndex = 13;
@@ -564,7 +623,7 @@
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(6, 203);
+            this.label30.Location = new System.Drawing.Point(6, 223);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(34, 13);
             this.label30.TabIndex = 20;
@@ -573,7 +632,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 149);
+            this.label8.Location = new System.Drawing.Point(6, 169);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(86, 13);
             this.label8.TabIndex = 12;
@@ -586,7 +645,7 @@
             this.player2Gender.Items.AddRange(new object[] {
             "Male",
             "Female"});
-            this.player2Gender.Location = new System.Drawing.Point(50, 173);
+            this.player2Gender.Location = new System.Drawing.Point(50, 193);
             this.player2Gender.Name = "player2Gender";
             this.player2Gender.Size = new System.Drawing.Size(130, 21);
             this.player2Gender.TabIndex = 19;
@@ -596,7 +655,7 @@
             // 
             this.player2Shirt.Enabled = false;
             this.player2Shirt.FormattingEnabled = true;
-            this.player2Shirt.Location = new System.Drawing.Point(43, 119);
+            this.player2Shirt.Location = new System.Drawing.Point(43, 139);
             this.player2Shirt.Name = "player2Shirt";
             this.player2Shirt.Size = new System.Drawing.Size(137, 21);
             this.player2Shirt.TabIndex = 11;
@@ -604,7 +663,7 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(6, 176);
+            this.label31.Location = new System.Drawing.Point(6, 196);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(45, 13);
             this.label31.TabIndex = 18;
@@ -613,7 +672,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 122);
+            this.label9.Location = new System.Drawing.Point(6, 142);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(31, 13);
             this.label9.TabIndex = 10;
@@ -627,6 +686,8 @@
             this.player2Debt.Name = "player2Debt";
             this.player2Debt.Size = new System.Drawing.Size(130, 20);
             this.player2Debt.TabIndex = 9;
+            this.player2Debt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox3_KeyPress);
+            this.player2Debt.LostFocus += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // label10
             // 
@@ -735,7 +796,7 @@
             "Black Paint",
             "White Paint",
             "Brown Paint"});
-            this.player2HeldItem.Location = new System.Drawing.Point(67, 92);
+            this.player2HeldItem.Location = new System.Drawing.Point(67, 112);
             this.player2HeldItem.Name = "player2HeldItem";
             this.player2HeldItem.Size = new System.Drawing.Size(113, 21);
             this.player2HeldItem.TabIndex = 7;
@@ -743,7 +804,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 95);
+            this.label11.Location = new System.Drawing.Point(6, 115);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(55, 13);
             this.label11.TabIndex = 6;
@@ -751,7 +812,7 @@
             // 
             // player2House
             // 
-            this.player2House.Location = new System.Drawing.Point(105, 233);
+            this.player2House.Location = new System.Drawing.Point(111, 253);
             this.player2House.Name = "player2House";
             this.player2House.Size = new System.Drawing.Size(75, 23);
             this.player2House.TabIndex = 5;
@@ -761,7 +822,7 @@
             // 
             // player2Inventory
             // 
-            this.player2Inventory.Location = new System.Drawing.Point(6, 233);
+            this.player2Inventory.Location = new System.Drawing.Point(12, 253);
             this.player2Inventory.Name = "player2Inventory";
             this.player2Inventory.Size = new System.Drawing.Size(75, 23);
             this.player2Inventory.TabIndex = 4;
@@ -777,6 +838,8 @@
             this.player2Bells.Name = "player2Bells";
             this.player2Bells.Size = new System.Drawing.Size(130, 20);
             this.player2Bells.TabIndex = 3;
+            this.player2Bells.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
+            this.player2Bells.LostFocus += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label12
             // 
@@ -809,7 +872,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.player3Savings);
             this.groupBox3.Controls.Add(this.player3Face);
+            this.groupBox3.Controls.Add(this.label36);
             this.groupBox3.Controls.Add(this.player3Background);
             this.groupBox3.Controls.Add(this.label28);
             this.groupBox3.Controls.Add(this.label14);
@@ -829,26 +894,46 @@
             this.groupBox3.Controls.Add(this.player3Name);
             this.groupBox3.Location = new System.Drawing.Point(401, 55);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(186, 262);
+            this.groupBox3.Size = new System.Drawing.Size(186, 282);
             this.groupBox3.TabIndex = 15;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Player3";
+            // 
+            // player3Savings
+            // 
+            this.player3Savings.Enabled = false;
+            this.player3Savings.Location = new System.Drawing.Point(50, 89);
+            this.player3Savings.MaxLength = 9;
+            this.player3Savings.Name = "player3Savings";
+            this.player3Savings.Size = new System.Drawing.Size(130, 20);
+            this.player3Savings.TabIndex = 31;
+            this.player3Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
+            this.player3Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
             // 
             // player3Face
             // 
             this.player3Face.Enabled = false;
             this.player3Face.FormattingEnabled = true;
-            this.player3Face.Location = new System.Drawing.Point(43, 200);
+            this.player3Face.Location = new System.Drawing.Point(43, 220);
             this.player3Face.Name = "player3Face";
             this.player3Face.Size = new System.Drawing.Size(137, 21);
             this.player3Face.TabIndex = 21;
             this.player3Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(6, 92);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(35, 13);
+            this.label36.TabIndex = 30;
+            this.label36.Text = "Bank:";
+            // 
             // player3Background
             // 
             this.player3Background.Enabled = false;
             this.player3Background.FormattingEnabled = true;
-            this.player3Background.Location = new System.Drawing.Point(91, 146);
+            this.player3Background.Location = new System.Drawing.Point(91, 166);
             this.player3Background.Name = "player3Background";
             this.player3Background.Size = new System.Drawing.Size(89, 21);
             this.player3Background.TabIndex = 13;
@@ -856,7 +941,7 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(6, 203);
+            this.label28.Location = new System.Drawing.Point(6, 223);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(34, 13);
             this.label28.TabIndex = 20;
@@ -865,7 +950,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 149);
+            this.label14.Location = new System.Drawing.Point(6, 169);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(86, 13);
             this.label14.TabIndex = 12;
@@ -878,7 +963,7 @@
             this.player3Gender.Items.AddRange(new object[] {
             "Male",
             "Female"});
-            this.player3Gender.Location = new System.Drawing.Point(50, 173);
+            this.player3Gender.Location = new System.Drawing.Point(50, 193);
             this.player3Gender.Name = "player3Gender";
             this.player3Gender.Size = new System.Drawing.Size(130, 21);
             this.player3Gender.TabIndex = 19;
@@ -888,7 +973,7 @@
             // 
             this.player3Shirt.Enabled = false;
             this.player3Shirt.FormattingEnabled = true;
-            this.player3Shirt.Location = new System.Drawing.Point(43, 119);
+            this.player3Shirt.Location = new System.Drawing.Point(43, 139);
             this.player3Shirt.Name = "player3Shirt";
             this.player3Shirt.Size = new System.Drawing.Size(137, 21);
             this.player3Shirt.TabIndex = 11;
@@ -896,7 +981,7 @@
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(6, 176);
+            this.label29.Location = new System.Drawing.Point(6, 196);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(45, 13);
             this.label29.TabIndex = 18;
@@ -905,7 +990,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 122);
+            this.label15.Location = new System.Drawing.Point(6, 142);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(31, 13);
             this.label15.TabIndex = 10;
@@ -919,6 +1004,8 @@
             this.player3Debt.Name = "player3Debt";
             this.player3Debt.Size = new System.Drawing.Size(130, 20);
             this.player3Debt.TabIndex = 9;
+            this.player3Debt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox3_KeyPress);
+            this.player3Debt.LostFocus += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // label16
             // 
@@ -1027,7 +1114,7 @@
             "Black Paint",
             "White Paint",
             "Brown Paint"});
-            this.player3HeldItem.Location = new System.Drawing.Point(67, 92);
+            this.player3HeldItem.Location = new System.Drawing.Point(67, 112);
             this.player3HeldItem.Name = "player3HeldItem";
             this.player3HeldItem.Size = new System.Drawing.Size(113, 21);
             this.player3HeldItem.TabIndex = 7;
@@ -1035,7 +1122,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 95);
+            this.label17.Location = new System.Drawing.Point(6, 115);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(55, 13);
             this.label17.TabIndex = 6;
@@ -1043,7 +1130,7 @@
             // 
             // player3House
             // 
-            this.player3House.Location = new System.Drawing.Point(105, 233);
+            this.player3House.Location = new System.Drawing.Point(105, 253);
             this.player3House.Name = "player3House";
             this.player3House.Size = new System.Drawing.Size(75, 23);
             this.player3House.TabIndex = 5;
@@ -1053,7 +1140,7 @@
             // 
             // player3Inventory
             // 
-            this.player3Inventory.Location = new System.Drawing.Point(6, 233);
+            this.player3Inventory.Location = new System.Drawing.Point(6, 253);
             this.player3Inventory.Name = "player3Inventory";
             this.player3Inventory.Size = new System.Drawing.Size(75, 23);
             this.player3Inventory.TabIndex = 4;
@@ -1069,6 +1156,8 @@
             this.player3Bells.Name = "player3Bells";
             this.player3Bells.Size = new System.Drawing.Size(130, 20);
             this.player3Bells.TabIndex = 3;
+            this.player3Bells.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
+            this.player3Bells.LostFocus += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label18
             // 
@@ -1101,7 +1190,9 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.player4Savings);
             this.groupBox4.Controls.Add(this.player4Face);
+            this.groupBox4.Controls.Add(this.label37);
             this.groupBox4.Controls.Add(this.label27);
             this.groupBox4.Controls.Add(this.player4Gender);
             this.groupBox4.Controls.Add(this.label26);
@@ -1121,25 +1212,45 @@
             this.groupBox4.Controls.Add(this.player4Name);
             this.groupBox4.Location = new System.Drawing.Point(593, 55);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(186, 262);
+            this.groupBox4.Size = new System.Drawing.Size(186, 282);
             this.groupBox4.TabIndex = 14;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Player4";
+            // 
+            // player4Savings
+            // 
+            this.player4Savings.Enabled = false;
+            this.player4Savings.Location = new System.Drawing.Point(50, 89);
+            this.player4Savings.MaxLength = 9;
+            this.player4Savings.Name = "player4Savings";
+            this.player4Savings.Size = new System.Drawing.Size(130, 20);
+            this.player4Savings.TabIndex = 33;
+            this.player4Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
+            this.player4Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
             // 
             // player4Face
             // 
             this.player4Face.Enabled = false;
             this.player4Face.FormattingEnabled = true;
-            this.player4Face.Location = new System.Drawing.Point(43, 200);
+            this.player4Face.Location = new System.Drawing.Point(43, 220);
             this.player4Face.Name = "player4Face";
             this.player4Face.Size = new System.Drawing.Size(137, 21);
             this.player4Face.TabIndex = 17;
             this.player4Face.SelectedIndexChanged += new System.EventHandler(this.face_SelectedIndexChanged);
             // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(6, 92);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(35, 13);
+            this.label37.TabIndex = 32;
+            this.label37.Text = "Bank:";
+            // 
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(6, 203);
+            this.label27.Location = new System.Drawing.Point(6, 223);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(34, 13);
             this.label27.TabIndex = 16;
@@ -1152,7 +1263,7 @@
             this.player4Gender.Items.AddRange(new object[] {
             "Male",
             "Female"});
-            this.player4Gender.Location = new System.Drawing.Point(50, 173);
+            this.player4Gender.Location = new System.Drawing.Point(50, 193);
             this.player4Gender.Name = "player4Gender";
             this.player4Gender.Size = new System.Drawing.Size(130, 21);
             this.player4Gender.TabIndex = 15;
@@ -1161,7 +1272,7 @@
             // label26
             // 
             this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(6, 176);
+            this.label26.Location = new System.Drawing.Point(6, 196);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(45, 13);
             this.label26.TabIndex = 14;
@@ -1171,7 +1282,7 @@
             // 
             this.player4Background.Enabled = false;
             this.player4Background.FormattingEnabled = true;
-            this.player4Background.Location = new System.Drawing.Point(91, 146);
+            this.player4Background.Location = new System.Drawing.Point(91, 166);
             this.player4Background.Name = "player4Background";
             this.player4Background.Size = new System.Drawing.Size(89, 21);
             this.player4Background.TabIndex = 13;
@@ -1179,7 +1290,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(6, 149);
+            this.label20.Location = new System.Drawing.Point(6, 169);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(86, 13);
             this.label20.TabIndex = 12;
@@ -1189,7 +1300,7 @@
             // 
             this.player4Shirt.Enabled = false;
             this.player4Shirt.FormattingEnabled = true;
-            this.player4Shirt.Location = new System.Drawing.Point(43, 119);
+            this.player4Shirt.Location = new System.Drawing.Point(43, 139);
             this.player4Shirt.Name = "player4Shirt";
             this.player4Shirt.Size = new System.Drawing.Size(137, 21);
             this.player4Shirt.TabIndex = 11;
@@ -1197,7 +1308,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 122);
+            this.label21.Location = new System.Drawing.Point(6, 142);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(31, 13);
             this.label21.TabIndex = 10;
@@ -1211,6 +1322,8 @@
             this.player4Debt.Name = "player4Debt";
             this.player4Debt.Size = new System.Drawing.Size(130, 20);
             this.player4Debt.TabIndex = 9;
+            this.player4Debt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox3_KeyPress);
+            this.player4Debt.LostFocus += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // label22
             // 
@@ -1319,7 +1432,7 @@
             "Black Paint",
             "White Paint",
             "Brown Paint"});
-            this.player4HeldItem.Location = new System.Drawing.Point(67, 92);
+            this.player4HeldItem.Location = new System.Drawing.Point(67, 112);
             this.player4HeldItem.Name = "player4HeldItem";
             this.player4HeldItem.Size = new System.Drawing.Size(113, 21);
             this.player4HeldItem.TabIndex = 7;
@@ -1327,7 +1440,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 95);
+            this.label23.Location = new System.Drawing.Point(6, 115);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(55, 13);
             this.label23.TabIndex = 6;
@@ -1335,7 +1448,7 @@
             // 
             // player4House
             // 
-            this.player4House.Location = new System.Drawing.Point(105, 233);
+            this.player4House.Location = new System.Drawing.Point(111, 253);
             this.player4House.Name = "player4House";
             this.player4House.Size = new System.Drawing.Size(75, 23);
             this.player4House.TabIndex = 5;
@@ -1345,7 +1458,7 @@
             // 
             // player4Inventory
             // 
-            this.player4Inventory.Location = new System.Drawing.Point(6, 233);
+            this.player4Inventory.Location = new System.Drawing.Point(12, 253);
             this.player4Inventory.Name = "player4Inventory";
             this.player4Inventory.Size = new System.Drawing.Size(75, 23);
             this.player4Inventory.TabIndex = 4;
@@ -1361,6 +1474,8 @@
             this.player4Bells.Name = "player4Bells";
             this.player4Bells.Size = new System.Drawing.Size(130, 20);
             this.player4Bells.TabIndex = 3;
+            this.player4Bells.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
+            this.player4Bells.LostFocus += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label24
             // 
@@ -1407,18 +1522,11 @@
             this.openFileDialog2.FileName = "openFileDialog2";
             this.openFileDialog2.Filter = "Bitmap Image (*.bmp) | *.bmp";
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(795, 407);
+            this.ClientSize = new System.Drawing.Size(795, 427);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -1542,6 +1650,14 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.TextBox player1Savings;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.TextBox player2Savings;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.TextBox player3Savings;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.TextBox player4Savings;
+        private System.Windows.Forms.Label label37;
     }
 }
 

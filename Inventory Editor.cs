@@ -12,7 +12,7 @@ namespace ACSE
 {
     public partial class Inventory_Editor : Form
     {
-        ushort[] InventoryData;
+        //ushort[] InventoryData;
         Form1 form;
         Inventory Pockets;
         Item[] Dresser;
@@ -31,12 +31,33 @@ namespace ACSE
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
             pictureBox1.MouseClick += new MouseEventHandler(clickCustom);
-            pictureBox2.MouseClick += new MouseEventHandler(clickCustom);
+            pictureBox1.MouseMove += new MouseEventHandler(hover);
+
+            //pictureBox2.MouseClick += new MouseEventHandler(clickCustom);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void hover(object sender, MouseEventArgs e)
+        {
+            int width = (sender as PictureBox).Width / 16;
+            int X = e.X / (16);
+            int Y = e.Y / (16);
+            int index = width * Y + X;
+
+            if (index > -1 && index < 15)
+            {
+                Item item = Pockets.Items[index];
+                label1.Text = string.Format("0x{0} - {1}", item.ItemID.ToString("X4"), item.Name);
+                //MessageBox.Show("Hi");
+            }
+            else
+            {
+                label1.Text = "0x0000 - Empty";
+            }
         }
 
         //Thanks NLSE!
@@ -73,7 +94,7 @@ namespace ACSE
                 else if (dresser)
                 {
                     Dresser[index] = new Item((ushort)comboBox1.SelectedValue);
-                    pictureBox2.Image = Inventory.getItemPic(16, 3, Dresser);
+                    //pictureBox2.Image = Inventory.getItemPic(16, 3, Dresser);
                 }
             }
         }

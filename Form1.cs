@@ -35,6 +35,7 @@ namespace ACSE
         public static int IslandBurriedItems_Offset = 0x23DC9;
         public static int IslandBurriedItems_Length = 0x40;
         public static int Nook_Items_Offset = 0x2040E;
+        public static int Town_Tune_Offset = 0x20F08;
         #endregion Offsets
 
         #region Variables
@@ -56,6 +57,25 @@ namespace ACSE
         private string patternSaveLoc;
         private Bitmap currentPattern;
         private CancelEventHandler importHandler;
+        public static Dictionary<byte, string> Tune_Chart = new Dictionary<byte, string>()
+        {
+            { 0xE, "Zz.png" },
+            { 0xF, "Empty.png" },
+            { 0x0, "Blue_G.png" },
+            { 0x1, "Blue_A.png" },
+            { 0x2, "Blue_B.png" },
+            { 0x3, "Green_C.png" },
+            { 0x4, "Green_D.png" },
+            { 0x5, "Green_E.png" },
+            { 0x6, "Green_F.png" },
+            { 0x7, "Green_G.png" },
+            { 0x8, "Green_A.png" },
+            { 0x9, "Yellow_B.png" },
+            { 0xA, "Yellow_C.png" },
+            { 0xB, "Orange_D.png" },
+            { 0xC, "Orange_E.png" },
+            { 0xD, "Random.png" }
+        };
         #endregion Variables
 
         public static DateTime DateFromTimestamp(long timestamp)
@@ -372,6 +392,7 @@ namespace ACSE
                 player1Name.Text = Player1.Name.Trim();
                 player1Bells.Text = Player1.Bells.ToString();
                 player1Debt.Text = Player1.Debt.ToString();
+                player1Savings.Text = Player1.Savings.ToString();
                 player1HeldItem.Text = Player1.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
                 player1Shirt.DataSource = new BindingSource(Shirts, null);
                 player1Shirt.ValueMember = "Key";
@@ -404,6 +425,7 @@ namespace ACSE
                 player2Name.Text = Player2.Name;
                 player2Bells.Text = Player2.Bells.ToString();
                 player2Debt.Text = Player2.Debt.ToString();
+                player2Savings.Text = Player2.Savings.ToString();
                 player2HeldItem.Text = Player2.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
                 if (!Player2.Exists)
                 {
@@ -412,6 +434,7 @@ namespace ACSE
                     player2Name.Enabled = false;
                     player2Bells.Enabled = false;
                     player2Debt.Enabled = false;
+                    player2Savings.Enabled = false;
                     player2HeldItem.Enabled = false;
                     player2Face.Enabled = false;
                     player2Gender.Enabled = false;
@@ -433,6 +456,7 @@ namespace ACSE
                 player3Name.Text = Player3.Name;
                 player3Bells.Text = Player3.Bells.ToString();
                 player3Debt.Text = Player3.Debt.ToString();
+                player3Savings.Text = Player3.Savings.ToString();
                 player3HeldItem.Text = Player3.Held_Item.ItemID == 0 ? "(None)" : Player3.Held_Item.Name;
                 if (!Player3.Exists)
                 {
@@ -441,6 +465,7 @@ namespace ACSE
                     player3Name.Enabled = false;
                     player3Bells.Enabled = false;
                     player3Debt.Enabled = false;
+                    player3Savings.Enabled = false;
                     player3HeldItem.Enabled = false;
                     player3Face.Enabled = false;
                     player3Gender.Enabled = false;
@@ -462,6 +487,7 @@ namespace ACSE
                 player4Name.Text = Player4.Name;
                 player4Bells.Text = Player4.Bells.ToString();
                 player4Debt.Text = Player4.Debt.ToString();
+                player4Savings.Text = Player4.Savings.ToString();
                 player4HeldItem.Text = Player4.Held_Item.ItemID == 0 ? "(None)" : Player4.Held_Item.Name;
                 if (!Player4.Exists)
                 {
@@ -470,6 +496,7 @@ namespace ACSE
                     player4Name.Enabled = false;
                     player4Bells.Enabled = false;
                     player4Debt.Enabled = false;
+                    player4Savings.Enabled = false;
                     player4HeldItem.Enabled = false;
                     player4Face.Enabled = false;
                     player4Gender.Enabled = false;
@@ -564,16 +591,34 @@ namespace ACSE
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             TextBox senderComboBox = (TextBox)sender;
-            if (CanSetData && player1Debt.Text.Length > 0)
+            if (CanSetData)
             {
                 uint bells = senderComboBox.Text.Any(char.IsDigit) ? uint.Parse(senderComboBox.Text) : 0;
-                int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(senderComboBox.Name.Where(char.IsDigit).ToArray()));
                 if (bells >= 0 && bells <= uint.MaxValue)
                     Players[player - 1].Bells = bells;
             }
         }
 
         private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                e.Handled = true;
+        }
+
+        private void savings_TextChanged(object sender, EventArgs e)
+        {
+            TextBox senderComboBox = (TextBox)sender;
+            if (CanSetData)
+            {
+                uint savings = senderComboBox.Text.Any(char.IsDigit) ? uint.Parse(senderComboBox.Text) : 0;
+                int player = int.Parse(new string(senderComboBox.Name.Where(char.IsDigit).ToArray()));
+                if (savings >= 0 && savings <= uint.MaxValue)
+                    Players[player - 1].Savings = savings;
+            }
+        }
+
+        private void savings_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                 e.Handled = true;
