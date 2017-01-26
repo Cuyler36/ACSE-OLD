@@ -1,5 +1,8 @@
 *.suo
 *.exe
+*.resources
+*.cache
+*.pdb
 bin/
 .vs/
 obj/
