@@ -16,12 +16,14 @@ namespace ACSE
             InitializeComponent();
             checkBox1.Checked = Properties.Settings.Default.SecondSave;
             checkBox2.Checked = Properties.Settings.Default.StopResetti;
+            checkBox3.Checked = Properties.Settings.Default.NookingtonsFlag;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.SecondSave = checkBox1.Checked;
             Properties.Settings.Default.StopResetti = checkBox2.Checked;
+            Properties.Settings.Default.NookingtonsFlag = checkBox3.Checked;
             Properties.Settings.Default.Save();
             this.Close();
         }

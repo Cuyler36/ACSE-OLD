@@ -24,17 +24,19 @@ namespace ACSE
         public static int AcreData_Size = 0x3C00;
         public static int AcreTile_Offset = 0x173A8;
         public static int AcreTile_Size = 0x8C;
-        public static int[] Player1_Dresser_Offsets = new int[3] { 0x9F6E, 0xA196, 0xA3BE }; //0x228 away from each other
+        //public static int[] Player1_Dresser_Offsets = new int[3] { 0x9F6E, 0xA196, 0xA3BE }; //0x228 away from each other
         public static int VillagerData_Offset = 0x17438;
         public static int VillagerData_Size = 0x8EF8;
         public static int IslandData_Offset = 0x22554;
         public static int IslandData_Length = 0x400;
         public static int Islander_Offset = 0x23440;
-        public static int BurriedItems_Offset = 0x20F1D;  //(Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
+        public static int BurriedItems_Offset = 0x20F1D;  //Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
         public static int BurriedItems_Length = 0x3C0;
         public static int IslandBurriedItems_Offset = 0x23DC9;
         public static int IslandBurriedItems_Length = 0x40;
         public static int Nook_Items_Offset = 0x2040E;
+        public static int Nook_Spent_Bells_Offset = 0x20468;
+        public static int Nookingtons_Visitor_Flag = 0x2047F;
         public static int Town_Tune_Offset = 0x20F08;
         #endregion Offsets
 
@@ -519,6 +521,8 @@ namespace ACSE
                 Faces[2] = player3Face;
                 Faces[3] = player4Face;
                 CanSetData = true;
+                if (Properties.Settings.Default.NookingtonsFlag)
+                    WriteData(Nookingtons_Visitor_Flag, new byte[] { 0x01 });
             }
             else
             {
