@@ -41,12 +41,12 @@ Click on the File button, then click Open and select your save file!
 ### Using the Main Editor Form
 This contains the Players, Patterns, Town Name, and buttons to access the other editors! Simply change the values of the text/combo boxes to edit them.
 
-![Main Editor](https://puu.sh/toMRD/90910ec782.png)
+![Main Editor](https://puu.sh/tIJV9/2db8da73fc.png)
 
 ### Using the Acre Editor Form
 This form allows you to change your acre tiles! There is a 7x10 grid of acre tiles. To select an acre to place, click the "Check Tile" button, then left click on the desired acre. You can also simply click on one of the entries in the acre list to the right of the acre grid. Once selected, a preview image of the selected acre will appear on the bottom right of the screen, along with it's name and AcreID. To place an acre, click on the "Place Tile" button, then just left click over any acre tile on the grid!
 
-![Acre Editor](http://i.imgur.com/Iaz1uhU.png)
+![Acre Editor](https://puu.sh/tIJTI/cb72b4831e.png)
 
 #### Acre Editor Precautions
 Placing/Removing specific acres can damage your town. Here is a list of possible things that could break your game:
@@ -79,10 +79,15 @@ There are a few cases where editing Villagers can cause strange results or break
 * Not removing the old villagers house or not adding the new villagers house in the Town Editor (It's important that their house is removed/added. Where else would they live???)
 * Changing an empty villager slot (No Villager) to another villager (Not 100% sure this can break your game, but it caused some weird AI glitches in mine. If you add their correct house, things might be fine.)
 
+### Using the Shop Editor Form
+This form allows you to edit Tom Nook's shop. It automatically detects which iteration of the shop exists in your town. You can change what is being sold, and how many bells you have spent/received from him.
+
+![Shop Editor](https://puu.sh/tIKoj/e3b0269524.png)
+
 ### Using the Pocket Editor Form
 Editing your pockets is very safe and probably the easiest part of this editor to grasp. You can place ANY item in your pocket. Items, Buildings, Trees, Rocks, etc. Same as before, right click or change the combo box selection to set the selected item. Left click to place in that spot. This form also contains the Dresser editor (See below section for more info about it.)
 
-![Pocket Editor](http://i.imgur.com/gbGLTeE.png)
+![Pocket Editor](https://puu.sh/tIJXx/8fbd037246.png)
 
 #### Inventory/Pocket Editor Precautions
 There is only one concern when using this editor.
@@ -97,6 +102,10 @@ The House Editor is pretty simple as well. The floors are labeled for you. The t
 There are only a few precautions:
 * Placing outdoor objects (trees/buildings) in your house will not make them show up, and could break your game (although they just disappeared when I did it.)
 * Placing furniture on the "top layer" with nothing below them will place them on the floor instead (Won't break your game or anything, but the save editor will notify you every time you try to do it.)
+
+### Changing Settings
+In the Settings Form, you can customize a few options that effect the save editor's behavior.
+![Settings Form](https://puu.sh/tIK8r/3835737ec3.png)
 
 ### Saving Your Changes
 Until you click File > Save, none of your changes will be commited. You must do this when you are ready to save your game. It will overwrite your old file, so make a backup if you're experimenting!
