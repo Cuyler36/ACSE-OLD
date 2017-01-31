@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace ACSE
 {
@@ -35,10 +36,11 @@ namespace ACSE
                 Item item = items[i] != null ? items[i] : new Item(0);
                 uint itemColor = ItemData.getItemColor(ItemData.getItemType(item.ItemID));
 
-                // Draw image
                 for (int x = 0; x < itemsize * itemsize; x++)
-                    Buffer.BlockCopy(BitConverter.GetBytes(itemColor), 0, bmpData,
-                        ((Y * itemsize + x % itemsize) * width * 4) + ((X * itemsize + x / itemsize) * 4), 4);
+                {
+                    int dataPosition = (Y * itemsize + x % itemsize) * width * 4 + (X * itemsize + x / itemsize) * 4;
+                    Buffer.BlockCopy(BitConverter.GetBytes(itemColor), 0, bmpData, dataPosition, 4);
+                }
             }
 
             for (int i = 0; i < (width * height); i++) // Draw grid

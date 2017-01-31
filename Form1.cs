@@ -16,7 +16,6 @@ namespace ACSE
         public byte[] saveBuffer = new byte[0x26000];
 
         #region Offsets
-        public static int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         public static int Data_Start_Offset = 0x26040;
         public static int Town_Name_Offset = 0x9120;
         //House Carpet & Wallpaper offset: 0x8A0
@@ -42,6 +41,7 @@ namespace ACSE
 
         #region Variables
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        static readonly int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         private FileStream fs;
         private BinaryReader reader;
         private BinaryWriter writer;
@@ -51,6 +51,8 @@ namespace ACSE
         private Villager_Editor vEditor;
         private Inventory_Editor iEditor;
         private House_Editor hEditor;
+        private SettingsForm settingsForm = new SettingsForm();
+        private NookEditor nEditor;
         List<KeyValuePair<ushort, string>> Shirts = new List<KeyValuePair<ushort, string>>();
         private bool CanSetData = false;
         private ACString TownName;
@@ -568,7 +570,7 @@ namespace ACSE
             if (CanSetData)
             {
                 TextBox t = (TextBox)sender;
-                int player = int.Parse(new string(t.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(t.Name.Where(char.IsDigit).ToArray()));
                 if (t.Text.Length > 0)
                     Players[player - 1].Name = t.Text;
             }
@@ -633,7 +635,7 @@ namespace ACSE
             TextBox senderComboBox = (TextBox)sender;
             if (CanSetData && player1Debt.Text.Length > 0)
             {
-                int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(senderComboBox.Name.Where(char.IsDigit).ToArray()));
                 uint debt = senderComboBox.Text.Any(char.IsDigit) ? uint.Parse(senderComboBox.Text) : 0;
                 if (debt >= 0 && debt <= uint.MaxValue)
                     Players[player - 1].Debt = debt;
@@ -651,7 +653,7 @@ namespace ACSE
             if (CanSetData)
             {
                 Button b = (Button)sender;
-                int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
                 if (Players[player - 1].Exists)
                 {
                     if (iEditor == null || iEditor.IsDisposed)
@@ -671,7 +673,7 @@ namespace ACSE
             if (CanSetData)
             {
                 Button b = (Button)sender;
-                int player = int.Parse(new string(b.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
                 if (Players[player - 1].Exists)
                 {
                     int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(Players[player - 1].House_Data_Offset, 0x114));
@@ -722,7 +724,7 @@ namespace ACSE
             {
                 ComboBox senderComboBox = (ComboBox)sender;
                 string selectedItem = senderComboBox.Text;
-                int player = int.Parse(new string(senderComboBox.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(senderComboBox.Name.Where(char.IsDigit).ToArray()));
                 Players[player - 1].Held_Item = new Item(selectedItem == "(None)" ? (ushort)0 : ItemData.GetItemID(selectedItem));
             }
         }
@@ -766,7 +768,7 @@ namespace ACSE
                 int player = -1;
                 if (selectedShirt != 0)
                 {
-                    player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                    player = int.Parse(new string(c.Name.Where(char.IsDigit).ToArray()));
                     if (player > -1)
                         Players[player - 1].Shirt = new Item(selectedShirt);
                 }
@@ -784,7 +786,7 @@ namespace ACSE
                 int player = -1;
                 if (selectedShirt != 0)
                 {
-                    player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                    player = int.Parse(new string(c.Name.Where(char.IsDigit).ToArray()));
                     if (player > -1)
                         Players[player - 1].Inventory_Background = new Item(selectedShirt);
                 }
@@ -796,7 +798,7 @@ namespace ACSE
             if (CanSetData)
             {
                 ComboBox c = (ComboBox)sender;
-                int player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(c.Name.Where(char.IsDigit).ToArray()));
                 Players[player - 1].Gender = c.Text == "Male" ? (byte)0 : (byte)1;
                 Faces[player - 1].DataSource = c.Text == "Male" ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
                 Faces[player - 1].SelectedIndex = Players[player - 1].Face;
@@ -808,14 +810,26 @@ namespace ACSE
             if (CanSetData)
             {
                 ComboBox c = (ComboBox)sender;
-                int player = int.Parse(new string(c.Name.Where(Char.IsDigit).ToArray()));
+                int player = int.Parse(new string(c.Name.Where(char.IsDigit).ToArray()));
                 Players[player - 1].Face = (byte)c.SelectedValue;
             }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new SettingsForm().Show();
+            if (settingsForm == null || settingsForm.IsDisposed)
+                settingsForm = new SettingsForm();
+            settingsForm.Show();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (CanSetData)
+                if (nEditor == null || nEditor.IsDisposed)
+                {
+                    nEditor = new NookEditor(this);
+                    nEditor.Show();
+                }
         }
     }
 }

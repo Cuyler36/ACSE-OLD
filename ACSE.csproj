@@ -175,6 +175,12 @@
     </Compile>
     <Compile Include="Inventory.cs" />
     <Compile Include="ItemData.cs" />
+    <Compile Include="NookEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NookEditor.Designer.cs">
+      <DependentUpon>NookEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pattern.cs" />
     <Compile Include="PatternNameForm.cs">
       <SubType>Form</SubType>
@@ -236,6 +242,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Inventory Editor.resx">
       <DependentUpon>Inventory Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NookEditor.resx">
+      <DependentUpon>NookEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PatternNameForm.resx">
       <DependentUpon>PatternNameForm.cs</DependentUpon>
