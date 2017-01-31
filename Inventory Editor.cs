@@ -15,7 +15,7 @@ namespace ACSE
         //ushort[] InventoryData;
         Form1 form;
         Inventory Pockets;
-        Item[] Dresser;
+        //Item[] Dresser;
 
         public Inventory_Editor(Inventory inventory, Form1 form1)
         {
@@ -74,14 +74,14 @@ namespace ACSE
 
             var s = (sender as PictureBox);
             bool pocket = s == pictureBox1;
-            bool dresser = false;//s == pictureBox2;
+            //bool dresser = false;//s == pictureBox2;
 
             if (e.Button == MouseButtons.Right) // Read
             {
                 if (pocket)
                     comboBox1.SelectedValue = Pockets.Items[index].ItemID;
-                else if (dresser)
-                    comboBox1.SelectedValue = Dresser[index].ItemID;
+                //else if (dresser)
+                    //comboBox1.SelectedValue = Dresser[index].ItemID;
             }
             else // Write
             {
@@ -91,11 +91,11 @@ namespace ACSE
                     Pockets.InventorySlots[index].Item = Pockets.Items[index];
                     pictureBox1.Image = Inventory.getItemPic(16, 5, Pockets.Items);
                 }
-                else if (dresser)
+                /*else if (dresser)
                 {
                     Dresser[index] = new Item((ushort)comboBox1.SelectedValue);
                     //pictureBox2.Image = Inventory.getItemPic(16, 3, Dresser);
-                }
+                }*/
             }
         }
 

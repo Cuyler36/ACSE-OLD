@@ -33,7 +33,7 @@ namespace ACSE
             {
                 int X = i % itemsPerRow;
                 int Y = i / itemsPerRow;
-                Item item = items[i] != null ? items[i] : new Item(0);
+                Item item = items[i] == null ? new Item(0) : items[i];
                 uint itemColor = ItemData.getItemColor(ItemData.getItemType(item.ItemID));
 
                 for (int x = 0; x < itemsize * itemsize; x++)

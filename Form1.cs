@@ -41,7 +41,7 @@ namespace ACSE
 
         #region Variables
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        static readonly int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
+        //static readonly int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         private FileStream fs;
         private BinaryReader reader;
         private BinaryWriter writer;
@@ -302,11 +302,13 @@ namespace ACSE
             for (int i = 0; i < 8; i++)
             {
                 Pattern pattern = p.Patterns[i];
-                PictureBox b = new PictureBox();
-                b.Name = pattern.Name; //string.Format("player{0}Pattern{1}", p.Index, i);
-                b.Image = pattern.Pattern_Bitmap;
-                b.Size = new Size(32, 32);
-                b.Location = new Point(playerBox.Location.X + 19 + 38 * (i % 4), playerBox.Location.Y + playerBox.Size.Height + 10 + 38 * (i / 4));
+                PictureBox b = new PictureBox()
+                {
+                    Name = pattern.Name,
+                    Image = pattern.Pattern_Bitmap,
+                    Size = new Size(32, 32),
+                    Location = new Point(playerBox.Location.X + 19 + 38 * (i % 4), playerBox.Location.Y + playerBox.Size.Height + 10 + 38 * (i / 4))
+                };
                 ToolTip t = new ToolTip();
                 t.SetToolTip(b, pattern.Name);
                 t.ShowAlways = true;

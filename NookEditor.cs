@@ -98,6 +98,13 @@ namespace ACSE
         {
             for (int i = 0; i < Shop_Selection.Length; i++)
                 form.WriteUShort(new ushort[] { Shop_Selection[i].ItemID }, Form1.Nook_Items_Offset + i * 2);
+            if (textBox1.Text.Length > 0)
+            {
+                int spentBells = -1;
+                int.TryParse(textBox1.Text, out spentBells);
+                if (spentBells > 1)
+                    form.WriteData(Form1.Nook_Spent_Bells_Offset, BitConverter.GetBytes(spentBells));
+            }
             Close();
         }
     }
