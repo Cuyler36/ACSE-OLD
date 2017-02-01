@@ -43,7 +43,7 @@ namespace ACSE
                 }
             }
 
-            for (int i = 0; i < (width * height); i++) // Draw grid
+            for (int i = 0; i < (width * height); i++)
                 if ((i / itemsize > 0 && i % (itemsize * itemsPerRow) > 0 && i % (itemsize) == 0) || (i / (itemsize * itemsPerRow) > 0 && (i / (itemsize * itemsPerRow)) % (itemsize) == 0))
                     Buffer.BlockCopy(BitConverter.GetBytes(0x17000000), 0, bmpData,
                         ((i / (itemsize * itemsPerRow)) * width * 4) + ((i % (itemsize * itemsPerRow)) * 4), 4);
