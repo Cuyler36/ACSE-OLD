@@ -105,7 +105,7 @@ namespace ACSE
             treeView1 = new TreeView();
             treeView1.ItemHeight = 26;
             treeView1.Size = new Size(261, 329);
-            treeView1.Location = new Point(250, 42);
+            treeView1.Location = new Point(250, 43);
             this.Controls.Add(treeView1);
 
             treeView1.BeginUpdate();

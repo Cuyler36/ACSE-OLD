@@ -42,7 +42,7 @@
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>AC Save Editor Logo.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\AC Save Editor Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />
-    <Content Include="AC Save Editor Logo.ico" />
+    <Content Include="Resources\AC Save Editor Logo.ico" />
     <Content Include="Resources\Images\1.jpg" />
     <Content Include="Resources\Images\10.jpg" />
     <None Include="Resources\Images\100.jpg" />
