@@ -11,14 +11,12 @@ namespace ACSE
 {
     public partial class NookEditor : Form
     {
-        private Form1 form;
         int Shop_Size = 1;
         int Item_Count = 0;
         Furniture[] Shop_Selection;
 
-        public NookEditor(Form1 form1)
+        public NookEditor()
         {
-            form = form1;
             InitializeComponent();
             GetShopSize();
             int itemsPerRow = Shop_Size == 1 ? 5 : Shop_Size == 2 ? 4 : Shop_Size == 3 ? 6 : 7;
@@ -32,13 +30,13 @@ namespace ACSE
 
             pictureBox1.MouseMove += new MouseEventHandler(PictureBox_Hover);
             pictureBox1.MouseClick += new MouseEventHandler(PictureBox_Click);
-            textBox1.Text = BitConverter.ToUInt32(form.ReadData(Form1.Nook_Spent_Bells_Offset, 4), 0).ToString();
+            textBox1.Text = BitConverter.ToUInt32(DataConverter.ReadData(Form1.Nook_Spent_Bells_Offset, 4), 0).ToString();
             label3.Text = "Shop: " + (Shop_Size == 1 ? "Nook's Cranny" : Shop_Size == 2 ? "Nook 'n Go" : Shop_Size == 3 ? "Nookway" : "Nookington's");
         }
 
         private void GetShopSize()
         {
-            ushort[] items = form.ReadRawUShort(Form1.Nook_Items_Offset, 0x46);
+            ushort[] items = DataConverter.ReadRawUShort(Form1.Nook_Items_Offset, 0x46);
             Item_Count = items.Length;
             for (int i = 0; i < items.Length; i++)
             {
@@ -97,13 +95,13 @@ namespace ACSE
         private void button1_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < Shop_Selection.Length; i++)
-                form.WriteUShort(new ushort[] { Shop_Selection[i].ItemID }, Form1.Nook_Items_Offset + i * 2);
+                DataConverter.WriteUShort(new ushort[] { Shop_Selection[i].ItemID }, Form1.Nook_Items_Offset + i * 2);
             if (textBox1.Text.Length > 0)
             {
                 int spentBells = -1;
                 int.TryParse(textBox1.Text, out spentBells);
                 if (spentBells > 1)
-                    form.WriteData(Form1.Nook_Spent_Bells_Offset, BitConverter.GetBytes(spentBells));
+                    DataConverter.WriteData(Form1.Nook_Spent_Bells_Offset, BitConverter.GetBytes(spentBells));
             }
             Close();
         }

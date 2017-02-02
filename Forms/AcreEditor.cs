@@ -20,7 +20,6 @@ namespace ACSE
         private bool acreSelected = false;
         private PictureBox[] acreImages = new PictureBox[70];
         private Dictionary<int, Acre> currentAcreData;
-        private Form1 form;
         private ImageList imageList;
         private TreeView treeView1;
         private int[] treeViewIconIndex;
@@ -50,9 +49,8 @@ namespace ACSE
             }
         }
 
-        public AcreEditor(Form1 form, Dictionary<int, Acre> acreData)
+        public AcreEditor(Dictionary<int, Acre> acreData)
         {
-            this.form = form;
             currentAcreData = acreData;
             InitializeComponent();
             imageList = new ImageList();
@@ -245,7 +243,7 @@ namespace ACSE
             foreach (KeyValuePair<int, Acre> acre in currentAcreData)
                 acreData[acre.Key - 1] = acre.Value.AcreID;
 
-            form.WriteUShort(acreData, Form1.AcreTile_Offset);
+            DataConverter.WriteUShort(acreData, Form1.AcreTile_Offset);
             this.Close();
         }
 

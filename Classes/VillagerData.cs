@@ -228,7 +228,7 @@ namespace ACSE
             {0xE0D5, "Cashmere" },
             {0xE0D6, "Woolio" },
             {0xE0D7, "Cookie" },
-            //Begining of Islanders
+            //Beginning of Islanders
             {0xE0D8, "Maelle" },
             {0xE0D9, "O'Hare" },
             {0xE0DA, "Bliss" },
@@ -445,27 +445,49 @@ namespace ACSE
             return 0xE000;
         }
 
+        public Villager NewVillager(ushort id, ushort townId, int idx)
+        {
+            return new Villager(id, townId, null, idx, 0, "Hello, World!");
+        }
+
     }
 
     public class Villager
     {
         public ushort ID = 0;
+        public ushort TownIdentifier = 0;
         public string Name = "";
         public string Personality = "";
         public byte PersonalityID = 0;
         public int Index = 0;
         public string Catchphrase = "";
-        public bool isSet = false;
+        public bool Exists = false;
+        public Item Shirt;
 
-        public Villager(ushort id, string name = null, int index = 0, int personality = -1, string catchphrase = "")
+        public Villager(ushort id, ushort townId, string name = null, int index = 0, int personality = -1, string catchphrase = "", ushort shirtId = 0)
         {
             ID = id;
+            TownIdentifier = townId;
             Name = name != null ? name : VillagerData.GetVillagerName(id);
             Index = index;
             Personality = personality > -1  ? VillagerData.GetVillagerPersonality(personality) : "Lazy";
             PersonalityID = personality > -1 ? (byte)personality : (byte)0;
             Catchphrase = catchphrase;
-            isSet = id != 0;
+            Exists = id != 0x0000 && id != 0xFFFF;
+            if (shirtId > 0)
+                Shirt = new Item(shirtId);
+        }
+
+        public void Write()
+        {
+            int Offset = Index == 16 ? Form1.Islander_Offset : Form1.VillagerData_Offset + (Index - 1) * 0x988;
+            DataConverter.WriteUShort(new ushort[] { ID }, Offset);
+            DataConverter.WriteUShort(new ushort[] { TownIdentifier }, Offset + 2);
+            DataConverter.WriteDataRaw(Offset + 0xC, new byte[] { Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF) }); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.
+            DataConverter.WriteDataRaw(Offset + 0xD, new byte[] { PersonalityID });
+            DataConverter.WriteString(Offset + 0x89D, Catchphrase, 10);
+            if (Shirt != null)
+                DataConverter.WriteUShort(new ushort[] { Shirt.ItemID }, Offset + 0x8E4);
         }
     }
 }

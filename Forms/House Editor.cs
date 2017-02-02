@@ -12,19 +12,17 @@ namespace ACSE
     public partial class House_Editor : Form
     {
         PictureBox[] Layers = new PictureBox[6];
-        Form1 form;
         int FirstFloorSize = 4;
         List<ushort[]> House_Data;
         List<Furniture[]> Items = new List<Furniture[]>();
         int House_Offset = 0;
 
-        public House_Editor(List<ushort[]> houseData, int houseOffset, Form1 form1)
+        public House_Editor(List<ushort[]> houseData, int houseOffset)
         {
             InitializeComponent();
             House_Offset = houseOffset;
             House_Data = houseData;
             FirstFloorSize = HouseData.GetHouseSize(houseData[0]);
-            form = form1;
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
             comboBox1.DataSource = bs;
             comboBox1.DisplayMember = "Value";
@@ -135,7 +133,7 @@ namespace ACSE
             {
                 HouseData.UpdateHouseData(Items[i], House_Data[i]);
                 if (i % 2 == 0)
-                    form.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
+                    DataConverter.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
                 else
                 {
                     int pos = 0;
@@ -145,7 +143,7 @@ namespace ACSE
                             House_Data[i][idx] = Items[i][pos].ItemID;
                             pos++;
                         }
-                    form.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
+                    DataConverter.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
                 }
             }
             this.Close();

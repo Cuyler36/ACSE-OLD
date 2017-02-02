@@ -13,7 +13,7 @@ namespace ACSE
 {
     public partial class Form1 : Form
     {
-        public byte[] saveBuffer = new byte[0x26000];
+        public static byte[] saveBuffer = new byte[0x26000];
 
         #region Offsets
         public static int Data_Start_Offset = 0x26040;
@@ -61,6 +61,7 @@ namespace ACSE
         private string patternSaveLoc;
         private Bitmap currentPattern;
         private CancelEventHandler importHandler;
+        public static byte[] SaveBuffer { get { return saveBuffer; } }
         public static Dictionary<byte, string> Tune_Chart = new Dictionary<byte, string>()
         {
             { 0xE, "Zz.png" },
@@ -87,6 +88,12 @@ namespace ACSE
             return _unixEpoch.AddSeconds(timestamp);
         }
 
+        private byte[] GetSaveData(int offset, int size)
+        {
+            reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+            return reader.ReadBytes(size);
+        }
+
         private void SaveData()
         {
             Checksum.Update(saveBuffer);
@@ -102,97 +109,6 @@ namespace ACSE
             }
             writer.Close();
             fs.Close();
-        }
-
-        public void WriteData(int offset, byte[] data)
-        {
-            Array.Reverse(data);
-            data.CopyTo(saveBuffer, offset);
-        }
-
-        public byte[] ReadData(int offset, int size)
-        {
-            byte[] data = new byte[size];
-            for (int i = 0; i < size; i++)
-                data[i] = saveBuffer[offset + i];
-            Array.Reverse(data);
-            return data;
-        }
-
-        public ushort[] ReadUShort(int offset, int size)
-        {
-            ushort[] data = new ushort[size];
-            byte[] byteData = ReadData(offset, size);
-            for (int i = 0; i < byteData.Length; i += 2)
-            {
-                ushort item = BitConverter.ToUInt16(byteData, i);
-                data[i / 2] = item;
-            }
-            return data;
-        }
-
-        public ushort[] ReadRawUShort(int offset, int size)
-        {
-            ushort[] data = new ushort[size / 2];
-            byte[] rawData = ReadDataRaw(offset, size);
-            for (int i = 0; i < rawData.Length; i += 2)
-            {
-                byte[] udata = new byte[2] { rawData[i], rawData[i + 1] };
-                Array.Reverse(udata);
-                data[i / 2] = BitConverter.ToUInt16(udata, 0);
-            }
-            return data;
-        }
-
-        public void WriteUShort(ushort[] buffer, int offset)
-        {
-            for (int i = 0; i < buffer.Length; i ++)
-            {
-                byte[] ushortBytes = BitConverter.GetBytes(buffer[i]);
-                Array.Reverse(ushortBytes);
-                ushortBytes.CopyTo(saveBuffer, offset + i * 2);
-            }
-        }
-
-        private byte[] GetSaveData(int offset, int size)
-        {
-            reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-            return reader.ReadBytes(size);
-        }
-
-        public byte[] ReadDataRaw(int offset, int size)
-        {
-            byte[] data = new byte[size];
-            for (int i = 0; i < size; i++)
-                data[i] = saveBuffer[offset + i];
-            return data;
-        }
-
-        public void WriteDataRaw(int offset, byte[] buffer)
-        {
-            buffer.CopyTo(saveBuffer, offset);
-        }
-
-        public ACString ReadString(int offset, int maxSize)
-        {
-            byte[] data = new byte[maxSize];
-            for (int i = 0; i < maxSize; i++)
-                data[i] = saveBuffer[offset + i];
-            return new ACString(data);
-        }
-
-        public void WriteString(int offset, string str, int maxSize)
-        {
-            byte[] strBytes = new byte[maxSize];
-            byte[] ACStringBytes = ACString.GetBytes(str, maxSize);
-            if (ACStringBytes.Length <= maxSize)
-            {
-                ACStringBytes.CopyTo(strBytes, 0);
-                if (str.Length < maxSize)
-                    for (int i = (str.Length); i <= maxSize - 1; i++)
-                        strBytes[i] = 0x20;
-                strBytes.CopyTo(saveBuffer, offset);
-            }
         }
 
         public Form1()
@@ -366,11 +282,11 @@ namespace ACSE
                     townEditorForm.Dispose();
                 setControlsEnabled(true, this);
                 GetSaveData(Data_Start_Offset, 0x26000).CopyTo(saveBuffer, 0);
-                TownName = ReadString(Town_Name_Offset, 0x8);
-                Player Player1 = new Player(0, this);
-                Player Player2 = new Player(1, this);
-                Player Player3 = new Player(2, this);
-                Player Player4 = new Player(3, this);
+                TownName = DataConverter.ReadString(Town_Name_Offset, 0x8);
+                Player Player1 = new Player(0);
+                Player Player2 = new Player(1);
+                Player Player3 = new Player(2);
+                Player Player4 = new Player(3);
 
                 List<PictureBox> temp = new List<PictureBox>();
                 foreach (PictureBox p in Controls.OfType<PictureBox>())
@@ -526,7 +442,7 @@ namespace ACSE
                 Faces[3] = player4Face;
                 CanSetData = true;
                 if (Properties.Settings.Default.NookingtonsFlag)
-                    WriteData(Nookingtons_Visitor_Flag, new byte[] { 0x01 });
+                    DataConverter.WriteData(Nookingtons_Visitor_Flag, new byte[] { 0x01 });
             }
             else
             {
@@ -543,7 +459,7 @@ namespace ACSE
                 string text = townNameTextBox.Text;
                 if (text.Length > 0)
                 {
-                    WriteString(Town_Name_Offset, text, 8);
+                    DataConverter.WriteString(Town_Name_Offset, text, 8);
                     foreach (Player p in Players)
                         p.Town_Name = text.Trim();
                 }
@@ -678,16 +594,16 @@ namespace ACSE
                 int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
                 if (Players[player - 1].Exists)
                 {
-                    int firstFloorSize = HouseData.GetHouseSize(ReadRawUShort(Players[player - 1].House_Data_Offset, 0x114));
-                    ushort[] firstFloorLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1]);
-                    ushort[] firstFloorLayer2 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1]);
-                    ushort[] secondFloorLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0);
-                    ushort[] secondFloorLayer2 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC);
-                    ushort[] basementLayer1 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x1150, 0x114);
-                    ushort[] basementLayer2 = ReadRawUShort(Players[player - 1].House_Data_Offset + 0x139A, 0xF0);
+                    int firstFloorSize = HouseData.GetHouseSize(DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset, 0x114));
+                    ushort[] firstFloorLayer1 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1]);
+                    ushort[] firstFloorLayer2 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1]);
+                    ushort[] secondFloorLayer1 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0);
+                    ushort[] secondFloorLayer2 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC);
+                    ushort[] basementLayer1 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x1150, 0x114);
+                    ushort[] basementLayer2 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x139A, 0xF0);
 
                     if (hEditor == null || hEditor.IsDisposed)
-                        hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, Players[player - 1].House_Data_Offset, this);
+                        hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, Players[player - 1].House_Data_Offset);
                     hEditor.Show();
                 }
             }
@@ -697,13 +613,13 @@ namespace ACSE
         {
             if (CanSetData)
             {
-                ushort[] acreRawData = ReadRawUShort(AcreData_Offset, AcreData_Size);
-                ushort[] islandRawData = ReadRawUShort(IslandData_Offset, IslandData_Length);
-                ushort[] acreTileData = ReadRawUShort(AcreTile_Offset, AcreTile_Size);
-                byte[] burriedItemData = ReadDataRaw(BurriedItems_Offset, BurriedItems_Length);
-                byte[] islandBurriedItemData = ReadDataRaw(IslandBurriedItems_Offset, IslandBurriedItems_Length);
+                ushort[] acreRawData = DataConverter.ReadRawUShort(AcreData_Offset, AcreData_Size);
+                ushort[] islandRawData = DataConverter.ReadRawUShort(IslandData_Offset, IslandData_Length);
+                ushort[] acreTileData = DataConverter.ReadRawUShort(AcreTile_Offset, AcreTile_Size);
+                byte[] burriedItemData = DataConverter.ReadDataRaw(BurriedItems_Offset, BurriedItems_Length);
+                byte[] islandBurriedItemData = DataConverter.ReadDataRaw(IslandBurriedItems_Offset, IslandBurriedItems_Length);
                 if (townEditorForm == null || townEditorForm.IsDisposed)
-                    townEditorForm = new TownEditor(acreRawData, islandRawData, acreTileData, burriedItemData, islandBurriedItemData, this);
+                    townEditorForm = new TownEditor(acreRawData, islandRawData, acreTileData, burriedItemData, islandBurriedItemData);
                 townEditorForm.Show();
                 
             }
@@ -735,10 +651,10 @@ namespace ACSE
         {
             if (CanSetData)
             {
-                ushort[] acreTileData = ReadRawUShort(AcreTile_Offset, AcreTile_Size);
+                ushort[] acreTileData = DataConverter.ReadRawUShort(AcreTile_Offset, AcreTile_Size);
                 Dictionary<int, Acre> tileData = AcreData.GetAcreTileData(acreTileData);
                 if (editor == null || editor.IsDisposed)
-                    editor = new AcreEditor(this, tileData);
+                    editor = new AcreEditor(tileData);
                 editor.Show();
             }
         }
@@ -747,14 +663,15 @@ namespace ACSE
         {
             if (CanSetData)
             {
-                byte[] villagerData = ReadDataRaw(VillagerData_Offset, VillagerData_Size);
-                byte[] islanderData = ReadDataRaw(Islander_Offset, VillagerData_Size / 15);
                 Villager[] Villagers = new Villager[16];
                 for (int i = 0; i < 15; i++)
-                    Villagers[i] = new Villager(BitConverter.ToUInt16(new byte[2] { villagerData[(i * 0x988) + 1], villagerData[i * 0x988] }, 0), null, i + 1, villagerData[(i * 0x988) + 0xD], ReadString(VillagerData_Offset + (i * 0x988) + 0x89D, 10).Trim());
-                Villagers[15] = new Villager(BitConverter.ToUInt16(new byte[2] { islanderData[1], islanderData[0] }, 0), null, 16, islanderData[0xD], ReadString(Islander_Offset + 0x89D, 10).Trim()); //0x89D + 0x3D = Villager Shirt
+                {
+                    int Villager_Offset = VillagerData_Offset + i * 0x988;
+                    Villagers[i] = new Villager(DataConverter.ReadRawUShort(Villager_Offset, 2)[0], DataConverter.ReadRawUShort(Villager_Offset + 2, 2)[0], null, i + 1, DataConverter.ReadData(Villager_Offset + 0xD, 1)[0], DataConverter.ReadString(Villager_Offset + 0x89D, 10).Trim(), DataConverter.ReadRawUShort(Villager_Offset + 0x8E4, 2)[0]);
+                }
+                Villagers[15] = new Villager(DataConverter.ReadRawUShort(Islander_Offset, 2)[0], DataConverter.ReadRawUShort(Islander_Offset + 2, 2)[0], null, 16, DataConverter.ReadData(Islander_Offset + 0xD, 1)[0], DataConverter.ReadString(Islander_Offset + 0x89D, 10).Trim(), DataConverter.ReadRawUShort(Islander_Offset + 0x8E4, 2)[0]);
                 if (vEditor == null || vEditor.IsDisposed)
-                    vEditor = new Villager_Editor(Villagers, this);
+                    vEditor = new Villager_Editor(Villagers);
                 vEditor.Show();
             }
         }
@@ -829,7 +746,7 @@ namespace ACSE
             if (CanSetData)
                 if (nEditor == null || nEditor.IsDisposed)
                 {
-                    nEditor = new NookEditor(this);
+                    nEditor = new NookEditor();
                     nEditor.Show();
                 }
         }

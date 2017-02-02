@@ -127,7 +127,6 @@ namespace ACSE
 
     public class Pattern
     {
-        private Form1 form;
         private int Offset = 0;
         public byte[] patternBitmapBuffer = new byte[4 * 32 * 32];
         public byte[] rawPatternArray;
@@ -135,10 +134,9 @@ namespace ACSE
         public byte Palette;
         public Bitmap Pattern_Bitmap;
 
-        public Pattern(int patternOffset, Form1 form1)
+        public Pattern(int patternOffset)
         {
             Offset = patternOffset;
-            form = form1;
             Read();
         }
 
@@ -203,7 +201,7 @@ namespace ACSE
 
         public void GeneratePatternBitmap()
         {
-            byte[] patternRawData = form.ReadDataRaw(Offset + 0x20, 0x200);
+            byte[] patternRawData = DataConverter.ReadDataRaw(Offset + 0x20, 0x200);
             if (PatternData.Palette_Data.Count >= Palette + 1)
             {
                 List<byte[]> Block_Data = new List<byte[]>();
@@ -248,17 +246,17 @@ namespace ACSE
 
         public void Read()
         {
-            Name = form.ReadString(Offset, 0x10).Trim();
-            Palette = form.ReadData(Offset + 0x10, 0x1)[0];
+            Name = DataConverter.ReadString(Offset, 0x10).Trim();
+            Palette = DataConverter.ReadData(Offset + 0x10, 0x1)[0];
             GeneratePatternBitmap();
         }
 
         public void Write()
         {
-            form.WriteString(Offset, Name, 0x10);
-            form.WriteData(Offset + 0x10, new byte[] { Palette });
+            DataConverter.WriteString(Offset, Name, 0x10);
+            DataConverter.WriteData(Offset + 0x10, new byte[] { Palette });
             if (rawPatternArray != null)
-                form.WriteDataRaw(Offset + 0x20, ConvertImport());
+                DataConverter.WriteDataRaw(Offset + 0x20, ConvertImport());
         }
     }
 }

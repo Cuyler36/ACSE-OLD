@@ -83,7 +83,6 @@ namespace ACSE
             {0x20, "Lloyd Face" }
         };
         static int Player_Length = 0x2440;
-        Form1 form;
 
         public int Index = 0;
         public string Name;
@@ -105,9 +104,8 @@ namespace ACSE
         public bool Reset = false;
         public bool Exists = false;
 
-        public Player(int idx, Form1 form1)
+        public Player(int idx)
         {
-            form = form1;
             Index = idx;
             Read();
         }
@@ -121,21 +119,21 @@ namespace ACSE
         public void Read()
         {
             int offset = 0x20 + Index * Player_Length;
-            Name = form.ReadString(offset + 0, 8).Trim();
-            Town_Name = form.ReadString(offset + 0x8, 8).Trim();
-            Identifier = BitConverter.ToUInt32(form.ReadData(offset + 0x10, 4), 0); //First two are player identifier bytes. Second two bytes are town identifier bytes.
-            Gender = form.ReadData(offset + 0x14, 1)[0];
-            Face = form.ReadData(offset + 0x15, 1)[0];
-            Inventory = new Inventory(form.ReadRawUShort(offset + 0x68, 0x1E));
-            Bells = BitConverter.ToUInt32(form.ReadData(offset + 0x8C, 4), 0);
-            Debt = BitConverter.ToUInt32(form.ReadData(offset + 0x90, 4), 0);
-            Held_Item = new Item(form.ReadRawUShort(offset + 0x4A4, 2)[0]);
-            Inventory_Background = new Item(form.ReadRawUShort(offset + 0x1084, 2)[0]);
-            Shirt = new Item(form.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
-            Reset = form.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
-            Savings = BitConverter.ToUInt32(form.ReadData(offset + 0x122C, 4), 0);
+            Name = DataConverter.ReadString(offset + 0, 8).Trim();
+            Town_Name = DataConverter.ReadString(offset + 0x8, 8).Trim();
+            Identifier = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x10, 4), 0); //First two are player identifier bytes. Second two bytes are town identifier bytes.
+            Gender = DataConverter.ReadData(offset + 0x14, 1)[0];
+            Face = DataConverter.ReadData(offset + 0x15, 1)[0];
+            Inventory = new Inventory(DataConverter.ReadRawUShort(offset + 0x68, 0x1E));
+            Bells = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x8C, 4), 0);
+            Debt = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x90, 4), 0);
+            Held_Item = new Item(DataConverter.ReadRawUShort(offset + 0x4A4, 2)[0]);
+            Inventory_Background = new Item(DataConverter.ReadRawUShort(offset + 0x1084, 2)[0]);
+            Shirt = new Item(DataConverter.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
+            Reset = DataConverter.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
+            Savings = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x122C, 4), 0);
             for (int i = 0; i < 8; i++)
-                Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220, form);
+                Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220);
             House_Number = GetHouse();
             House_Data_Offset = 0x9CF8 + (House_Number - 1) * 0x26B0 + 0x28;
             Exists = Identifier != 0xFFFFFFFF;
@@ -144,21 +142,21 @@ namespace ACSE
         public void Write()
         {
             int offset = 0x20 + Index * Player_Length;
-            form.WriteString(offset + 0, Name, 8);
-            form.WriteString(offset + 0x8, Town_Name, 8);
-            form.WriteData(offset + 0x14, new byte[] { Gender });
-            form.WriteData(offset + 0x15, new byte[] { Face });
-            form.WriteUShort(Inventory.GetItemIDs(), offset + 0x68);
-            form.WriteData(offset + 0x8C, BitConverter.GetBytes(Bells));
-            form.WriteData(offset + 0x90, BitConverter.GetBytes(Debt));
-            form.WriteUShort(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
-            form.WriteUShort(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
-            form.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
+            DataConverter.WriteString(offset + 0, Name, 8);
+            DataConverter.WriteString(offset + 0x8, Town_Name, 8);
+            DataConverter.WriteData(offset + 0x14, new byte[] { Gender });
+            DataConverter.WriteData(offset + 0x15, new byte[] { Face });
+            DataConverter.WriteUShort(Inventory.GetItemIDs(), offset + 0x68);
+            DataConverter.WriteData(offset + 0x8C, BitConverter.GetBytes(Bells));
+            DataConverter.WriteData(offset + 0x90, BitConverter.GetBytes(Debt));
+            DataConverter.WriteUShort(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
+            DataConverter.WriteUShort(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
+            DataConverter.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
 
             if (Properties.Settings.Default.StopResetti)
-                form.WriteUShort(new ushort[] { 0 }, offset + 0x10F6);
+                DataConverter.WriteUShort(new ushort[] { 0 }, offset + 0x10F6);
 
-            form.WriteData(offset + 0x122C, BitConverter.GetBytes(Savings));
+            DataConverter.WriteData(offset + 0x122C, BitConverter.GetBytes(Savings));
 
             foreach (Pattern p in Patterns)
                 p.Write();
@@ -167,7 +165,7 @@ namespace ACSE
         public int GetHouse()
         {
             for (int i = 0; i < 4; i++)
-                if (Identifier != 0xFFFFFFFF && BitConverter.ToUInt32(form.ReadData(0x9CF8 + i * 0x26B0, 4), 0) == Identifier)
+                if (Identifier != 0xFFFFFFFF && BitConverter.ToUInt32(DataConverter.ReadData(0x9CF8 + i * 0x26B0, 4), 0) == Identifier)
                     return i + 1;
             return 0;
         }

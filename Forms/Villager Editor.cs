@@ -16,9 +16,9 @@ namespace ACSE
         private ComboBox[] Personalities = new ComboBox[16];
         private TextBox[] Catchphrases = new TextBox[16];
         private Label[] Indexes = new Label[16];
-        private Form1 form;
         public Villager[] Villagers;
         private BindingSource bs;
+        private ushort TownIdentifier = 0;
 
         private void Setup_Villager_Editor()
         {
@@ -55,35 +55,30 @@ namespace ACSE
                 VillagerBoxes[i].SelectedValueChanged += delegate (object sender, EventArgs e)
                 {
                     ComboBox c = (ComboBox)sender;
-                    if (c.SelectedIndex != -1)
+                    int x = Array.IndexOf(VillagerBoxes, c);
+                    if (c.SelectedIndex != -1 && x > -1)
                     {
-                        for (int x = 0; x < 16; x++)
+                        Villager v = Villagers[x];
+                        if (!v.Exists)
                         {
-                            if (VillagerBoxes[x] == c)
-                            {
-                                Villagers[x].ID = VillagerData.GetVillagerID(c.Text);
-                                Villagers[x].Name = c.Text;
-                                VillagerBoxes[x].Name = Villagers[x].ID.ToString();
-                                break;
-                            }
+                            v.TownIdentifier = TownIdentifier;
+                            v.Exists = true;
+                            v.Shirt = new Item(0x2400);
                         }
+                        v.ID = VillagerData.GetVillagerID(c.Text);
+                        v.Name = c.Text;
+                        v.Name = v.ID.ToString();
                     }
                 };
 
                 Personalities[i].SelectedValueChanged += delegate (object sender, EventArgs e)
                 {
                     ComboBox c = (ComboBox)sender;
-                    if (c.SelectedIndex != -1)
+                    int x = Array.IndexOf(VillagerBoxes, c);
+                    if (c.SelectedIndex != -1 && x > -1)
                     {
-                        for (int x = 0; x < 16; x++)
-                        {
-                            if (Personalities[x] == c)
-                            {
-                                Villagers[x].Personality = c.Text;
-                                Villagers[x].PersonalityID = (byte)VillagerData.GetVillagerPersonalityID(c.Text);
-                                break;
-                            }
-                        }
+                        Villagers[x].Personality = c.Text;
+                        Villagers[x].PersonalityID = (byte)VillagerData.GetVillagerPersonalityID(c.Text);
                     }
                 };
 
@@ -109,62 +104,27 @@ namespace ACSE
             }
         }
 
-        public Villager_Editor(Villager[] villagers, Form1 form1)
+        public Villager_Editor(Villager[] villagers)
         {
-            form = form1;
             InitializeComponent();
             bs = new BindingSource(VillagerData.VillagerDatabase, null);
             Villagers = villagers;
+            TownIdentifier = DataConverter.ReadRawUShort(0x8, 2)[0];
             Setup_Villager_Editor();
             for (int i = 0; i < 16; i++)
-            {
-                KeyValuePair<ushort, string> t = VillagerData.VillagerDatabase.FirstOrDefault(o => o.Key == Villagers[i].ID);
-                int idx = VillagerData.VillagerDatabase.IndexOf(t);
-                //MessageBox.Show("VillagerID: " + Villagers[i].ID + " | Name:" + Villagers[i].Name + " | KeyValuePair<ushort, string>: " + t.ToString() + " | Index: " + idx);
                 VillagerBoxes[i].SelectedValue = Villagers[i].ID;
-            }
-        }
-
-        private void Villager_Editor_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ushort[] VillagerIds = new ushort[16];
-            byte[] vPersonalities = new byte[16];
-            string[] catchphrases = new string[16];
-
-            foreach (Villager v in Villagers)
-            {
-                VillagerIds[v.Index - 1] = v.ID;
-                vPersonalities[v.Index - 1] = v.PersonalityID;
-                catchphrases[v.Index - 1] = v.Catchphrase;
-            }
-
-            for (int i = 0; i < 15; i++)
-            {
-                if(Villagers[i].ID > 0 && Villagers[i].isSet == false)
-                {
-                    MessageBox.Show("Villager wasn't set. Adding blank data! | " + Villagers[i].ID.ToString("X"));
-                    //form.WriteDataRaw(Form1.VillagerData_Offset + (i * 0x988), Form1.Blank_Villager); //FIX THIS
-                }
-
-                form.WriteUShort(new ushort[] { VillagerIds[i] }, Form1.VillagerData_Offset + (i * 0x988));
-                form.WriteDataRaw(Form1.VillagerData_Offset + (i * 0x988) + 0xD, new byte[] { vPersonalities[i] });
-                form.WriteString(Form1.VillagerData_Offset + (i * 0x988) + 0x89D, catchphrases[i], 10);
-            }
-
-            form.WriteUShort(new ushort[] { VillagerIds[15] }, Form1.Islander_Offset);
-            form.WriteDataRaw(Form1.Islander_Offset + 0xD, new byte[] { vPersonalities[15] });
-            form.WriteString(Form1.Islander_Offset + 0x89D, catchphrases[15], 10);
-            this.Hide();
+            for (int i = 0; i < 16; i++)
+                Villagers[i].Write();
+            Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Close();
         }
     }
 }

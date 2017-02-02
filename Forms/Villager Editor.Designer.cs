@@ -148,7 +148,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Villager_Editor";
             this.Text = "Villager Editor";
-            this.Load += new System.EventHandler(this.Villager_Editor_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
