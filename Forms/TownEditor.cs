@@ -250,12 +250,12 @@ namespace ACSE
         {
             for (int i = 0; i < Acres.Length; i++)
                 for (int x = 0; x < 256; x++)
-                    DataConverter.WriteUShort(new ushort[1] { Acres[i].Acre_Items[x].ItemID }, Form1.AcreData_Offset + (i * 512) + x * 2);
+                    DataConverter.WriteUShort(new ushort[1] { Acres[i].Acre_Items[x].ItemID }, MainForm.AcreData_Offset + (i * 512) + x * 2);
             for (int i = 0; i < 2; i++)
                 for (int x = 0; x < 256; x++)
-                    DataConverter.WriteUShort(new ushort[1] { Island_Acres[i].Acre_Items[x].ItemID }, Form1.IslandData_Offset + (i * 512) + x * 2);
-            DataConverter.WriteDataRaw(Form1.BurriedItems_Offset, buriedData);
-            DataConverter.WriteDataRaw(Form1.IslandBurriedItems_Offset, islandBuriedData);
+                    DataConverter.WriteUShort(new ushort[1] { Island_Acres[i].Acre_Items[x].ItemID }, MainForm.IslandData_Offset + (i * 512) + x * 2);
+            DataConverter.WriteDataRaw(MainForm.BurriedItems_Offset, buriedData);
+            DataConverter.WriteDataRaw(MainForm.IslandBurriedItems_Offset, islandBuriedData);
             this.Hide();
         }
 

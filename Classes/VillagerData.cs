@@ -480,7 +480,7 @@ namespace ACSE
 
         public void Write()
         {
-            int Offset = Index == 16 ? Form1.Islander_Offset : Form1.VillagerData_Offset + (Index - 1) * 0x988;
+            int Offset = Index == 16 ? MainForm.Islander_Offset : MainForm.VillagerData_Offset + (Index - 1) * 0x988;
             DataConverter.WriteUShort(new ushort[] { ID }, Offset);
             DataConverter.WriteUShort(new ushort[] { TownIdentifier }, Offset + 2);
             DataConverter.WriteDataRaw(Offset + 0xC, new byte[] { Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF) }); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.

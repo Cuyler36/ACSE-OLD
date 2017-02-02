@@ -11,7 +11,7 @@ using System.IO;
 
 namespace ACSE
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         public static byte[] saveBuffer = new byte[0x26000];
 
@@ -111,7 +111,7 @@ namespace ACSE
             fs.Close();
         }
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             ItemData.AddVillagerHouses();

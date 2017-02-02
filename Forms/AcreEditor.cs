@@ -243,7 +243,7 @@ namespace ACSE
             foreach (KeyValuePair<int, Acre> acre in currentAcreData)
                 acreData[acre.Key - 1] = acre.Value.AcreID;
 
-            DataConverter.WriteUShort(acreData, Form1.AcreTile_Offset);
+            DataConverter.WriteUShort(acreData, MainForm.AcreTile_Offset);
             this.Close();
         }
 

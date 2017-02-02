@@ -12,14 +12,14 @@ namespace ACSE
         public static void WriteData(int offset, byte[] data)
         {
             Array.Reverse(data);
-            data.CopyTo(Form1.SaveBuffer, offset);
+            data.CopyTo(MainForm.SaveBuffer, offset);
         }
 
         public static byte[] ReadData(int offset, int size)
         {
             byte[] data = new byte[size];
             for (int i = 0; i < size; i++)
-                data[i] = Form1.SaveBuffer[offset + i];
+                data[i] = MainForm.SaveBuffer[offset + i];
             Array.Reverse(data);
             return data;
         }
@@ -55,7 +55,7 @@ namespace ACSE
             {
                 byte[] ushortBytes = BitConverter.GetBytes(buffer[i]);
                 Array.Reverse(ushortBytes);
-                ushortBytes.CopyTo(Form1.SaveBuffer, offset + i * 2);
+                ushortBytes.CopyTo(MainForm.SaveBuffer, offset + i * 2);
             }
         }
 
@@ -63,20 +63,20 @@ namespace ACSE
         {
             byte[] data = new byte[size];
             for (int i = 0; i < size; i++)
-                data[i] = Form1.SaveBuffer[offset + i];
+                data[i] = MainForm.SaveBuffer[offset + i];
             return data;
         }
 
         public static void WriteDataRaw(int offset, byte[] buffer)
         {
-            buffer.CopyTo(Form1.SaveBuffer, offset);
+            buffer.CopyTo(MainForm.SaveBuffer, offset);
         }
 
         public static ACString ReadString(int offset, int maxSize)
         {
             byte[] data = new byte[maxSize];
             for (int i = 0; i < maxSize; i++)
-                data[i] = Form1.SaveBuffer[offset + i];
+                data[i] = MainForm.SaveBuffer[offset + i];
             return new ACString(data);
         }
 
@@ -90,7 +90,7 @@ namespace ACSE
                 if (str.Length < maxSize)
                     for (int i = (str.Length); i <= maxSize - 1; i++)
                         strBytes[i] = 0x20;
-                strBytes.CopyTo(Form1.SaveBuffer, offset);
+                strBytes.CopyTo(MainForm.SaveBuffer, offset);
             }
         }
     }

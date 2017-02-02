@@ -13,11 +13,11 @@ namespace ACSE
     public partial class Inventory_Editor : Form
     {
         //ushort[] InventoryData;
-        Form1 form;
+        MainForm form;
         Inventory Pockets;
         //Item[] Dresser;
 
-        public Inventory_Editor(Inventory inventory, Form1 form1)
+        public Inventory_Editor(Inventory inventory, MainForm form1)
         {
             InitializeComponent();
             //InventoryData = inventoryData;
@@ -102,7 +102,7 @@ namespace ACSE
         private void button1_Click(object sender, EventArgs e)
         {
             //for (int i = 0; i < 15; i++)
-                //form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, Form1.Player1_Pockets + (i * 2));
+                //form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, MainForm.Player1_Pockets + (i * 2));
 
             //Interesting note about dresser storage:
             //The limitation when storing furniture in it is created by the actual stored location of the items.
@@ -110,7 +110,7 @@ namespace ACSE
             //Using the editor to place furniture inside of the dresser causes the stacked item glitch used by many speed runners.
 
             //for (int i = 0; i < 3; i++)
-                //form.WriteUShort(new ushort[1] { Dresser[i].ItemID }, Form1.Player1_Dresser_Offsets[i]);
+                //form.WriteUShort(new ushort[1] { Dresser[i].ItemID }, MainForm.Player1_Dresser_Offsets[i]);
             this.Close();
         }
 
