@@ -121,17 +121,17 @@ namespace ACSE
             int offset = 0x20 + Index * Player_Length;
             Name = DataConverter.ReadString(offset + 0, 8).Trim();
             Town_Name = DataConverter.ReadString(offset + 0x8, 8).Trim();
-            Identifier = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x10, 4), 0); //First two are player identifier bytes. Second two bytes are town identifier bytes.
+            Identifier = DataConverter.ReadUInt(offset + 0x10); //First two are player identifier bytes. Second two bytes are town identifier bytes.
             Gender = DataConverter.ReadData(offset + 0x14, 1)[0];
             Face = DataConverter.ReadData(offset + 0x15, 1)[0];
             Inventory = new Inventory(DataConverter.ReadRawUShort(offset + 0x68, 0x1E));
-            Bells = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x8C, 4), 0);
-            Debt = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x90, 4), 0);
+            Bells = DataConverter.ReadUInt(offset + 0x8C);
+            Debt = DataConverter.ReadUInt(offset + 0x90);
             Held_Item = new Item(DataConverter.ReadRawUShort(offset + 0x4A4, 2)[0]);
             Inventory_Background = new Item(DataConverter.ReadRawUShort(offset + 0x1084, 2)[0]);
             Shirt = new Item(DataConverter.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
             Reset = DataConverter.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
-            Savings = BitConverter.ToUInt32(DataConverter.ReadData(offset + 0x122C, 4), 0);
+            Savings = DataConverter.ReadUInt(offset + 0x122C);
             for (int i = 0; i < 8; i++)
                 Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220);
             House_Number = GetHouse();
@@ -165,7 +165,7 @@ namespace ACSE
         public int GetHouse()
         {
             for (int i = 0; i < 4; i++)
-                if (Identifier != 0xFFFFFFFF && BitConverter.ToUInt32(DataConverter.ReadData(0x9CF8 + i * 0x26B0, 4), 0) == Identifier)
+                if (Identifier != 0xFFFFFFFF && DataConverter.ReadUInt(0x9CF8 + i * 0x26B0) == Identifier)
                     return i + 1;
             return 0;
         }

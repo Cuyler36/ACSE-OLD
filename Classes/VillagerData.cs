@@ -488,6 +488,12 @@ namespace ACSE
             DataConverter.WriteString(Offset + 0x89D, Catchphrase, 10);
             if (Shirt != null)
                 DataConverter.WriteUShort(new ushort[] { Shirt.ItemID }, Offset + 0x8E4);
+            if (!Exists)
+            {
+                DataConverter.WriteString(Offset + 4, DataConverter.ReadString(MainForm.Town_Name_Offset, 8).Trim(), 8); //Set town name
+                DataConverter.WriteDataRaw(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }); //This byte might be the met flag. Setting it just in case
+            }
+                //Second byte here is always a random number. This could be responsible for the Villager's AI or their house, but I'm not sure. Just writing it for good measure.
         }
     }
 }

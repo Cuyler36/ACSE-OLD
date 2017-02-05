@@ -39,6 +39,11 @@ namespace ACSE
                 for (int x = 0; x < itemsize * itemsize; x++)
                 {
                     int dataPosition = (Y * itemsize + x % itemsize) * width * 4 + (X * itemsize + x / itemsize) * 4;
+                    if (dataPosition >= bmpData.Length)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Item Bitmap generation received more items than allocated space. Skipping " + (items.Length - i).ToString() + " Item(s).");
+                        break;
+                    }
                     Buffer.BlockCopy(BitConverter.GetBytes(itemColor), 0, bmpData, dataPosition, 4);
                 }
             }

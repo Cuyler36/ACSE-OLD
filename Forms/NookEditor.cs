@@ -30,7 +30,7 @@ namespace ACSE
 
             pictureBox1.MouseMove += new MouseEventHandler(PictureBox_Hover);
             pictureBox1.MouseClick += new MouseEventHandler(PictureBox_Click);
-            textBox1.Text = BitConverter.ToUInt32(DataConverter.ReadData(MainForm.Nook_Spent_Bells_Offset, 4), 0).ToString();
+            textBox1.Text = DataConverter.ReadUInt(MainForm.Nook_Spent_Bells_Offset).ToString();
             label3.Text = "Shop: " + (Shop_Size == 1 ? "Nook's Cranny" : Shop_Size == 2 ? "Nook 'n Go" : Shop_Size == 3 ? "Nookway" : "Nookington's");
         }
 
@@ -50,7 +50,7 @@ namespace ACSE
                 Shop_Size = 4;
             else if (Item_Count > 16)
                 Shop_Size = 3;
-            else if (Item_Count > 10)
+            else if (Item_Count > 11) //Sometimes there is an extra (unbuyable?) flower at Nook's Cranny...
                 Shop_Size = 2;
             Shop_Selection = new Furniture[Item_Count];
             for (int i = 0; i < Item_Count; i++)

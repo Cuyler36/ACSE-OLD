@@ -75,41 +75,8 @@ namespace ACSE
                 islandAcreImages[i].BackgroundImage = islandImages[i];
                 islandAcreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
                 islandAcreImages[i].BorderStyle = BorderStyle.FixedSingle;
-                islandAcreImages[i].MouseClick += delegate (object sender, MouseEventArgs e)
-                {
-                    int selectedAcre = Array.IndexOf(islandAcreImages, sender as PictureBox);
-                    int X = e.X / (4 * scale);
-                    int Y = e.Y / (4 * scale);
-                    int index = X + Y * 16;
-                    //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
-                    if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
-                    {
-                        //Dump Check
-                        if (((ushort)comboBox1.SelectedValue) == 0x583B && (!(Acres[selectedAcre].AcreID == 0x0295 || Acres[selectedAcre].AcreID == 0x0119) || (selectedAcre > 4)))
-                        {
-                            DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
-                            if (result == DialogResult.No || result == DialogResult.Cancel)
-                                return;
-                        }
-                        //Set Item
-                        Island_Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
-                        //Set Buried
-                        if ((ushort)comboBox1.SelectedValue >= 0x1000 && (ushort)comboBox1.SelectedValue < 0x5000) //Avoid burying world objects
-                            Island_Acres[selectedAcre].SetBuriedInMemory(Island_Acres[selectedAcre].Acre_Items[index], selectedAcre, islandBuriedData, checkBox1.Checked); //change to add burried data
-                        //Redraw Picturebox
-                        islandAcreImages[selectedAcre].Image = GenerateAcreItemsBitmap(Island_Acres[selectedAcre].Acre_Items, selectedAcre);
-                    }
-                    else if (e.Button == MouseButtons.Right)
-                    {
-                        comboBox1.SelectedValue = Island_Acres[selectedAcre].Acre_Items[index].ItemID;
-                        checkBox1.Checked = Island_Acres[selectedAcre].Acre_Items[index].Burried;
-                        comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
-                        comboBox1.SelectionStart = comboBox1.Text.Length;
-                        comboBox1.SelectionLength = 0;
-                        //MessageBox.Show("ItemID: " + Island_Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
-                    }
-                    //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
-                };
+                islandAcreImages[i].MouseClick += new MouseEventHandler(Island_Mouse_Click);
+                islandAcreImages[i].MouseMove += new MouseEventHandler(Mouse_Move);
                 this.Controls.Add(islandAcreImages[i]);
             }
             for (int i = 0; i < 30; i++)
@@ -123,40 +90,8 @@ namespace ACSE
                 acreImages[i].BackgroundImage = images[i];
                 acreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
                 acreImages[i].BorderStyle = BorderStyle.FixedSingle;
-                acreImages[i].MouseClick += delegate (object sender, MouseEventArgs e)
-                {
-                    int selectedAcre = Array.IndexOf(acreImages, sender as PictureBox);
-                    int X = e.X / (4 * scale);
-                    int Y = e.Y / (4 * scale);
-                    int index = X + Y * 16;
-                //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
-                if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
-                    {
-                        //Dump Check
-                        if (((ushort)comboBox1.SelectedValue) == 0x583B && (!(Acres[selectedAcre].AcreID == 0x0295 || Acres[selectedAcre].AcreID == 0x0119) || (selectedAcre > 4)))
-                        {
-                            DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
-                            if (result == DialogResult.No || result == DialogResult.Cancel)
-                                return;
-                        }
-                        //Set Item
-                        Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
-                        //Set Buried
-                        if ((ushort)comboBox1.SelectedValue >= 0x1000 && (ushort)comboBox1.SelectedValue < 0x5000) //Avoid burying world objects
-                            Acres[selectedAcre].SetBuriedInMemory(Acres[selectedAcre].Acre_Items[index], selectedAcre, buriedData, checkBox1.Checked);
-                        //Redraw Picturebox
-                        acreImages[selectedAcre].Image = GenerateAcreItemsBitmap(Acres[selectedAcre].Acre_Items, selectedAcre);
-                    }
-                    else if (e.Button == MouseButtons.Right)
-                    {
-                        comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
-                        comboBox1.SelectionStart = comboBox1.Text.Length;
-                        comboBox1.SelectionLength = 0;
-                        checkBox1.Checked = Acres[selectedAcre].Acre_Items[index].Burried;
-                        label1.Text = "0x" + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X4");
-                    }
-                    //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
-                };
+                acreImages[i].MouseClick += new MouseEventHandler(Mouse_Click);
+                acreImages[i].MouseMove += new MouseEventHandler(Mouse_Move);
                 this.Controls.Add(acreImages[i]);
             }
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
@@ -165,6 +100,89 @@ namespace ACSE
             comboBox1.DataSource = bs;
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
+        }
+
+        private void Mouse_Click(object sender, MouseEventArgs e)
+        {
+            int selectedAcre = Array.IndexOf(acreImages, sender as PictureBox);
+            int X = e.X / (4 * scale);
+            int Y = e.Y / (4 * scale);
+            int index = X + Y * 16;
+            //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
+            if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
+            {
+                //Dump Check
+                if (((ushort)comboBox1.SelectedValue) == 0x583B && (!(Acres[selectedAcre].AcreID == 0x0295 || Acres[selectedAcre].AcreID == 0x0119) || (selectedAcre > 4)))
+                {
+                    DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.No || result == DialogResult.Cancel)
+                        return;
+                }
+                //Set Item
+                Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
+                //Set Buried
+                if ((ushort)comboBox1.SelectedValue >= 0x1000 && (ushort)comboBox1.SelectedValue < 0x5000) //Avoid burying world objects
+                    Acres[selectedAcre].SetBuriedInMemory(Acres[selectedAcre].Acre_Items[index], selectedAcre, buriedData, checkBox1.Checked);
+                //Redraw Picturebox
+                acreImages[selectedAcre].Image = GenerateAcreItemsBitmap(Acres[selectedAcre].Acre_Items, selectedAcre);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
+                comboBox1.SelectionStart = comboBox1.Text.Length;
+                comboBox1.SelectionLength = 0;
+                checkBox1.Checked = Acres[selectedAcre].Acre_Items[index].Burried;
+                //label1.Text = "0x" + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X4");
+            }
+            //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
+        }
+
+        private void Island_Mouse_Click(object sender, MouseEventArgs e)
+        {
+            int selectedAcre = Array.IndexOf(islandAcreImages, sender as PictureBox);
+            int X = e.X / (4 * scale);
+            int Y = e.Y / (4 * scale);
+            int index = X + Y * 16;
+            //MessageBox.Show(Acres[selectedAcre].Name + " | " + Acres[selectedAcre].Acre_Items.Length.ToString() + " | " + Acres[selectedAcre].Acre_Items[index].Location);
+            if (e.Button == MouseButtons.Left && !string.IsNullOrEmpty(comboBox1.Text))
+            {
+                //Dump Check
+                if (((ushort)comboBox1.SelectedValue) == 0x583B && (!(Acres[selectedAcre].AcreID == 0x0295 || Acres[selectedAcre].AcreID == 0x0119) || (selectedAcre > 4)))
+                {
+                    DialogResult result = MessageBox.Show("Placing a Dump in a Non-Dump, Non-A Acre can break your game.\nWould you still like to place it?", "Warning", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.No || result == DialogResult.Cancel)
+                        return;
+                }
+                //Set Item
+                Island_Acres[selectedAcre].Acre_Items[index] = new WorldItem((ushort)comboBox1.SelectedValue, index);
+                //Set Buried
+                if ((ushort)comboBox1.SelectedValue >= 0x1000 && (ushort)comboBox1.SelectedValue < 0x5000) //Avoid burying world objects
+                    Island_Acres[selectedAcre].SetBuriedInMemory(Island_Acres[selectedAcre].Acre_Items[index], selectedAcre, islandBuriedData, checkBox1.Checked); //change to add burried data
+                                                                                                                                                                   //Redraw Picturebox
+                islandAcreImages[selectedAcre].Image = GenerateAcreItemsBitmap(Island_Acres[selectedAcre].Acre_Items, selectedAcre);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                comboBox1.SelectedValue = Island_Acres[selectedAcre].Acre_Items[index].ItemID;
+                checkBox1.Checked = Island_Acres[selectedAcre].Acre_Items[index].Burried;
+                comboBox1.SelectedValue = Acres[selectedAcre].Acre_Items[index].ItemID;
+                comboBox1.SelectionStart = comboBox1.Text.Length;
+                comboBox1.SelectionLength = 0;
+                //MessageBox.Show("ItemID: " + Island_Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
+            }
+            //MessageBox.Show("Acre: " + selectedAcre.ToString() + " | X: " + X.ToString() + " Y: " + Y.ToString() + " | Index: " + index.ToString() + " | Item: " + Acres[selectedAcre].Acre_Items[index].Name + " | ItemID: " + Acres[selectedAcre].Acre_Items[index].ItemID.ToString("X"));
+        }
+
+        private void Mouse_Move(object sender, MouseEventArgs e)
+        {
+            bool Island_Acre = Array.IndexOf(islandAcreImages, sender as PictureBox) > -1;
+            int Selected_Acre = Array.IndexOf(Island_Acre ? islandAcreImages : acreImages, sender as PictureBox);
+            int X = e.X / (4 * scale);
+            int Y = e.Y / (4 * scale);
+            int Item_Index = X + Y * 16;
+            WorldItem Item = Island_Acre ? Island_Acres[Selected_Acre].Acre_Items[Item_Index] : Acres[Selected_Acre].Acre_Items[Item_Index];
+
+            label1.Text = string.Format("0x{0} - {1}", Item.ItemID.ToString("X4"), Item.Name);
         }
 
         private void Update_Pictureboxes()
@@ -290,8 +308,8 @@ namespace ACSE
             bool set = true;
             try { value = (ushort)comboBox1.SelectedValue; }
             catch { set = false; }
-            if (set)
-                label1.Text = "0x" + value.ToString("X4");
+            //if (set)
+                //label1.Text = "0x" + value.ToString("X4");
         }
     }
 }

@@ -22,19 +22,18 @@ namespace ACSE
 
         private void Setup_Villager_Editor()
         {
+            string[] Villager_Names = VillagerData.Villagers.Values.ToArray();
             for (int i = 0; i < 16; i++)
             {
                 VillagerBoxes[i] = new ComboBox();
-                foreach (KeyValuePair<ushort, string> v in VillagerData.Villagers)
-                    VillagerBoxes[i].Items.Add(v.Value);
+                VillagerBoxes[i].Items.AddRange(Villager_Names);
                 VillagerBoxes[i].Text = Villagers[i].Name;
                 VillagerBoxes[i].Name = Villagers[i].ID.ToString();
                 VillagerBoxes[i].Size = new Size(200, 20);
                 VillagerBoxes[i].Location = new Point(32, (i * 22) + 32);
                 VillagerBoxes[i].DropDownStyle = ComboBoxStyle.DropDownList;
                 Personalities[i] = new ComboBox();
-                foreach (string v in VillagerData.Personalities)
-                    Personalities[i].Items.Add(v);
+                Personalities[i].Items.AddRange(VillagerData.Personalities);
                 Personalities[i].Text = Villagers[i].Personality;
                 Personalities[i].DropDownStyle = ComboBoxStyle.DropDownList;
                 Personalities[i].Size = new Size(80, 20);
@@ -52,56 +51,62 @@ namespace ACSE
                 this.Controls.Add(VillagerBoxes[i]);
                 this.Controls.Add(Personalities[i]);
                 this.Controls.Add(Catchphrases[i]);
-                VillagerBoxes[i].SelectedValueChanged += delegate (object sender, EventArgs e)
-                {
-                    ComboBox c = (ComboBox)sender;
-                    int x = Array.IndexOf(VillagerBoxes, c);
-                    if (c.SelectedIndex != -1 && x > -1)
-                    {
-                        Villager v = Villagers[x];
-                        if (!v.Exists)
-                        {
-                            v.TownIdentifier = TownIdentifier;
-                            v.Exists = true;
-                            v.Shirt = new Item(0x2400);
-                        }
-                        v.ID = VillagerData.GetVillagerID(c.Text);
-                        v.Name = c.Text;
-                        v.Name = v.ID.ToString();
-                    }
-                };
-
-                Personalities[i].SelectedValueChanged += delegate (object sender, EventArgs e)
-                {
-                    ComboBox c = (ComboBox)sender;
-                    int x = Array.IndexOf(VillagerBoxes, c);
-                    if (c.SelectedIndex != -1 && x > -1)
-                    {
-                        Villagers[x].Personality = c.Text;
-                        Villagers[x].PersonalityID = (byte)VillagerData.GetVillagerPersonalityID(c.Text);
-                    }
-                };
-
-                Catchphrases[i].TextChanged += delegate (object sender, EventArgs e)
-                {
-                    TextBox b = (TextBox)sender;
-                    int maxBytes = StringUtil.StringToMaxChars(b.Text);
-                    if (b.Text.ToCharArray().Length > 10)
-                    {
-                        b.Text = b.Text.Substring(0, 10);
-                        b.SelectionStart = b.Text.Length;
-                        b.SelectionLength = 0;
-                    }
-                    if (Encoding.UTF8.GetBytes(b.Text.ToCharArray()).Length > maxBytes)
-                    {
-                        b.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(b.Text), 0, maxBytes);
-                        b.SelectionStart = b.Text.Length;
-                        b.SelectionLength = 0;
-                    }
-                    if (b.Text.ToCharArray().Length < 11)
-                        Villagers[Array.IndexOf(Catchphrases, b)].Catchphrase = b.Text;
-                };
+                VillagerBoxes[i].SelectedValueChanged += new EventHandler(Villager_Changed);
+                Personalities[i].SelectedValueChanged += new EventHandler(Personality_Changed);
+                Catchphrases[i].TextChanged += new EventHandler(Catchphrase_Changed);
             }
+        }
+
+        private void Villager_Changed(object sender, EventArgs e)
+        {
+            ComboBox c = (ComboBox)sender;
+            int x = Array.IndexOf(VillagerBoxes, c);
+            if (c.SelectedIndex != -1 && x > -1)
+            {
+                Villager v = Villagers[x];
+                if (!v.Exists)
+                {
+                    v.Personality = "Lazy";
+                    v.PersonalityID = 0;
+                    v.TownIdentifier = TownIdentifier;
+                    //v.Exists = true;
+                    v.Shirt = new Item(0x2400);
+                }
+                v.ID = VillagerData.GetVillagerID(c.Text);
+                v.Name = c.Text;
+                v.Name = v.ID.ToString();
+            }
+        }
+
+        private void Personality_Changed(object sender, EventArgs e)
+        {
+            ComboBox c = (ComboBox)sender;
+            int x = Array.IndexOf(VillagerBoxes, c);
+            if (c.SelectedIndex != -1 && x > -1)
+            {
+                Villagers[x].Personality = c.Text;
+                Villagers[x].PersonalityID = (byte)VillagerData.GetVillagerPersonalityID(c.Text);
+            }
+        }
+
+        private void Catchphrase_Changed(object sender, EventArgs e)
+        {
+            TextBox b = (TextBox)sender;
+            int maxBytes = StringUtil.StringToMaxChars(b.Text);
+            if (b.Text.ToCharArray().Length > 10)
+            {
+                b.Text = b.Text.Substring(0, 10);
+                b.SelectionStart = b.Text.Length;
+                b.SelectionLength = 0;
+            }
+            if (Encoding.UTF8.GetBytes(b.Text.ToCharArray()).Length > maxBytes)
+            {
+                b.Text = Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(b.Text), 0, maxBytes);
+                b.SelectionStart = b.Text.Length;
+                b.SelectionLength = 0;
+            }
+            if (b.Text.ToCharArray().Length < 11)
+                Villagers[Array.IndexOf(Catchphrases, b)].Catchphrase = b.Text;
         }
 
         public Villager_Editor(Villager[] villagers)
@@ -119,12 +124,12 @@ namespace ACSE
         {
             for (int i = 0; i < 16; i++)
                 Villagers[i].Write();
-            Close();
+            Hide(); //Villager Editor isn't closed, as it takes a few seconds to open the first time. Just a time saver.
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Close();
+            Hide();
         }
     }
 }
