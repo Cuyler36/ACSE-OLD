@@ -434,7 +434,6 @@ namespace ACSE
         {
             if (Villagers.ContainsValue(villagerName))
                 return Villagers.FirstOrDefault(x => x.Value == villagerName).Key;
-
             return 0xE000;
         }
 
@@ -444,12 +443,6 @@ namespace ACSE
                 return Villagers.Keys.ElementAt(i);
             return 0xE000;
         }
-
-        public Villager NewVillager(ushort id, ushort townId, int idx)
-        {
-            return new Villager(id, townId, null, idx, 0, "Hello, World!");
-        }
-
     }
 
     public class Villager
@@ -462,38 +455,105 @@ namespace ACSE
         public int Index = 0;
         public string Catchphrase = "";
         public bool Exists = false;
+        public bool Modified = false;
         public Item Shirt;
+        public byte[] House_Coords = new byte[4]; //X-Acre, Y-Acre, Y-Position, X-Position - 1 (This is actually the location of their sign, also dictates map location)
+        private int Offset = 0;
 
-        public Villager(ushort id, ushort townId, string name = null, int index = 0, int personality = -1, string catchphrase = "", ushort shirtId = 0)
+        public Villager(int idx)
         {
-            ID = id;
-            TownIdentifier = townId;
-            Name = name != null ? name : VillagerData.GetVillagerName(id);
-            Index = index;
-            Personality = personality > -1  ? VillagerData.GetVillagerPersonality(personality) : "Lazy";
-            PersonalityID = personality > -1 ? (byte)personality : (byte)0;
-            Catchphrase = catchphrase;
-            Exists = id != 0x0000 && id != 0xFFFF;
-            if (shirtId > 0)
-                Shirt = new Item(shirtId);
+            Index = idx;
+            Offset = Index == 16 ? MainForm.Islander_Offset : MainForm.VillagerData_Offset + (Index - 1) * 0x988;
+            ID = DataConverter.ReadRawUShort(Offset, 2)[0];
+            TownIdentifier = DataConverter.ReadRawUShort(Offset + 2, 2)[0];
+            Name = VillagerData.GetVillagerName(ID);
+            PersonalityID = DataConverter.ReadDataRaw(Offset + 0xD, 1)[0];
+            Personality = VillagerData.GetVillagerPersonality(PersonalityID);
+            Catchphrase = DataConverter.ReadString(Offset + 0x89D, 10).Trim();
+            Shirt = new Item(DataConverter.ReadRawUShort(Offset + 0x8E4, 2)[0]);
+            House_Coords = DataConverter.ReadDataRaw(Offset + 0x899, 4); //Could make this WorldCoords class if used for other things
+            House_Coords[2] = (byte)(House_Coords[2] + 1);
+            //House_Coords[3] = (byte)(House_Coords[3] + 1); //X-Position is the position of the Villager Name Sign, which is to the left of the house object, so we add one.
+            Exists = ID != 0x0000 && ID != 0xFFFF;
         }
 
         public void Write()
         {
-            int Offset = Index == 16 ? MainForm.Islander_Offset : MainForm.VillagerData_Offset + (Index - 1) * 0x988;
+            House_Coords[2] = (byte)(House_Coords[2] - 1);
+            //House_Coords[3] = (byte)(House_Coords[3] - 1);
             DataConverter.WriteUShort(new ushort[] { ID }, Offset);
             DataConverter.WriteUShort(new ushort[] { TownIdentifier }, Offset + 2);
             DataConverter.WriteDataRaw(Offset + 0xC, new byte[] { Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF) }); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.
             DataConverter.WriteDataRaw(Offset + 0xD, new byte[] { PersonalityID });
             DataConverter.WriteString(Offset + 0x89D, Catchphrase, 10);
+            DataConverter.WriteDataRaw(Offset + 0x899, House_Coords);
             if (Shirt != null)
                 DataConverter.WriteUShort(new ushort[] { Shirt.ItemID }, Offset + 0x8E4);
-            if (!Exists)
+            if (!Exists && Modified)
             {
                 DataConverter.WriteString(Offset + 4, DataConverter.ReadString(MainForm.Town_Name_Offset, 8).Trim(), 8); //Set town name
                 DataConverter.WriteDataRaw(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }); //This byte might be the met flag. Setting it just in case
+                Exists = true;
+                Add_House();
             }
-                //Second byte here is always a random number. This could be responsible for the Villager's AI or their house, but I'm not sure. Just writing it for good measure.
+            Modified = false;
+            //Second byte here is always a random number. This could be responsible for the Villager's AI, but I'm not sure. Just writing it for good measure.
+            //If the Villager's house location is out of bounds, (or just left 0xFFFF) the game will pick a random signboard as the new house location and write it on load.
+        }
+
+        public void Delete()
+        {
+            if (Index < 16) //Don't delete islander
+            {
+                ID = 0;
+                TownIdentifier = 0xFFFF;
+                PersonalityID = 6;
+                Catchphrase = "";
+                House_Coords = new byte[4] { 0xFF, 0xFF, 0xFF, 0xFF };
+                Shirt = new Item(0);
+                Exists = false;
+                Modified = false;
+            }
+        }
+
+        public void Remove_House()
+        {
+            ushort House_ID = (ushort)(0x5000 + ID & 0x00FF);
+            ushort[] World_Buffer = DataConverter.ReadRawUShort(MainForm.AcreData_Offset, MainForm.AcreData_Size);
+            for (int i = 0; i < World_Buffer.Length; i++)
+            {
+                if (World_Buffer[i] == House_ID)
+                {
+                    for (int x = i - 17; x < i - 14; x++) //First Row
+                        World_Buffer[x] = 0;
+                    for (int x = i - 1; x < i + 2; x++) //Middle Row
+                        World_Buffer[x] = 0;
+                    for (int x = i + 15; x < i + 18; x++) //Final Row
+                        World_Buffer[x] = 0;
+                }
+            }
+            DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
+        }
+
+        public void Add_House()
+        {
+            ushort House_ID = BitConverter.ToUInt16(new byte[] { (byte)(ID & 0x00FF), 0x50 }, 0);
+            ushort[] World_Buffer = DataConverter.ReadRawUShort(MainForm.AcreData_Offset, MainForm.AcreData_Size);
+            if (House_Coords[0] > 5 || House_Coords[1] > 6 || House_Coords[2] > 15 || House_Coords[3] > 15) //Houses can't be on edge of acres
+                return;
+            int Position = (House_Coords[0] - 1) * 256 + (House_Coords[1] - 1) * 1280 + (House_Coords[2]) + (House_Coords[3] - 1) * 16; //X Acre + Y Acre + X Pos + Y Pos
+            if (Position > 0x1E00) //7,680 item spots per town (minus island acres) (5 * 6 * 16^2)
+                return;
+            for (int x = Position - 17; x < Position - 14; x++) //First Row
+                World_Buffer[x] = 0xFFFF;
+            for (int x = Position - 1; x < Position + 2; x++) //Middle Row
+                World_Buffer[x] = 0xFFFF;
+            for (int x = Position + 15; x < Position + 18; x++) //Final Row
+                World_Buffer[x] = 0xFFFF;
+            World_Buffer[Position] = House_ID;
+            World_Buffer[Position + 15] = 0xA012; //Nameplate
+
+            DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
         }
     }
 }

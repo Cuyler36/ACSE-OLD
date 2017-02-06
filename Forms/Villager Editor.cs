@@ -16,6 +16,8 @@ namespace ACSE
         private ComboBox[] Personalities = new ComboBox[16];
         private TextBox[] Catchphrases = new TextBox[16];
         private Label[] Indexes = new Label[16];
+        private Panel[] House_Coords = new Panel[16];
+        private TextBox[] House_Coord_Boxes = new TextBox[16 * 4];
         public Villager[] Villagers;
         private BindingSource bs;
         private ushort TownIdentifier = 0;
@@ -47,13 +49,46 @@ namespace ACSE
                 Indexes[i].Text = i == 15 ? "Isl." : (i + 1).ToString();
                 Indexes[i].Location = new Point(10, (i * 22) + 35);
                 Indexes[i].AutoSize = true;
-                this.Controls.Add(Indexes[i]);
-                this.Controls.Add(VillagerBoxes[i]);
-                this.Controls.Add(Personalities[i]);
-                this.Controls.Add(Catchphrases[i]);
+                House_Coords[i] = new Panel()
+                {
+                    Size = new Size(120, 20),
+                    Location = new Point(442, (i * 22) + 32),
+                };
+                for (int x = 0; x < 4; x++)
+                {
+                    int idx = i * 4 + x;
+                    House_Coord_Boxes[idx] = new TextBox()
+                    {
+                        Size = new Size(25, 20),
+                        Location = new Point(10 + x * 27, 0),
+                        MaxLength = 2,
+                        Text = Villagers[i].Exists ? Villagers[i].House_Coords[x].ToString() : "0"
+                    };
+                    House_Coord_Boxes[idx].TextChanged += new EventHandler(House_Position_Changed);
+                    House_Coords[i].Controls.Add(House_Coord_Boxes[idx]);
+                }
+                Controls.Add(Indexes[i]);
+                Controls.Add(VillagerBoxes[i]);
+                Controls.Add(Personalities[i]);
+                Controls.Add(Catchphrases[i]);
+                Controls.Add(House_Coords[i]);
                 VillagerBoxes[i].SelectedValueChanged += new EventHandler(Villager_Changed);
                 Personalities[i].SelectedValueChanged += new EventHandler(Personality_Changed);
                 Catchphrases[i].TextChanged += new EventHandler(Catchphrase_Changed);
+            }
+        }
+
+        private void House_Position_Changed(object sender, EventArgs e)
+        {
+            TextBox t = (TextBox)sender;
+            int idx = Array.IndexOf(House_Coords, t.Parent);
+            int coord = Array.IndexOf(House_Coord_Boxes, t);
+            byte pos = 1;
+            if (idx > -1 && coord > -1)
+            {
+                byte.TryParse(t.Text, out pos);
+                int realCoord = coord % 4;
+                Villagers[idx].House_Coords[realCoord] = pos; //Remember that X Positions were incremented
             }
         }
 
@@ -69,7 +104,7 @@ namespace ACSE
                     v.Personality = "Lazy";
                     v.PersonalityID = 0;
                     v.TownIdentifier = TownIdentifier;
-                    //v.Exists = true;
+                    v.Modified = true;
                     v.Shirt = new Item(0x2400);
                 }
                 v.ID = VillagerData.GetVillagerID(c.Text);

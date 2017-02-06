@@ -26,12 +26,12 @@ namespace ACSE
 
         public string[] X_Acre_Names =
         {
-            "1", "2", "3", "4", "5"
+            "0", "1", "2", "3", "4", "5", "6"
         };
 
         public string[] Y_Acre_Names =
         {
-            "A", "B", "C", "D", "E", "F"
+            "0", "A", "B", "C", "D", "E", "F", "G", "H", "I"
         };
 
         public string[] Island_Acre_Names =
@@ -58,7 +58,7 @@ namespace ACSE
                 ushort[] itemsBuff = new ushort[256];
                 Array.ConstrainedCopy(items, i * 256, itemsBuff, 0, 256);
                 Acres[i] = new Normal_Acre(acreIds[i], i + 1, itemsBuff, burriedItemData);
-                Acres[i].Name = Y_Acre_Names[i / 5] + " - " + X_Acre_Names[i % 5];
+                Acres[i].Name = Y_Acre_Names[(i / 5) + 1] + " - " + X_Acre_Names[(i % 5) + 1];
                 Acres[i].AcreID = acreIds[acreIdIndex - 1];
             }
             for (int i = 0; i < 2; i++)
@@ -183,6 +183,7 @@ namespace ACSE
             WorldItem Item = Island_Acre ? Island_Acres[Selected_Acre].Acre_Items[Item_Index] : Acres[Selected_Acre].Acre_Items[Item_Index];
 
             label1.Text = string.Format("0x{0} - {1}", Item.ItemID.ToString("X4"), Item.Name);
+            label2.Text = string.Format("Acre: {0} | X: {1} Y: {2}", Island_Acre ? Island_Acres[Selected_Acre].Name : Acres[Selected_Acre].Name, X + 1, Y + 1);
         }
 
         private void Update_Pictureboxes()

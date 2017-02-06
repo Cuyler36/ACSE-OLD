@@ -664,12 +664,8 @@ namespace ACSE
             if (CanSetData)
             {
                 Villager[] Villagers = new Villager[16];
-                for (int i = 0; i < 15; i++)
-                {
-                    int Villager_Offset = VillagerData_Offset + i * 0x988;
-                    Villagers[i] = new Villager(DataConverter.ReadRawUShort(Villager_Offset, 2)[0], DataConverter.ReadRawUShort(Villager_Offset + 2, 2)[0], null, i + 1, DataConverter.ReadData(Villager_Offset + 0xD, 1)[0], DataConverter.ReadString(Villager_Offset + 0x89D, 10).Trim(), DataConverter.ReadRawUShort(Villager_Offset + 0x8E4, 2)[0]);
-                }
-                Villagers[15] = new Villager(DataConverter.ReadRawUShort(Islander_Offset, 2)[0], DataConverter.ReadRawUShort(Islander_Offset + 2, 2)[0], null, 16, DataConverter.ReadData(Islander_Offset + 0xD, 1)[0], DataConverter.ReadString(Islander_Offset + 0x89D, 10).Trim(), DataConverter.ReadRawUShort(Islander_Offset + 0x8E4, 2)[0]);
+                for (int i = 0; i < 16; i++)
+                    Villagers[i] = new Villager(i + 1);
                 if (vEditor == null || vEditor.IsDisposed)
                     vEditor = new Villager_Editor(Villagers);
                 vEditor.Show();

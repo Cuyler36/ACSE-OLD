@@ -39,6 +39,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -53,7 +55,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(54, 13);
+            this.label2.Location = new System.Drawing.Point(105, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 1;
@@ -73,8 +75,8 @@
             this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label4.Location = new System.Drawing.Point(5, 30);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(505, 2);
-            this.label4.TabIndex = 3;
+            this.label4.Size = new System.Drawing.Size(569, 2);
+            this.label4.TabIndex = 11;
             // 
             // label5
             // 
@@ -94,7 +96,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(431, 398);
+            this.button1.Location = new System.Drawing.Point(491, 398);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 6;
@@ -104,7 +106,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(350, 398);
+            this.button2.Location = new System.Drawing.Point(410, 398);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 7;
@@ -123,17 +125,36 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(337, 13);
+            this.label8.Location = new System.Drawing.Point(345, 13);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(67, 13);
             this.label8.TabIndex = 9;
             this.label8.Text = "Catchphrase";
             // 
+            // label9
+            // 
+            this.label9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label9.Location = new System.Drawing.Point(440, 12);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(2, 372);
+            this.label9.TabIndex = 10;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(467, 13);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(82, 13);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "House Location";
+            // 
             // Villager_Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(514, 433);
+            this.ClientSize = new System.Drawing.Size(578, 433);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.button2);
@@ -165,5 +186,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
     }
 }
