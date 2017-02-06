@@ -58,5 +58,17 @@ namespace ACSE.Properties {
                 this["NookingtonsFlag"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ModifyVillagerHouse {
+            get {
+                return ((bool)(this["ModifyVillagerHouse"]));
+            }
+            set {
+                this["ModifyVillagerHouse"] = value;
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace ACSE
             checkBox1.Checked = Properties.Settings.Default.SecondSave;
             checkBox2.Checked = Properties.Settings.Default.StopResetti;
             checkBox3.Checked = Properties.Settings.Default.NookingtonsFlag;
+            checkBox4.Checked = Properties.Settings.Default.ModifyVillagerHouse;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -24,8 +25,9 @@ namespace ACSE
             Properties.Settings.Default.SecondSave = checkBox1.Checked;
             Properties.Settings.Default.StopResetti = checkBox2.Checked;
             Properties.Settings.Default.NookingtonsFlag = checkBox3.Checked;
+            Properties.Settings.Default.ModifyVillagerHouse = checkBox4.Checked;
             Properties.Settings.Default.Save();
-            this.Close();
+            Close();
         }
     }
 }

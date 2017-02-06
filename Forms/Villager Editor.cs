@@ -99,17 +99,26 @@ namespace ACSE
             if (c.SelectedIndex != -1 && x > -1)
             {
                 Villager v = Villagers[x];
-                if (!v.Exists)
+                if (c.SelectedIndex > 0)
                 {
-                    v.Personality = "Lazy";
-                    v.PersonalityID = 0;
-                    v.TownIdentifier = TownIdentifier;
-                    v.Modified = true;
-                    v.Shirt = new Item(0x2400);
+                    if (!v.Exists)
+                    {
+                        v.Personality = "Lazy";
+                        v.PersonalityID = 0;
+                        v.TownIdentifier = TownIdentifier;
+                        v.Modified = true;
+                        v.Shirt = new Item(0x2400);
+                    }
+                    if (Properties.Settings.Default.ModifyVillagerHouse && v.Index < 16)
+                        v.Remove_House(); //Cleanup old house(s)
+                    v.ID = VillagerData.GetVillagerID(c.Text);
+                    v.Name = c.Text;
+                    v.Name = v.ID.ToString();
+                    if (Properties.Settings.Default.ModifyVillagerHouse && v.Index < 16)
+                        v.Add_House();
                 }
-                v.ID = VillagerData.GetVillagerID(c.Text);
-                v.Name = c.Text;
-                v.Name = v.ID.ToString();
+                else if (c.SelectedIndex == 0)
+                    v.Delete();
             }
         }
 

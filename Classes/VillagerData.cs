@@ -494,7 +494,8 @@ namespace ACSE
                 DataConverter.WriteString(Offset + 4, DataConverter.ReadString(MainForm.Town_Name_Offset, 8).Trim(), 8); //Set town name
                 DataConverter.WriteDataRaw(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }); //This byte might be the met flag. Setting it just in case
                 Exists = true;
-                Add_House();
+                if (Index < 16)
+                    Add_House();
             }
             Modified = false;
             //Second byte here is always a random number. This could be responsible for the Villager's AI, but I'm not sure. Just writing it for good measure.
@@ -505,6 +506,8 @@ namespace ACSE
         {
             if (Index < 16) //Don't delete islander
             {
+                if (Properties.Settings.Default.ModifyVillagerHouse)
+                    Remove_House();
                 ID = 0;
                 TownIdentifier = 0xFFFF;
                 PersonalityID = 6;
@@ -518,7 +521,7 @@ namespace ACSE
 
         public void Remove_House()
         {
-            ushort House_ID = (ushort)(0x5000 + ID & 0x00FF);
+            ushort House_ID = BitConverter.ToUInt16(new byte[] { (byte)(ID & 0x00FF), 0x50 }, 0);
             ushort[] World_Buffer = DataConverter.ReadRawUShort(MainForm.AcreData_Offset, MainForm.AcreData_Size);
             for (int i = 0; i < World_Buffer.Length; i++)
             {
@@ -530,6 +533,8 @@ namespace ACSE
                         World_Buffer[x] = 0;
                     for (int x = i + 15; x < i + 18; x++) //Final Row
                         World_Buffer[x] = 0;
+                    World_Buffer[i] = BitConverter.ToUInt16(new byte[] { (byte)(new Random().Next(0x10, 0x25)), 0x58 }, 0); //New Signboard to replace house
+                    //This is akin to actual game behavior
                 }
             }
             DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
@@ -551,7 +556,7 @@ namespace ACSE
             for (int x = Position + 15; x < Position + 18; x++) //Final Row
                 World_Buffer[x] = 0xFFFF;
             World_Buffer[Position] = House_ID;
-            World_Buffer[Position + 15] = 0xA012; //Nameplate
+            World_Buffer[Position + 15] = 0xA012; //Add Nameplate
 
             DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
         }
