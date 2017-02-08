@@ -458,7 +458,8 @@ namespace ACSE
         public bool Modified = false;
         public Item Shirt;
         public byte[] House_Coords = new byte[4]; //X-Acre, Y-Acre, Y-Position, X-Position - 1 (This is actually the location of their sign, also dictates map location)
-        private int Offset = 0;
+        public Villager_Player_Entry[] Villager_Player_Entries = new Villager_Player_Entry[7];
+        public int Offset = 0;
 
         public Villager(int idx)
         {
@@ -475,6 +476,13 @@ namespace ACSE
             House_Coords[2] = (byte)(House_Coords[2] + 1);
             //House_Coords[3] = (byte)(House_Coords[3] + 1); //X-Position is the position of the Villager Name Sign, which is to the left of the house object, so we add one.
             Exists = ID != 0x0000 && ID != 0xFFFF;
+            for (int i = 0; i < 7; i++)
+            {
+                int Entry_Offset = Offset + 0x10 + (i * 0x138); //Offet + 16 data bytes + entrynum * entrysize
+                uint Player_ID = DataConverter.ReadUInt(Entry_Offset + 0x10);
+                if (Player_ID < 0xFFFFFFFF && Player_ID >= 0xF0000000)
+                    Villager_Player_Entries[i] = new Villager_Player_Entry(DataConverter.ReadDataRaw(Entry_Offset, 0x138));
+            }
         }
 
         public void Write()
@@ -559,6 +567,53 @@ namespace ACSE
             World_Buffer[Position + 15] = 0xA012; //Add Nameplate
 
             DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
+        }
+    }
+
+    /*Villager Player Entry Structure (Size: 0x138):
+        Player Name: 0x000 - 0x007
+        Town Name: 0x008 - 0x00F
+        Player ID: 0x010 - 0x013
+        Met Date: 0x014 - 0x01B
+        Met Town Name: 0x01C - 0x023
+        Met Town ID: 0x024 - 0x025
+        Padding??: 0x026 - 0x027
+        Unknown Data: 0x028 - 0x02F
+        Unknown Byte: 0x030 - 0x032
+        Padding??: 0x033 - 0x037
+        Saved Message: 0x038 - 0x138
+    */
+    public class Villager_Player_Entry
+    {
+        public bool Exists = false;
+        //Struct Start
+        public string Player_Name;
+        public string Player_Town_Name;
+        public uint Player_ID;
+        public ACDate Met_Date;
+        public string Met_Town_Name;
+        public uint Met_Town_ID;
+        public byte[] Garbage = new byte[8]; //I have no idea wtf these are for. Might investigate some day.
+        //
+
+        public Villager_Player_Entry(byte[] entryData)
+        {
+            Exists = true;
+            byte[] playerNameBytes = new byte[8], playerTownName = new byte[8], metTownName = new byte[8], metDate = new byte[8], playerId = new byte[4];
+            Buffer.BlockCopy(entryData, 0, playerNameBytes, 0, 8);
+            Buffer.BlockCopy(entryData, 8, playerTownName, 0, 8);
+            Buffer.BlockCopy(entryData, 0x1C, metTownName, 0, 8);
+            Buffer.BlockCopy(entryData, 0x10, playerId, 0, 4);
+            Buffer.BlockCopy(entryData, 0x14, metDate, 0, 8);
+            Array.Reverse(playerId);
+
+            Player_Name = new ACString(playerNameBytes).Trim();
+            Player_Town_Name = new ACString(playerTownName).Trim();
+            Met_Town_Name = new ACString(metTownName).Trim();
+
+            Met_Date = new ACDate(metDate);
+            Player_ID = BitConverter.ToUInt32(playerId, 0);
+            Met_Town_ID = BitConverter.ToUInt16(entryData, 0x24);
         }
     }
 }

@@ -62,6 +62,8 @@ namespace ACSE
         private Bitmap currentPattern;
         private CancelEventHandler importHandler;
         public static byte[] SaveBuffer { get { return saveBuffer; } }
+        public static Villager[] Villagers = new Villager[16];
+        public static ACDate Town_Date;
         public static Dictionary<byte, string> Tune_Chart = new Dictionary<byte, string>()
         {
             { 0xE, "Zz.png" },
@@ -283,11 +285,18 @@ namespace ACSE
                 setControlsEnabled(true, this);
                 GetSaveData(Data_Start_Offset, 0x26000).CopyTo(saveBuffer, 0);
                 TownName = DataConverter.ReadString(Town_Name_Offset, 0x8);
+                //Add Players
                 Player Player1 = new Player(0);
                 Player Player2 = new Player(1);
                 Player Player3 = new Player(2);
                 Player Player4 = new Player(3);
+                //Add Villagers
+                for (int i = 0; i < 16; i++)
+                    Villagers[i] = new Villager(i + 1);
 
+                //Date Thing
+                Town_Date = new ACDate(DataConverter.ReadDataRaw(0xA, 8));
+                townDateLabel.Text = "Last Town Date: " + Town_Date.Date_Time_String;
                 List<PictureBox> temp = new List<PictureBox>();
                 foreach (PictureBox p in Controls.OfType<PictureBox>())
                     temp.Add(p);
@@ -330,26 +339,31 @@ namespace ACSE
                 player1Face.SelectedValue = Player1.Face;
                 player1Gender.Text = Player1.Gender == 0 ? "Male" : "Female";
                 player1HeldItem.Text = Player1.Held_Item.ItemID == 0 ? "(None)" : Player1.Held_Item.Name;
+                groupBox1.Text = "Player1 - " + Player1.Last_Played_Date.Date_Time_String;
 
-                player2Shirt.DataSource = new BindingSource(Shirts, null);
-                player2Shirt.ValueMember = "Key";
-                player2Shirt.DisplayMember = "Value";
-                player2Shirt.SelectedValue = Player2.Shirt.ItemID;
-                player2Background.DataSource = new BindingSource(Shirts, null);
-                player2Background.ValueMember = "Key";
-                player2Background.DisplayMember = "Value";
-                player2Background.SelectedValue = Player2.Inventory_Background.ItemID;
-                player2Face.DataSource = Player2.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
-                player2Face.ValueMember = "Key";
-                player2Face.DisplayMember = "Value";
-                player2Face.SelectedValue = Player2.Face;
-                player2Gender.Text = Player2.Gender == 0 ? "Male" : "Female";
-                player2Name.Text = Player2.Name;
-                player2Bells.Text = Player2.Bells.ToString();
-                player2Debt.Text = Player2.Debt.ToString();
-                player2Savings.Text = Player2.Savings.ToString();
-                player2HeldItem.Text = Player2.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
-                if (!Player2.Exists)
+                if (Player2.Exists)
+                {
+                    player2Shirt.DataSource = new BindingSource(Shirts, null);
+                    player2Shirt.ValueMember = "Key";
+                    player2Shirt.DisplayMember = "Value";
+                    player2Shirt.SelectedValue = Player2.Shirt.ItemID;
+                    player2Background.DataSource = new BindingSource(Shirts, null);
+                    player2Background.ValueMember = "Key";
+                    player2Background.DisplayMember = "Value";
+                    player2Background.SelectedValue = Player2.Inventory_Background.ItemID;
+                    player2Face.DataSource = Player2.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                    player2Face.ValueMember = "Key";
+                    player2Face.DisplayMember = "Value";
+                    player2Face.SelectedValue = Player2.Face;
+                    player2Gender.Text = Player2.Gender == 0 ? "Male" : "Female";
+                    player2Name.Text = Player2.Name;
+                    player2Bells.Text = Player2.Bells.ToString();
+                    player2Debt.Text = Player2.Debt.ToString();
+                    player2Savings.Text = Player2.Savings.ToString();
+                    player2HeldItem.Text = Player2.Held_Item.ItemID == 0 ? "(None)" : Player2.Held_Item.Name;
+                    groupBox2.Text = "Player2 - " + Player2.Last_Played_Date.Date_Time_String;
+                }
+                else
                 {
                     player2Shirt.Enabled = false;
                     player2Background.Enabled = false;
@@ -362,25 +376,29 @@ namespace ACSE
                     player2Gender.Enabled = false;
                 }
 
-                player3Shirt.DataSource = new BindingSource(Shirts, null);
-                player3Shirt.ValueMember = "Key";
-                player3Shirt.DisplayMember = "Value";
-                player3Shirt.SelectedValue = Player3.Shirt.ItemID;
-                player3Background.DataSource = new BindingSource(Shirts, null);
-                player3Background.ValueMember = "Key";
-                player3Background.DisplayMember = "Value";
-                player3Background.SelectedValue = Player3.Inventory_Background.ItemID;
-                player3Face.DataSource = Player3.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
-                player3Face.ValueMember = "Key";
-                player3Face.DisplayMember = "Value";
-                player3Face.SelectedValue = Player3.Face;
-                player3Gender.Text = Player3.Gender == 0 ? "Male" : "Female";
-                player3Name.Text = Player3.Name;
-                player3Bells.Text = Player3.Bells.ToString();
-                player3Debt.Text = Player3.Debt.ToString();
-                player3Savings.Text = Player3.Savings.ToString();
-                player3HeldItem.Text = Player3.Held_Item.ItemID == 0 ? "(None)" : Player3.Held_Item.Name;
-                if (!Player3.Exists)
+                if (Player3.Exists)
+                {
+                    player3Shirt.DataSource = new BindingSource(Shirts, null);
+                    player3Shirt.ValueMember = "Key";
+                    player3Shirt.DisplayMember = "Value";
+                    player3Shirt.SelectedValue = Player3.Shirt.ItemID;
+                    player3Background.DataSource = new BindingSource(Shirts, null);
+                    player3Background.ValueMember = "Key";
+                    player3Background.DisplayMember = "Value";
+                    player3Background.SelectedValue = Player3.Inventory_Background.ItemID;
+                    player3Face.DataSource = Player3.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                    player3Face.ValueMember = "Key";
+                    player3Face.DisplayMember = "Value";
+                    player3Face.SelectedValue = Player3.Face;
+                    player3Gender.Text = Player3.Gender == 0 ? "Male" : "Female";
+                    player3Name.Text = Player3.Name;
+                    player3Bells.Text = Player3.Bells.ToString();
+                    player3Debt.Text = Player3.Debt.ToString();
+                    player3Savings.Text = Player3.Savings.ToString();
+                    player3HeldItem.Text = Player3.Held_Item.ItemID == 0 ? "(None)" : Player3.Held_Item.Name;
+                    groupBox3.Text = "Player3 - " + Player3.Last_Played_Date.Date_Time_String;
+                }
+                else
                 {
                     player3Shirt.Enabled = false;
                     player3Background.Enabled = false;
@@ -393,25 +411,29 @@ namespace ACSE
                     player3Gender.Enabled = false;
                 }
 
-                player4Shirt.DataSource = new BindingSource(Shirts, null);
-                player4Shirt.ValueMember = "Key";
-                player4Shirt.DisplayMember = "Value";
-                player4Shirt.SelectedValue = Player4.Shirt.ItemID;
-                player4Background.DataSource = new BindingSource(Shirts, null);
-                player4Background.ValueMember = "Key";
-                player4Background.DisplayMember = "Value";
-                player4Face.DataSource = Player4.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
-                player4Face.ValueMember = "Key";
-                player4Face.DisplayMember = "Value";
-                player4Face.SelectedValue = Player4.Face;
-                player4Gender.Text = Player4.Gender == 0 ? "Male" : "Female";
-                player4Background.SelectedValue = Player4.Inventory_Background.ItemID;
-                player4Name.Text = Player4.Name;
-                player4Bells.Text = Player4.Bells.ToString();
-                player4Debt.Text = Player4.Debt.ToString();
-                player4Savings.Text = Player4.Savings.ToString();
-                player4HeldItem.Text = Player4.Held_Item.ItemID == 0 ? "(None)" : Player4.Held_Item.Name;
-                if (!Player4.Exists)
+                if (Player4.Exists)
+                {
+                    player4Shirt.DataSource = new BindingSource(Shirts, null);
+                    player4Shirt.ValueMember = "Key";
+                    player4Shirt.DisplayMember = "Value";
+                    player4Shirt.SelectedValue = Player4.Shirt.ItemID;
+                    player4Background.DataSource = new BindingSource(Shirts, null);
+                    player4Background.ValueMember = "Key";
+                    player4Background.DisplayMember = "Value";
+                    player4Face.DataSource = Player4.Gender == 0 ? new BindingSource(Player.Male_Faces, null) : new BindingSource(Player.Female_Faces, null);
+                    player4Face.ValueMember = "Key";
+                    player4Face.DisplayMember = "Value";
+                    player4Face.SelectedValue = Player4.Face;
+                    player4Gender.Text = Player4.Gender == 0 ? "Male" : "Female";
+                    player4Background.SelectedValue = Player4.Inventory_Background.ItemID;
+                    player4Name.Text = Player4.Name;
+                    player4Bells.Text = Player4.Bells.ToString();
+                    player4Debt.Text = Player4.Debt.ToString();
+                    player4Savings.Text = Player4.Savings.ToString();
+                    player4HeldItem.Text = Player4.Held_Item.ItemID == 0 ? "(None)" : Player4.Held_Item.Name;
+                    groupBox4.Text = "Player4 - " + Player4.Last_Played_Date.Date_Time_String;
+                }
+                else
                 {
                     player4Shirt.Enabled = false;
                     player4Background.Enabled = false;
@@ -423,6 +445,7 @@ namespace ACSE
                     player4Face.Enabled = false;
                     player4Gender.Enabled = false;
                 }
+
                 reader.Close();
                 writer.Close();
                 fs.Close();
@@ -663,9 +686,6 @@ namespace ACSE
         {
             if (CanSetData)
             {
-                Villager[] Villagers = new Villager[16];
-                for (int i = 0; i < 16; i++)
-                    Villagers[i] = new Villager(i + 1);
                 if (vEditor == null || vEditor.IsDisposed)
                     vEditor = new Villager_Editor(Villagers);
                 vEditor.Show();

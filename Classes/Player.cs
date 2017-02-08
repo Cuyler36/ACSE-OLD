@@ -103,6 +103,7 @@ namespace ACSE
         public Pattern[] Patterns = new Pattern[8];
         public bool Reset = false;
         public bool Exists = false;
+        public ACDate Last_Played_Date;
 
         public Player(int idx)
         {
@@ -132,17 +133,36 @@ namespace ACSE
             Shirt = new Item(DataConverter.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
             Reset = DataConverter.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
             Savings = DataConverter.ReadUInt(offset + 0x122C);
+            Exists = Identifier != 0xFFFFFFFF;
+
             for (int i = 0; i < 8; i++)
                 Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220);
             House_Number = GetHouse();
             House_Data_Offset = 0x9CF8 + (House_Number - 1) * 0x26B0 + 0x28;
-            Exists = Identifier != 0xFFFFFFFF;
+            Last_Played_Date = new ACDate(Exists ? DataConverter.ReadDataRaw(House_Data_Offset + 0x2640, 8) : new byte[8]);
+        }
+
+        public void WriteName()
+        {
+            int offset = 0x20 + Index * Player_Length;
+            DataConverter.WriteString(offset, Name, 8);
+            DataConverter.WriteString(0x9CF8 + (House_Number - 1) * 0x26B0 - 0x10, Name, 8); //House Name
+            foreach (Villager v in MainForm.Villagers)
+                if (v.Exists)
+                    for (int i = 0; i < v.Villager_Player_Entries.Length; i++)
+                        if (v.Villager_Player_Entries[i] != null && v.Villager_Player_Entries[i].Exists)
+                            if (v.Villager_Player_Entries[i].Player_ID == Identifier)
+                            {
+                                v.Villager_Player_Entries[i].Player_Name = Name;
+                                DataConverter.WriteString(v.Offset + 0x10 + (i * 0x138), Name, 8); //Update name in save
+                            }
         }
 
         public void Write()
         {
             int offset = 0x20 + Index * Player_Length;
-            DataConverter.WriteString(offset + 0, Name, 8);
+            //DataConverter.WriteString(offset + 0, Name, 8);
+            WriteName();
             DataConverter.WriteString(offset + 0x8, Town_Name, 8);
             DataConverter.WriteData(offset + 0x14, new byte[] { Gender });
             DataConverter.WriteData(offset + 0x15, new byte[] { Face });

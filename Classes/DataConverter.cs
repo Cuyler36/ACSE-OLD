@@ -62,7 +62,7 @@ namespace ACSE
         public static byte[] ReadDataRaw(int offset, int size)
         {
             byte[] data = new byte[size];
-            Array.ConstrainedCopy(MainForm.SaveBuffer, offset, data, 0, size);
+            Buffer.BlockCopy(MainForm.SaveBuffer, offset, data, 0, size);
             return data;
         }
 
@@ -73,9 +73,7 @@ namespace ACSE
 
         public static uint ReadUInt(int offset)
         {
-            byte[] intBytes = ReadDataRaw(offset, 4);
-            Array.Reverse(intBytes);
-            return BitConverter.ToUInt32(intBytes, 0);
+            return BitConverter.ToUInt32(ReadData(offset, 4), 0);
         }
 
         public static uint[] ReadUIntArray(int offset, int numInts)
@@ -89,7 +87,7 @@ namespace ACSE
         public static ACString ReadString(int offset, int maxSize)
         {
             byte[] data = new byte[maxSize];
-            Array.ConstrainedCopy(MainForm.SaveBuffer, offset, data, 0, maxSize);
+            Buffer.BlockCopy(MainForm.SaveBuffer, offset, data, 0, maxSize);
             return new ACString(data);
         }
 

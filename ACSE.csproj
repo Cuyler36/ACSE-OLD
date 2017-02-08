@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\AcreData.cs" />
+    <Compile Include="Classes\DateUtil.cs" />
     <Compile Include="Forms\AcreEditor.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -129,6 +129,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
+            this.townDateLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -525,7 +526,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(290, 26);
+            this.button3.Location = new System.Drawing.Point(536, 26);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 5;
@@ -535,7 +536,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(209, 26);
+            this.button6.Location = new System.Drawing.Point(455, 26);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 8;
@@ -545,7 +546,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(371, 26);
+            this.button7.Location = new System.Drawing.Point(617, 26);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(80, 23);
             this.button7.TabIndex = 9;
@@ -1525,7 +1526,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(457, 26);
+            this.button1.Location = new System.Drawing.Point(703, 26);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 23);
             this.button1.TabIndex = 16;
@@ -1533,11 +1534,21 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // townDateLabel
+            // 
+            this.townDateLabel.AutoSize = true;
+            this.townDateLabel.Location = new System.Drawing.Point(209, 31);
+            this.townDateLabel.Name = "townDateLabel";
+            this.townDateLabel.Size = new System.Drawing.Size(196, 13);
+            this.townDateLabel.TabIndex = 17;
+            this.townDateLabel.Text = "Last Town Date: 0:00:00 AM, 0/0/0000";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(795, 427);
+            this.Controls.Add(this.townDateLabel);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -1671,6 +1682,7 @@
         private System.Windows.Forms.TextBox player4Savings;
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label townDateLabel;
     }
 }
 
