@@ -285,18 +285,21 @@ namespace ACSE
                 setControlsEnabled(true, this);
                 GetSaveData(Data_Start_Offset, 0x26000).CopyTo(saveBuffer, 0);
                 TownName = DataConverter.ReadString(Town_Name_Offset, 0x8);
+                Town_Date = new ACDate(DataConverter.ReadDataRaw(0xA, 8)); //Last Played Date
+                townNameTextBox.Text = TownName.Trim();
+                townDateLabel.Text = "Last Town Date: " + Town_Date.Date_Time_String;
+
                 //Add Players
                 Player Player1 = new Player(0);
                 Player Player2 = new Player(1);
                 Player Player3 = new Player(2);
                 Player Player4 = new Player(3);
+
                 //Add Villagers
                 for (int i = 0; i < 16; i++)
                     Villagers[i] = new Villager(i + 1);
 
-                //Date Thing
-                Town_Date = new ACDate(DataConverter.ReadDataRaw(0xA, 8));
-                townDateLabel.Text = "Last Town Date: " + Town_Date.Date_Time_String;
+                //Pattern PictureBoxes
                 List<PictureBox> temp = new List<PictureBox>();
                 foreach (PictureBox p in Controls.OfType<PictureBox>())
                     temp.Add(p);
@@ -317,8 +320,6 @@ namespace ACSE
                     addPatternBoxes(Player3, groupBox3);
                 if (Player4.Exists)
                     addPatternBoxes(Player4, groupBox4);
-
-                townNameTextBox.Text = TownName.Trim();
 
                 player1Name.Text = Player1.Name.Trim();
                 player1Bells.Text = Player1.Bells.ToString();

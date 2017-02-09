@@ -8,6 +8,12 @@ namespace ACSE
     public static class DateUtil
     {
         //Might use for something
+        public static uint Day_String_to_Number(string day)
+        {
+            if (Enum.IsDefined(typeof(DayOfWeek), day))
+                return Convert.ToUInt32((DayOfWeek)Enum.Parse(typeof(DayOfWeek), day, true));
+            return 0; //Guess we're going Sunday
+        }
     }
 
     public class ACDate
@@ -34,7 +40,41 @@ namespace ACSE
 
             Is_PM = Hour >= 12;
             Date_Time_String = string.Format("{0}:{1}:{2} {3}, {4}/{5}/{6}", (Hour % 12) == 0 ? 12 : Hour % 12,
-                Minute.ToString("D2"), Second.ToString("D2"), Is_PM ? "PM" : "AM", Month, Day, Year);
+                Minute.ToString("D2"), Second.ToString("D2"), Is_PM ? "PM" : "AM", Month, Day, Year); //Default date/time string
+        }
+
+        public string Format(string formatString) //Need to redo this if there is a more efficient/cleaner way
+        {
+            formatString = formatString.Replace("(s)", Second.ToString("D2"));
+            formatString = formatString.Replace("(m)", Minute.ToString("D2"));
+            formatString = formatString.Replace("(h)", (Hour % 12) == 0 ? "12" : (Hour % 12).ToString());
+            formatString = formatString.Replace("(H)", Hour.ToString());
+            formatString = formatString.Replace("(d)", Day.ToString());
+            formatString = formatString.Replace("(D)", Day.ToString("D2"));
+            formatString = formatString.Replace("(w)", Day_of_Week.ToString());
+            formatString = formatString.Replace("(W)", Enum.GetName(typeof(DayOfWeek), Day_of_Week));
+            formatString = formatString.Replace("(m)", Month.ToString());
+            formatString = formatString.Replace("(M)", Month.ToString("D2"));
+            formatString = formatString.Replace("(y)", Year.ToString());
+            formatString = formatString.Replace("(Y)", Year.ToString().Substring(2, 2));
+            formatString = formatString.Replace("(a)", Is_PM ? "PM" : "AM");
+            formatString = formatString.Replace("(A)", Is_PM ? "P.M." : "A.M.");
+            return formatString;
+        }
+
+        public byte[] ToBytes()
+        {
+            return new byte[8]
+                {
+                    (byte)Second,
+                    (byte)Minute,
+                    (byte)Hour,
+                    (byte)Day,
+                    (byte)Day_of_Week,
+                    (byte)Month,
+                    (byte)((Year & 0xFF00) >> 8),
+                    (byte)(Year & 0x00FF)
+                };
         }
     }
 
