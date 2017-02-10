@@ -24,7 +24,7 @@ namespace ACSE
             form = form1;
             //Dresser = dresserItems;
             Pockets = inventory;
-            pictureBox1.Image = Inventory.getItemPic(16, 5, Pockets.Items);
+            pictureBox1.Image = Inventory.GetItemPic(16, 5, Pockets.Items);
            // pictureBox2.Image = Inventory.getItemPic(16, 3, dresserItems);
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
             comboBox1.DataSource = bs;
@@ -89,7 +89,7 @@ namespace ACSE
                 {
                     Pockets.Items[index] = new Item((ushort)comboBox1.SelectedValue);
                     Pockets.InventorySlots[index].Item = Pockets.Items[index];
-                    pictureBox1.Image = Inventory.getItemPic(16, 5, Pockets.Items);
+                    pictureBox1.Image = Inventory.GetItemPic(16, 5, Pockets.Items);
                 }
                 /*else if (dresser)
                 {

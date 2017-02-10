@@ -69,7 +69,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(12, 58);
+            this.checkBox3.Location = new System.Drawing.Point(12, 81);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(172, 17);
             this.checkBox3.TabIndex = 5;
@@ -79,11 +79,11 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(12, 81);
+            this.checkBox4.Location = new System.Drawing.Point(12, 58);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(172, 17);
+            this.checkBox4.Size = new System.Drawing.Size(191, 17);
             this.checkBox4.TabIndex = 6;
-            this.checkBox4.Text = "Force Nookington\'s Visitor Flag";
+            this.checkBox4.Text = "Auto Add/Remove Villager Houses";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
             // SettingsForm

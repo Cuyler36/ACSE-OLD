@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace ACSE
 {
@@ -23,6 +24,7 @@ namespace ACSE
         private ImageList imageList;
         private TreeView treeView1;
         private int[] treeViewIconIndex;
+        private CancelEventHandler Selected_Handler;
 
         void acreImage_Click(object sender, MouseEventArgs e)
         {
@@ -98,6 +100,64 @@ namespace ACSE
             {
                 setSelectedAcre((KeyValuePair<ushort, string>)node.Tag);
             }
+        }
+
+        private void Import_Acre_Map(object sender, CancelEventArgs e)
+        {
+            FileStream Map = new FileStream(((OpenFileDialog)sender).FileName, FileMode.Open);
+            BinaryReader Map_Reader = new BinaryReader(Map);
+            ushort[] Map_Buffer = new ushort[70];
+            for (int i = 0; i < 0x8C; i += 2)
+            {
+                byte[] Acre_Bytes = Map_Reader.ReadBytes(2);
+                Array.Reverse(Acre_Bytes);
+                Map_Buffer[i / 2] = BitConverter.ToUInt16(Acre_Bytes, 0);
+            }
+            for (int x = 0; x < 70; x++)
+            {
+                acreImages[x].Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreData.AcreImages.ContainsKey(Map_Buffer[x]) ? AcreData.AcreImages[Map_Buffer[x]].ToString() : "99"));
+                acreImages[x].Name = Map_Buffer[x].ToString();
+                currentAcreData[x + 1] = new Acre(Map_Buffer[x], currentAcreData[x + 1].Index);
+            }
+            Map_Reader.Close();
+            Map.Close();
+            (sender as OpenFileDialog).FileOk -= Selected_Handler;
+            (sender as OpenFileDialog).Dispose();
+        }
+
+        private void Import_Select_File()
+        {
+            OpenFileDialog Map_Selector = new OpenFileDialog() {
+                InitialDirectory = Path.GetDirectoryName(MainForm.fileName),
+                DefaultExt = ".acmap",
+                Filter = "Animal Crossing Map (*.acmap) | *.acmap"
+            };
+
+            Selected_Handler = new CancelEventHandler(Import_Acre_Map);
+            Map_Selector.FileOk += Selected_Handler;
+            Map_Selector.ShowDialog();
+        }
+
+        private void Export_Acre_Map()
+        {
+            ushort[] Acre_Data_Buffer = new ushort[70];
+            int i = 0;
+            foreach (KeyValuePair<int, Acre> Acre in currentAcreData)
+            {
+                Acre_Data_Buffer[i] = Acre.Value.AcreID;
+                i++;
+            }
+
+            FileStream Map_File = new FileStream(Path.GetDirectoryName(MainForm.fileName) + "\\" + Path.GetFileNameWithoutExtension(MainForm.fileName) + ".acmap", FileMode.OpenOrCreate);
+            if (Map_File.CanWrite)
+            {
+                BinaryWriter Map_Writer = new BinaryWriter(Map_File);
+                foreach (ushort Acre in Acre_Data_Buffer)
+                    Map_Writer.Write(new byte[] { BitConverter.GetBytes(Acre)[1], BitConverter.GetBytes(Acre)[0] });
+                Map_File.Flush();
+                Map_Writer.Close();
+            }
+            Map_File.Close();
         }
 
         private void populate_TreeView()
@@ -247,5 +307,14 @@ namespace ACSE
             this.Close();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Export_Acre_Map();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Import_Select_File();
+        }
     }
 }

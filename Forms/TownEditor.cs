@@ -23,6 +23,7 @@ namespace ACSE
         Bitmap[] islandImages = new Bitmap[2];
         byte[] buriedData;
         byte[] islandBuriedData;
+        WorldItem Last_Hovered_Item;
 
         public string[] X_Acre_Names =
         {
@@ -56,22 +57,24 @@ namespace ACSE
                 else
                     acreIdIndex++;
                 ushort[] itemsBuff = new ushort[256];
-                Array.ConstrainedCopy(items, i * 256, itemsBuff, 0, 256);
+                //Array.ConstrainedCopy(items, i * 256, itemsBuff, 0, 256);
+                Buffer.BlockCopy(items, i * 256 * 2, itemsBuff, 0, 256 * 2);
                 Acres[i] = new Normal_Acre(acreIds[i], i + 1, itemsBuff, burriedItemData);
                 Acres[i].Name = Y_Acre_Names[(i / 5) + 1] + " - " + X_Acre_Names[(i % 5) + 1];
                 Acres[i].AcreID = acreIds[acreIdIndex - 1];
             }
-            for (int i = 0; i < 2; i++)
+            for (int i = 1; i > -1; i--)
             {
                 ushort[] itemsBuff = new ushort[256];
-                Array.ConstrainedCopy(islandItems, i * 256, itemsBuff, 0, 256);
+                //Array.ConstrainedCopy(islandItems, i * 256, itemsBuff, 0, 256);
+                Buffer.BlockCopy(islandItems, i * 256 * 2, itemsBuff, 0, 256 * 2);
                 Island_Acres[i] = new Normal_Acre(acreIds[60 + i], i + 1, itemsBuff, islandBurriedItemData);
+                Island_Acres[i].Name = "Island - " + (i == 0 ? "Left" : "Right");
                 int acreImg = AcreData.AcreImages.ContainsKey(Island_Acres[i].AcreID) ? AcreData.AcreImages[Island_Acres[i].AcreID] : 99;
                 islandImages[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 islandAcreImages[i] = new PictureBox();
-                islandAcreImages[i].Size = new Size(128, 128);
-                islandAcreImages[i].Location = new Point(16 + (128 * (5 + i)), 30);
-                islandAcreImages[i].SizeMode = PictureBoxSizeMode.StretchImage;
+                islandAcreImages[i].Size = new Size(130, 130);
+                islandAcreImages[i].Location = new Point(968 - 25 - (130 * (2 - i)), 30);
                 islandAcreImages[i].BackgroundImage = islandImages[i];
                 islandAcreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
                 islandAcreImages[i].BorderStyle = BorderStyle.FixedSingle;
@@ -84,9 +87,8 @@ namespace ACSE
                 int acreImg = AcreData.AcreImages.ContainsKey(Acres[i].AcreID) ? AcreData.AcreImages[Acres[i].AcreID] : 99;
                 images[i] = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + acreImg.ToString());
                 acreImages[i] = new PictureBox();
-                acreImages[i].Size = new Size(128, 128);
-                acreImages[i].Location = new Point(10 + (128 * (i % 5)), 30 + (128 * (i / 5)));
-                acreImages[i].SizeMode = PictureBoxSizeMode.StretchImage;
+                acreImages[i].Size = new Size(130, 130);
+                acreImages[i].Location = new Point(10 + (130 * (i % 5)), 30 + (130 * (i / 5)));
                 acreImages[i].BackgroundImage = images[i];
                 acreImages[i].BackgroundImageLayout = ImageLayout.Stretch;
                 acreImages[i].BorderStyle = BorderStyle.FixedSingle;
@@ -95,11 +97,18 @@ namespace ACSE
                 this.Controls.Add(acreImages[i]);
             }
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
+            MouseEnter += new EventHandler(Hide_Tip);
 
             InitializeComponent();
             comboBox1.DataSource = bs;
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
+        }
+
+        private void Hide_Tip(object sender, EventArgs e)
+        {
+            toolTip1.Hide(this);
+            Last_Hovered_Item = null;
         }
 
         private void Mouse_Click(object sender, MouseEventArgs e)
@@ -175,15 +184,20 @@ namespace ACSE
 
         private void Mouse_Move(object sender, MouseEventArgs e)
         {
-            bool Island_Acre = Array.IndexOf(islandAcreImages, sender as PictureBox) > -1;
-            int Selected_Acre = Array.IndexOf(Island_Acre ? islandAcreImages : acreImages, sender as PictureBox);
+            PictureBox s = (PictureBox)sender;
+            bool Island_Acre = Array.IndexOf(islandAcreImages, s) > -1;
+            int Selected_Acre = Array.IndexOf(Island_Acre ? islandAcreImages : acreImages, s);
             int X = e.X / (4 * scale);
             int Y = e.Y / (4 * scale);
             int Item_Index = X + Y * 16;
             WorldItem Item = Island_Acre ? Island_Acres[Selected_Acre].Acre_Items[Item_Index] : Acres[Selected_Acre].Acre_Items[Item_Index];
 
-            label1.Text = string.Format("0x{0} - {1}", Item.ItemID.ToString("X4"), Item.Name);
             label2.Text = string.Format("Acre: {0} | X: {1} Y: {2}", Island_Acre ? Island_Acres[Selected_Acre].Name : Acres[Selected_Acre].Name, X + 1, Y + 1);
+            if (Last_Hovered_Item != Item)
+            {
+                toolTip1.Show(Item.Burried ? Item.Name + " (Buried)" : Item.Name, this, s.Left + e.X + 10, s.Top + e.Y + 40, 100000);
+                Last_Hovered_Item = Item;
+            }
         }
 
         private void Update_Pictureboxes()
@@ -200,7 +214,6 @@ namespace ACSE
                 }
                 Bitmap acreImage = GenerateAcreItemsBitmap(Acres[x].Acre_Items, x);
                 p.Image = acreImage;
-                p.BringToFront();
                 x++;
             }
             for (int i = 0; i < 2; i++)
@@ -230,7 +243,7 @@ namespace ACSE
             for(int i = 0; i < 256; i++)
             {
                 WorldItem item = items[i];
-                uint itemColor = ItemData.getItemColor(ItemData.getItemType(item.ItemID));
+                uint itemColor = ItemData.GetItemColor(ItemData.GetItemType(item.ItemID));
                 for (int x = 0; x < itemSize * itemSize; x++)
                 {
                     Buffer.BlockCopy(BitConverter.GetBytes(itemColor), 0, bitmapBuffer, ((item.Location.Y * itemSize + x / itemSize) * acreSize * 4) + ((item.Location.X * itemSize + x % itemSize) * 4), 4);
@@ -275,20 +288,26 @@ namespace ACSE
                     DataConverter.WriteUShort(new ushort[1] { Island_Acres[i].Acre_Items[x].ItemID }, MainForm.IslandData_Offset + (i * 512) + x * 2);
             DataConverter.WriteDataRaw(MainForm.BurriedItems_Offset, buriedData);
             DataConverter.WriteDataRaw(MainForm.IslandBurriedItems_Offset, islandBuriedData);
-            this.Hide();
+            Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Close();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
+            int Cleared_Weeds = 0;
             for (int i = 0; i < 30; i++)
                 foreach (WorldItem item in Acres[i].Acre_Items.Where(o => o.Name == "Weed"))
+                {
                     item.ItemID = 0;
+                    item.Name = "Empty";
+                    Cleared_Weeds++;
+                }
             Update_Pictureboxes();
+            MessageBox.Show("Weeds Cleared: " + Cleared_Weeds.ToString(), "Weeds Cleared");
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -301,16 +320,6 @@ namespace ACSE
                     Acres[i].SetBuriedInMemory(item, i, buriedData, false);
                 }
             Update_Pictureboxes();
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ushort value = 0;
-            bool set = true;
-            try { value = (ushort)comboBox1.SelectedValue; }
-            catch { set = false; }
-            //if (set)
-                //label1.Text = "0x" + value.ToString("X4");
         }
     }
 }

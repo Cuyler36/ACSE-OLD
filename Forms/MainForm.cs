@@ -45,7 +45,7 @@ namespace ACSE
         private FileStream fs;
         private BinaryReader reader;
         private BinaryWriter writer;
-        private string fileName;
+        public static string fileName;
         private TownEditor townEditorForm;
         private AcreEditor editor;
         private Villager_Editor vEditor;

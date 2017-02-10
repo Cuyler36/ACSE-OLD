@@ -82,7 +82,7 @@ namespace ACSE
                 }
             }
             for (int i = 0; i < 6; i++)
-                Layers[i].Image = Inventory.getItemPic(16, Layers[i].Size.Width / 16, Items[i]);
+                Layers[i].Image = Inventory.GetItemPic(16, Layers[i].Size.Width / 16, Items[i]);
         }
 
         //Thanks NLSE!
@@ -112,7 +112,7 @@ namespace ACSE
                         MessageBox.Show("Placing Furniture on top of nothing will result in it appearing on the floor. If you want this item to be on something, place an item in the above picturebox at the same location!", "Funriture Warning");
 
                     Items[idx][index] = new Furniture((ushort)comboBox1.SelectedValue);
-                    s.Image = Inventory.getItemPic(16, s.Size.Width / 16, Items[idx]);
+                    s.Image = Inventory.GetItemPic(16, s.Size.Width / 16, Items[idx]);
                 }
             }
         }

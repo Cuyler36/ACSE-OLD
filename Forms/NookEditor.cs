@@ -21,8 +21,8 @@ namespace ACSE
             GetShopSize();
             int itemsPerRow = Shop_Size == 1 ? 5 : Shop_Size == 2 ? 4 : Shop_Size == 3 ? 6 : 7;
             int rows = Shop_Size == 2 ? 4 : Shop_Size + 1;
-            pictureBox1.Size = new Size(itemsPerRow * 16, rows * 16);
-            pictureBox1.Image = Inventory.getItemPic(16, itemsPerRow, Shop_Selection);
+            pictureBox1.Size = new Size(itemsPerRow * 16 + 2, rows * 16 + 2); //+2 to account for border size
+            pictureBox1.Image = Inventory.GetItemPic(16, itemsPerRow, Shop_Selection);
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
             comboBox1.DataSource = bs;
             comboBox1.DisplayMember = "Value";
@@ -37,15 +37,7 @@ namespace ACSE
         private void GetShopSize()
         {
             ushort[] items = DataConverter.ReadRawUShort(MainForm.Nook_Items_Offset, 0x46);
-            Item_Count = items.Length;
-            for (int i = 0; i < items.Length; i++)
-            {
-                if (items[i] == 0)
-                {
-                    Item_Count = i;
-                    break;
-                }
-            }
+            Item_Count = Array.IndexOf<ushort>(items, 0) > -1 ? Array.IndexOf<ushort>(items, 0) : items.Length;
             if (Item_Count > 24)
                 Shop_Size = 4;
             else if (Item_Count > 16)
@@ -87,7 +79,7 @@ namespace ACSE
                 if (comboBox1.SelectedValue != null)
                 {
                     Shop_Selection[index] = new Furniture((ushort)comboBox1.SelectedValue);
-                    pictureBox1.Image = Inventory.getItemPic(16, Shop_Size == 1 ? 5 : Shop_Size == 2 ? 4 : Shop_Size == 3 ? 6 : 7, Shop_Selection);
+                    pictureBox1.Image = Inventory.GetItemPic(16, Shop_Size == 1 ? 5 : Shop_Size == 2 ? 4 : Shop_Size == 3 ? 6 : 7, Shop_Selection);
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace ACSE
             }
         }
 
-        public static Image getItemPic(int itemsize, int itemsPerRow, Item[] items)
+        public static Image GetItemPic(int itemsize, int itemsPerRow, Item[] items)
         {
             int width = itemsize * itemsPerRow, height = itemsize * items.Length / itemsPerRow;
             height = height < 1 ? width : height;
@@ -34,7 +34,7 @@ namespace ACSE
                 int X = i % itemsPerRow;
                 int Y = i / itemsPerRow;
                 Item item = items[i] == null ? new Item(0) : items[i];
-                uint itemColor = ItemData.getItemColor(ItemData.getItemType(item.ItemID));
+                uint itemColor = ItemData.GetItemColor(ItemData.GetItemType(item.ItemID));
 
                 for (int x = 0; x < itemsize * itemsize; x++)
                 {

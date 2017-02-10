@@ -168,12 +168,12 @@ namespace ACSE
         {
             for (int i = 0; i < 16; i++)
                 Villagers[i].Write();
-            Hide(); //Villager Editor isn't closed, as it takes a few seconds to open the first time. Just a time saver.
+            Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Hide();
+            Close();
         }
     }
 }

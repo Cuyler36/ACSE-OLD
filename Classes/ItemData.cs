@@ -56,7 +56,7 @@ namespace ACSE
             0x5845, 0x5846, 0x5847, 0x5848, 0x5849,
             0x584B, 0x584C,
             0xFFFF
-        }; //FE 1D || FE 1E = river? (to the right of the middle of the river) (Possibly shows new bridge locations?)
+        }; //FE 1D || FE 1E = Possibly shows new bridge locations?
         public static List<string> acreItemNames = new List<string>
         {
             "Fence (Type 1)", "Fence (Type 2)",
@@ -203,55 +203,116 @@ namespace ACSE
             ItemDatabase.Sort((x, y) => x.Key.CompareTo(y.Key));
         }
 
-        public static string getItemType(ushort ID)
+        public static string GetItemType(ushort ID)
         {
-            if (ID == 0) return "empty";
-            if (ID == 0xFFFF) return "occupied";
-            if (ID >= 0x8 && ID <= 0xA) return "weed";
-            if (ID >= 0x845 && ID <= 0x84D) return "flower";
-            if (ID >= 0x2100 && ID <= 0x2103) return "money";
-            if (ID >= 0x63 && ID <= 0x67) return "rock";
-            if (ID >= 0x2514 && ID <= 0x251B) return "shell";
-            if (ID >= 0x2A00 && ID <= 0x2A36) return "song";
-            if (ID >= 0x2000 && ID <= 0x20FF) return "paper";
-            if (ID >= 0x2F00 && ID <= 0x2F03) return "turnip";
-            if ((ID >= 0x2300 && ID <= 0x2327) || (ID >= 0x2D00 && ID <= 0x2D27)) return "catchable";
-            if ((ID >= 0x2600 && ID <= 0x2642) || (ID >= 0x2700 && ID <= 0x2742)) return "wallfloor";
-            if (ID >= 0x2400 && ID <= 0x24FE) return "clothes";
-            if (ID >= 0x15B0 && ID <= 0x17A8) return "gyroids";
-            if (ID == 0x2511) return "fossil";
-            if ((ID >= 0x2200 && ID <= 0x225B) || ID == 0x251E) return "tool";  //0x251E = Signboard (not a 'tool', but it's still classified as one)
-            if ((ID >= 0x005E && ID <= 0x0060) || (ID >= 0x0069 && ID <= 0x0082) || (ID >= 0x0800 && ID <= 0x0868)) return "tree";
-            if ((ID >= 0x5 && ID <= 0x7) || (ID >= 0xB && ID <= 0x10) || (ID >= 0x5000 && ID <= 0xB000) || (ID == 0xFE1D || ID == 0xFE1E)) return "building";
-            if (ID != 0xFFFF && ID != 0x0000) return "furniture";
-
-            return "unknown";
+            if (ID == 0)
+                return "Empty";
+            else if (ID == 0xFFFF)
+                return "Occupied";
+            else if (ID >= 0x8 && ID <= 0xA)
+                return "Weed";
+            else if (ID >= 0x845 && ID <= 0x84D)
+                return "Flower";
+            else if (ID >= 0x2100 && ID <= 0x2103)
+                return "Money";
+            else if (ID >= 0x63 && ID <= 0x67)
+                return "Rock";
+            else if (ID >= 0x2514 && ID <= 0x251B)
+                return "Shell";
+            else if (ID >= 0x2A00 && ID <= 0x2A36)
+                return "Song";
+            else if (ID >= 0x2000 && ID <= 0x20FF)
+                return "Paper";
+            else if (ID >= 0x2F00 && ID <= 0x2F03)
+                return "Turnip";
+            else if ((ID >= 0x2800 && ID <= 0x2804) || ID == 0x2807)
+                return "Fruit";
+            else if ((ID >= 0x2300 && ID <= 0x2327) || (ID >= 0x2D00 && ID <= 0x2D27))
+                return "Catchable";
+            else if (ID >= 0x2503 && ID <= 0x250C)
+                return "Quest Item";
+            else if (ID >= 0x250E && ID <= 0x2510)
+                return "Trash";
+            else if ((ID >= 0x2523 && ID <= 0x2530) || (ID >= 0x2900 && ID <= 0x290A) || (ID >= 0x2805 && ID <= 0x2806))
+                return "Item";
+            else if (ID >= 0x2C00 && ID <= 0x2C5F)
+                return "Raffle Ticket";
+            else if ((ID >= 0x2600 && ID <= 0x2642) || (ID >= 0x2700 && ID <= 0x2742))
+                return "Wall/Floor";
+            else if (ID >= 0x2400 && ID <= 0x24FE)
+                return "Clothes";
+            else if (ID >= 0x15B0 && ID <= 0x17A8)
+                return "Gyroids";
+            else if (ID == 0x2511)
+                return "Fossil";
+            else if ((ID >= 0x2200 && ID <= 0x225B) || ID == 0x251E)
+                return "Tool";  //0x251E = Signboard (not a 'tool', but it's still classified as one)
+            else if ((ID >= 0x005E && ID <= 0x0060) || (ID >= 0x0069 && ID <= 0x0082) || (ID >= 0x0800 && ID <= 0x0868))
+                return "Tree";
+            else if ((ID >= 0x5 && ID <= 0x7) || (ID >= 0xB && ID <= 0x10) || (ID >= 0x5000 && ID <= 0xB000) || (ID == 0xFE1D || ID == 0xFE1E))
+                return "Building";
+            else if ((ID >= 0x1000 && ID <= 0x15AC) || (ID >= 0x17AC && ID <= 0x1FFC) || (ID >= 0x3000 && ID <= 0x33C4))
+                return "Furniture";
+            else
+                return "Unknown";
         }
-        public static uint getItemColor(string itemType)
+        public static uint GetItemColor(string itemType)
         {
             switch (itemType)
             {
-                case "furniture": return 0xc83cde30;
-                case "flower": return 0xc8ec67b8;
-                case "money": return 0xc8ffff00;
-                case "rock": return 0xc8000000;
-                case "song": return 0xc8a4ecb8;
-                case "paper": return 0xc8a4ece8;
-                case "turnip": return 0xc8bbac9d;
-                case "catchable": return 0xc8bae33e;
-                case "wallfloor": return 0xc8994040;
-                case "clothes": return 0xc82874aa;
-                case "gyroids": return 0xc8d48324;
-                case "fossil": return 0xc8868686;
-                case "tool": return 0xc8818181;
-                case "tree": return 0xc800ff00;
-                case "weed": return 0xc8008000;
-                case "shell": return 0xc8FFC0CB;
-                case "empty": return 0x00ffffff;
-                case "occupied": return 0xDD999999;
-                case "building": return 0xFF777777;
+                case "Furniture":
+                    return 0xC83CDE30;
+                case "Flower":
+                    return 0xC8EC67B8;
+                case "Money":
+                    return 0xC8FFFF00;
+                case "Rock":
+                    return 0xC8000000;
+                case "Song":
+                    return 0xC8A4ECB8;
+                case "Paper":
+                    return 0xC8A4ECE8;
+                case "Turnip":
+                    return 0xC8BBAC9D;
+                case "Catchable":
+                    return 0xC8BAE33E;
+                case "Wall/Floor":
+                    return 0xC8994040;
+                case "Clothes":
+                    return 0xC82874AA;
+                case "Gyroids":
+                    return 0xC8D48324;
+                case "Fossil":
+                    return 0xC8868686;
+                case "Tool":
+                    return 0xC8818181;
+                case "Item":
+                    return 0xC8FFA500;
+                case "Fruit":
+                    return 0xC8DDA0DD;
+                case "Trash":
+                    return 0xC8556B2F;
+                case "Quest Item":
+                    return 0xC8BDB76B;
+                case "Raffle Ticket":
+                    return 0xC81E90FF;
+                case "Tree":
+                    return 0xC800FF00;
+                case "Weed":
+                    return 0xC8008000;
+                case "Shell":
+                    return 0xC8FFC0CB;
+                case "Empty":
+                    return 0x00FFFFFF;
+                case "Occupied":
+                    return 0xDD999999;
+                case "Building":
+                    return 0xFF777777;
+                case "Unknown":
+                    return 0xC8FF0000;
+                default:
+                    return 0xC8FF0000;
             }
-            return 0xc8ff0000;
         }
 
         public static void AddVillagerHouses()
@@ -267,12 +328,7 @@ namespace ACSE
 
         public static ushort GetItemID(string itemName)
         {
-            for(int i = 0; i < Item_Names.Length; i++)
-            {
-                if (Item_Names[i] == itemName)
-                    return Item_IDs[i];
-            }
-            return 0;
+            return (Array.IndexOf(Item_Names, itemName) < 0 ? (ushort)0 : Item_IDs[Array.IndexOf(Item_Names, itemName)]);
         }
 
         public static string GetItemName(ushort itemID)
