@@ -130,6 +130,14 @@
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.townDateLabel = new System.Windows.Forms.Label();
+            this.player1Catchables = new System.Windows.Forms.Button();
+            this.player1Catalog = new System.Windows.Forms.Button();
+            this.player2Catalog = new System.Windows.Forms.Button();
+            this.player2Catchables = new System.Windows.Forms.Button();
+            this.player3Catalog = new System.Windows.Forms.Button();
+            this.player3Catchables = new System.Windows.Forms.Button();
+            this.player4Catalog = new System.Windows.Forms.Button();
+            this.player4Catchables = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -205,6 +213,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.player1Catalog);
+            this.groupBox1.Controls.Add(this.player1Catchables);
             this.groupBox1.Controls.Add(this.player1Savings);
             this.groupBox1.Controls.Add(this.label34);
             this.groupBox1.Controls.Add(this.player1Face);
@@ -227,7 +237,7 @@
             this.groupBox1.Controls.Add(this.player1Name);
             this.groupBox1.Location = new System.Drawing.Point(17, 55);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(186, 282);
+            this.groupBox1.Size = new System.Drawing.Size(186, 342);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Player1";
@@ -466,7 +476,7 @@
             // 
             // player1House
             // 
-            this.player1House.Location = new System.Drawing.Point(111, 253);
+            this.player1House.Location = new System.Drawing.Point(105, 253);
             this.player1House.Name = "player1House";
             this.player1House.Size = new System.Drawing.Size(75, 23);
             this.player1House.TabIndex = 5;
@@ -476,7 +486,7 @@
             // 
             // player1Inventory
             // 
-            this.player1Inventory.Location = new System.Drawing.Point(12, 253);
+            this.player1Inventory.Location = new System.Drawing.Point(6, 253);
             this.player1Inventory.Name = "player1Inventory";
             this.player1Inventory.Size = new System.Drawing.Size(75, 23);
             this.player1Inventory.TabIndex = 4;
@@ -556,7 +566,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.player2Catalog);
             this.groupBox2.Controls.Add(this.player2Savings);
+            this.groupBox2.Controls.Add(this.player2Catchables);
             this.groupBox2.Controls.Add(this.player2Face);
             this.groupBox2.Controls.Add(this.label35);
             this.groupBox2.Controls.Add(this.player2Background);
@@ -578,7 +590,7 @@
             this.groupBox2.Controls.Add(this.player2Name);
             this.groupBox2.Location = new System.Drawing.Point(209, 55);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(186, 282);
+            this.groupBox2.Size = new System.Drawing.Size(186, 342);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Player2";
@@ -814,7 +826,7 @@
             // 
             // player2House
             // 
-            this.player2House.Location = new System.Drawing.Point(111, 253);
+            this.player2House.Location = new System.Drawing.Point(105, 253);
             this.player2House.Name = "player2House";
             this.player2House.Size = new System.Drawing.Size(75, 23);
             this.player2House.TabIndex = 5;
@@ -824,7 +836,7 @@
             // 
             // player2Inventory
             // 
-            this.player2Inventory.Location = new System.Drawing.Point(12, 253);
+            this.player2Inventory.Location = new System.Drawing.Point(6, 253);
             this.player2Inventory.Name = "player2Inventory";
             this.player2Inventory.Size = new System.Drawing.Size(75, 23);
             this.player2Inventory.TabIndex = 4;
@@ -874,7 +886,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.player3Catalog);
             this.groupBox3.Controls.Add(this.player3Savings);
+            this.groupBox3.Controls.Add(this.player3Catchables);
             this.groupBox3.Controls.Add(this.player3Face);
             this.groupBox3.Controls.Add(this.label36);
             this.groupBox3.Controls.Add(this.player3Background);
@@ -896,7 +910,7 @@
             this.groupBox3.Controls.Add(this.player3Name);
             this.groupBox3.Location = new System.Drawing.Point(401, 55);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(186, 282);
+            this.groupBox3.Size = new System.Drawing.Size(186, 342);
             this.groupBox3.TabIndex = 15;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Player3";
@@ -1192,7 +1206,9 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.player4Catalog);
             this.groupBox4.Controls.Add(this.player4Savings);
+            this.groupBox4.Controls.Add(this.player4Catchables);
             this.groupBox4.Controls.Add(this.player4Face);
             this.groupBox4.Controls.Add(this.label37);
             this.groupBox4.Controls.Add(this.label27);
@@ -1214,7 +1230,7 @@
             this.groupBox4.Controls.Add(this.player4Name);
             this.groupBox4.Location = new System.Drawing.Point(593, 55);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(186, 282);
+            this.groupBox4.Size = new System.Drawing.Size(186, 342);
             this.groupBox4.TabIndex = 14;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Player4";
@@ -1450,7 +1466,7 @@
             // 
             // player4House
             // 
-            this.player4House.Location = new System.Drawing.Point(111, 253);
+            this.player4House.Location = new System.Drawing.Point(105, 253);
             this.player4House.Name = "player4House";
             this.player4House.Size = new System.Drawing.Size(75, 23);
             this.player4House.TabIndex = 5;
@@ -1460,7 +1476,7 @@
             // 
             // player4Inventory
             // 
-            this.player4Inventory.Location = new System.Drawing.Point(12, 253);
+            this.player4Inventory.Location = new System.Drawing.Point(6, 253);
             this.player4Inventory.Name = "player4Inventory";
             this.player4Inventory.Size = new System.Drawing.Size(75, 23);
             this.player4Inventory.TabIndex = 4;
@@ -1543,11 +1559,83 @@
             this.townDateLabel.TabIndex = 17;
             this.townDateLabel.Text = "Last Town Date: 0:00:00 AM, 0/0/0000";
             // 
+            // player1Catchables
+            // 
+            this.player1Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player1Catchables.Name = "player1Catchables";
+            this.player1Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player1Catchables.TabIndex = 28;
+            this.player1Catchables.Text = "Fill Catchables";
+            this.player1Catchables.UseVisualStyleBackColor = true;
+            // 
+            // player1Catalog
+            // 
+            this.player1Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player1Catalog.Name = "player1Catalog";
+            this.player1Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player1Catalog.TabIndex = 29;
+            this.player1Catalog.Text = "Fill Catalog";
+            this.player1Catalog.UseVisualStyleBackColor = true;
+            // 
+            // player2Catalog
+            // 
+            this.player2Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player2Catalog.Name = "player2Catalog";
+            this.player2Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player2Catalog.TabIndex = 31;
+            this.player2Catalog.Text = "Fill Catalog";
+            this.player2Catalog.UseVisualStyleBackColor = true;
+            // 
+            // player2Catchables
+            // 
+            this.player2Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player2Catchables.Name = "player2Catchables";
+            this.player2Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player2Catchables.TabIndex = 30;
+            this.player2Catchables.Text = "Fill Catchables";
+            this.player2Catchables.UseVisualStyleBackColor = true;
+            // 
+            // player3Catalog
+            // 
+            this.player3Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player3Catalog.Name = "player3Catalog";
+            this.player3Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player3Catalog.TabIndex = 33;
+            this.player3Catalog.Text = "Fill Catalog";
+            this.player3Catalog.UseVisualStyleBackColor = true;
+            // 
+            // player3Catchables
+            // 
+            this.player3Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player3Catchables.Name = "player3Catchables";
+            this.player3Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player3Catchables.TabIndex = 32;
+            this.player3Catchables.Text = "Fill Catchables";
+            this.player3Catchables.UseVisualStyleBackColor = true;
+            // 
+            // player4Catalog
+            // 
+            this.player4Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player4Catalog.Name = "player4Catalog";
+            this.player4Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player4Catalog.TabIndex = 35;
+            this.player4Catalog.Text = "Fill Catalog";
+            this.player4Catalog.UseVisualStyleBackColor = true;
+            // 
+            // player4Catchables
+            // 
+            this.player4Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player4Catchables.Name = "player4Catchables";
+            this.player4Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player4Catchables.TabIndex = 34;
+            this.player4Catchables.Text = "Fill Catchables";
+            this.player4Catchables.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(795, 427);
+            this.ClientSize = new System.Drawing.Size(795, 484);
             this.Controls.Add(this.townDateLabel);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox4);
@@ -1683,6 +1771,14 @@
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label townDateLabel;
+        private System.Windows.Forms.Button player1Catalog;
+        private System.Windows.Forms.Button player1Catchables;
+        private System.Windows.Forms.Button player2Catalog;
+        private System.Windows.Forms.Button player2Catchables;
+        private System.Windows.Forms.Button player3Catalog;
+        private System.Windows.Forms.Button player3Catchables;
+        private System.Windows.Forms.Button player4Catalog;
+        private System.Windows.Forms.Button player4Catchables;
     }
 }
 

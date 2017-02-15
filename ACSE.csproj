@@ -59,6 +59,7 @@
     <Content Include="Resources\AC Save Editor Logo.ico" />
     <Content Include="Resources\Images\1.jpg" />
     <Content Include="Resources\Images\10.jpg" />
+    <None Include="Resources\Images\VillagerHouse.png" />
     <None Include="Resources\Images\100.jpg" />
     <Content Include="Resources\Images\11.jpg" />
     <Content Include="Resources\Images\12.jpg" />
@@ -140,7 +141,17 @@
     <Content Include="Resources\Images\8.jpg" />
     <None Include="Resources\Images\80.jpg" />
     <None Include="Resources\Images\81.jpg" />
+    <None Include="Resources\Images\82.jpg" />
+    <None Include="Resources\Images\83.jpg" />
+    <None Include="Resources\Images\88.jpg" />
+    <None Include="Resources\Images\84.jpg" />
+    <None Include="Resources\Images\85.jpg" />
+    <None Include="Resources\Images\86.jpg" />
+    <None Include="Resources\Images\87.jpg" />
+    <None Include="Resources\Images\89.jpg" />
     <Content Include="Resources\Images\9.jpg" />
+    <None Include="Resources\Images\90.jpg" />
+    <None Include="Resources\Images\91.jpg" />
     <Content Include="Resources\Images\99.jpg" />
     <Content Include="Resources\Images\items_en.txt" />
   </ItemGroup>

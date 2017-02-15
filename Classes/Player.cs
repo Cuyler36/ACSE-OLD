@@ -96,10 +96,12 @@ namespace ACSE
         //public Item[] Stored_Items;
         public byte Face;
         public byte Gender;
+        public byte Tan;
         public uint Identifier;
         public int House_Number = 0;
         public int House_Data_Offset = 0;
         public uint Savings = 0;
+        public byte[] Bugs_and_Fish_Caught = new byte[11]; //Contains some furntiure set as well
         public Pattern[] Patterns = new Pattern[8];
         public bool Reset = false;
         public bool Exists = false;
@@ -188,6 +190,15 @@ namespace ACSE
                 if (Identifier != 0xFFFFFFFF && DataConverter.ReadUInt(0x9CF8 + i * 0x26B0) == Identifier)
                     return i + 1;
             return 0;
+        }
+
+        public void Fill_Catchables()
+        {
+            //This will add some items to Nook's Catalog as well (They're stored in binary again for space saving)
+            int offset = 0x20 + Index * Player_Length;
+            DataConverter.WriteDataRaw(offset + 0x1164, new byte[] { 0xFF, 0xFF });
+            DataConverter.WriteDataRaw(offset + 0x1168, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF });
+            DataConverter.WriteDataRaw(offset + 0x1173, new byte[] { 0xFF });
         }
     }
 }

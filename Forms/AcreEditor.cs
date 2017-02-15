@@ -12,11 +12,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Drawing.Imaging;
 
 namespace ACSE
 {
     public partial class AcreEditor : Form
     {
+        //TODO: Create "Generate Random Town" method
         private ushort currentlySelectedAcre = 0;
         private bool acreSelected = false;
         private PictureBox[] acreImages = new PictureBox[70];
@@ -24,6 +26,7 @@ namespace ACSE
         private ImageList imageList;
         private TreeView treeView1;
         private int[] treeViewIconIndex;
+        private List<PictureBox> Villager_Houses = new List<PictureBox>();
         private CancelEventHandler Selected_Handler;
 
         void acreImage_Click(object sender, MouseEventArgs e)
@@ -33,8 +36,8 @@ namespace ACSE
             {
                 acreSelected = true;
                 ushort id = ushort.Parse(p.Name);
-                bool acreExists = AcreData.AcreImages.ContainsKey(id);
-                pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (acreExists ? AcreData.AcreImages[id] : 99).ToString());
+                bool acreExists = AcreData.Acres.ContainsKey(id);
+                pictureBox1.Image = AcreData.ToAcrePicture(id);
                 label2.Text = acreExists ? AcreData.Acres[id] : "Unknown Acre";
                 currentlySelectedAcre = id;
                 label3.Text = "0x" + id.ToString("X4");
@@ -44,7 +47,7 @@ namespace ACSE
                 int idx = Array.IndexOf(acreImages, p);
                 if (idx > -1)
                 {
-                    p.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreData.AcreImages.ContainsKey(currentlySelectedAcre) ? AcreData.AcreImages[currentlySelectedAcre].ToString() : "99"));
+                    p.Image = AcreData.ToAcrePicture(currentlySelectedAcre);
                     p.Name = currentlySelectedAcre.ToString();
                     currentAcreData[idx + 1] = new Acre(currentlySelectedAcre, currentAcreData[idx + 1].Index);
                 }
@@ -63,7 +66,7 @@ namespace ACSE
                 imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
                 iconIndex.Add(i);
             }
-            for (int i = 70; i < 82; i++)
+            for (int i = 70; i < 92; i++)
             {
                 imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
                 iconIndex.Add(i);
@@ -79,13 +82,51 @@ namespace ACSE
             populate_TreeView();
         }
 
+        public void Populate_Villager_Houses()
+        {   
+            foreach (Villager Villager in MainForm.Villagers)
+                if (Villager.Exists)
+                {
+                    int X_Acre = Villager.House_Coords[0];
+                    int Y_Acre = Villager.House_Coords[1];
+                    int X_Position = Villager.House_Coords[2];
+                    int Y_Position = Villager.House_Coords[3];
+                    int Acre_Index = 7 * Y_Acre + X_Acre;
+                    if (X_Acre >= 1 && X_Acre <= 5 && Y_Acre >= 1 && Y_Acre <= 6 && X_Position > 0 && X_Position < 16 && Y_Position > 0 && Y_Position < 15)
+                    {
+                        Acre House_Acre = currentAcreData.ElementAt(Acre_Index).Value;
+                        int Z_Position = House_Acre.Name.Contains("Upper") ? 0 : House_Acre.Name.Contains("Middle") ? 1 : 2;
+                        //Add Z-Position logic
+                        /*ColorPalette Bitmap_Palette = House_Image.Palette;
+                        for (int i = 0; i < Bitmap_Palette.Entries.Length; i++)
+                        {
+                            if (Bitmap_Palette.Entries[i] == Color.White)
+                                Bitmap_Palette.Entries[i] = Color.FromArgb(90, 90, 225);
+                            else if (Bitmap_Palette.Entries[i] == Color.Black)
+                                Bitmap_Palette.Entries[i] = Color.White;
+                        }
+                        House_Image.Palette = Bitmap_Palette;*/
+                        PictureBox Acre_Picturebox = acreImages[Acre_Index];
+                        PictureBox House_Picturebox = new PictureBox();
+                        House_Picturebox.Size = new Size(16, 16);
+                        House_Picturebox.Location = new Point(Math.Min(X_Position * 4 - 8, 56), Math.Min(Y_Position * 4 - 8, 56));
+                        House_Picturebox.SizeMode = PictureBoxSizeMode.StretchImage;
+                        House_Picturebox.BackColor = Color.Transparent;
+                        House_Picturebox.Image = (Image)Properties.Resources.ResourceManager.GetObject("_VillagerHouse");
+                        Acre_Picturebox.Controls.Add(House_Picturebox);
+                        House_Picturebox.BringToFront();
+                        Villager_Houses.Add(House_Picturebox);
+                    }
+                }
+        }
+
         private void setSelectedAcre(KeyValuePair<ushort, string> acre)
         {
             if (AcreData.Acres.Contains(acre))
             {
                 acreSelected = true;
                 ushort acreId = acre.Key;
-                pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreData.AcreImages[acreId]).ToString());
+                pictureBox1.Image = AcreData.ToAcrePicture(acreId);
                 currentlySelectedAcre = acreId;
                 label2.Text = acre.Value;
                 label3.Text = "0x" + acreId.ToString("X4");
@@ -115,7 +156,7 @@ namespace ACSE
             }
             for (int x = 0; x < 70; x++)
             {
-                acreImages[x].Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (AcreData.AcreImages.ContainsKey(Map_Buffer[x]) ? AcreData.AcreImages[Map_Buffer[x]].ToString() : "99"));
+                acreImages[x].Image = AcreData.ToAcrePicture(Map_Buffer[x]);
                 acreImages[x].Name = Map_Buffer[x].ToString();
                 currentAcreData[x + 1] = new Acre(Map_Buffer[x], currentAcreData[x + 1].Index);
             }
@@ -165,7 +206,7 @@ namespace ACSE
             treeView1 = new TreeView();
             treeView1.ItemHeight = 26;
             treeView1.Size = new Size(261, 329);
-            treeView1.Location = new Point(250, 43);
+            treeView1.Location = new Point(Size.Width - 281, 43);
             this.Controls.Add(treeView1);
 
             treeView1.BeginUpdate();
@@ -197,8 +238,8 @@ namespace ACSE
             islandAcres.ImageIndex = 75;
             islandAcres.SelectedImageIndex = 75;
             TreeNode miscAcres = new TreeNode("Miscellaneous");
-            miscAcres.ImageIndex = 80;
-            miscAcres.SelectedImageIndex = 80;
+            miscAcres.ImageIndex = 90;
+            miscAcres.SelectedImageIndex = 90;
 
             treeView1.Nodes.Add(borderAcres);
             treeView1.Nodes.Add(grassAcres);
@@ -213,7 +254,8 @@ namespace ACSE
             foreach (KeyValuePair<ushort, string> acre in AcreData.Acres)
             {
                 TreeNode acreNode = new TreeNode(acre.Value);
-                acreNode.ImageIndex = Array.IndexOf(treeViewIconIndex, AcreData.AcreImages[acre.Key]);
+                int idx = Array.IndexOf(treeViewIconIndex, AcreData.ToAcrePictureID(acre.Key));
+                acreNode.ImageIndex = idx > -1 ? idx : 0;
                 acreNode.SelectedImageIndex = acreNode.ImageIndex;
                 acreNode.Tag = acre;
 
@@ -242,6 +284,22 @@ namespace ACSE
             treeView1.EndUpdate();
         }
 
+        //Upcoming Feature. WIP currently.
+        private void Generate_Random_Town(bool Normal_Rules = true)
+        {
+            Random Number_Generator = new Random();
+            ushort[] Acre_Buffer = new ushort[70];
+            List<byte> A_Acres = new List<byte>() { 1, 2, 3, 4, 5 };
+            int Town_Layer_Count = Number_Generator.Next(Normal_Rules ? 2 : 1, Normal_Rules ? 3 : 4);
+            int Town_Layers = Town_Layer_Count - 1;
+            int River_Start_Acre = Number_Generator.Next(1, 5);
+            int River_Turn_Count = Town_Layer_Count == 4 ? 0 : Number_Generator.Next(1, 3);
+            River_Turn_Count = River_Turn_Count + River_Turn_Count % 2; //Must turn an even amount to get back to valid connected acres
+            A_Acres.Remove((byte)River_Start_Acre);
+            Acre_Buffer[0] = (ushort)(0x344 + Town_Layers);
+            //Acre_Buffer[River_Start_Acre - 1] = 0; //Make this method generate acres in rows of 7 would be a lot easier
+        }
+
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -258,7 +316,7 @@ namespace ACSE
             if (acreId < 0x600)
             {
                 bool acreDataExists = AcreData.Acres.ContainsKey(acreId);
-                pictureBox1.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (acreDataExists ? (AcreData.AcreImages[acreId]).ToString() : "99"));
+                pictureBox1.Image = AcreData.ToAcrePicture(acreId);
                 string acreInfo = "Unknown Acre";
                 if (acreDataExists)
                     AcreData.Acres.TryGetValue(acreId, out acreInfo);
@@ -271,25 +329,22 @@ namespace ACSE
 
         private void AcreEditor_Shown(object sender, EventArgs e)
         {
-            int y = 1;
             int xOffset = 10;
             int yOffset = 42;
             int i = 0;
             foreach (KeyValuePair<int, Acre> data in currentAcreData)
             {
-                int imageNumber = AcreData.AcreImages.ContainsKey(data.Value.AcreID) ? AcreData.AcreImages[data.Value.AcreID] : 99;
-                if (i % 7 == 0 && i > 0)
-                    y = y + 33;
                 acreImages[i] = new PictureBox();
                 acreImages[i].SizeMode = PictureBoxSizeMode.StretchImage;
-                acreImages[i].Size = new Size(32, 32);
-                acreImages[i].Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (imageNumber).ToString());
-                acreImages[i].Location = new Point(xOffset + (i % 7) * 33 + (1 + (i % 7)), y + yOffset);
+                acreImages[i].Size = new Size(64, 64);
+                acreImages[i].Image = AcreData.ToAcrePicture(data.Value.AcreID);
+                acreImages[i].Location = new Point(xOffset + (i % 7) * 65 + (1 + (i % 7)), (i / 7) * 65 + yOffset);
                 acreImages[i].Name = data.Value.AcreID.ToString();
                 acreImages[i].MouseClick += new MouseEventHandler(acreImage_Click);
                 this.Controls.Add(acreImages[i]);
                 i++;
             }
+            Populate_Villager_Houses();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -315,6 +370,12 @@ namespace ACSE
         private void button2_Click(object sender, EventArgs e)
         {
             Import_Select_File();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (PictureBox House in Villager_Houses)
+                House.Visible = checkBox1.Checked;
         }
     }
 }

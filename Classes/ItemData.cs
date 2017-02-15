@@ -10,7 +10,61 @@ namespace ACSE
 {
     public class ItemData
     {
-        //REDO THIS UGLY CODE
+        //TODO: Add Nook's shops, Player Houses, Island House
+        //Possibily add: Suspension Bridges, Boards, Villager Houses, Train Station
+        public static Structure[] World_Structures = new Structure[7]
+        {
+            new Structure("Post Office", 4, new ushort[16]
+            {
+                0, 1, 1, 0,
+                1, 1, 2, 1,
+                1, 1, 1, 1,
+                1, 1, 1, 0
+            }),
+            new Structure("Dump", 6, new ushort[36]
+            {
+                1, 1, 1, 1, 1, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 1, 0, 0, 1, 2
+            }),
+            new Structure("Museum", 7, new ushort[42]
+            {
+                1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 2, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1,
+                0, 0, 0, 1, 0, 0, 0
+            }),
+            new Structure("Tailor's Shop", 4, new ushort[16]
+            {
+                0, 1, 1, 0,
+                1, 1, 2, 1,
+                1, 1, 1, 1,
+                1, 1, 1, 0
+            }),
+            new Structure("Police Station", 3, new ushort[9]
+            {
+                1, 1, 1,
+                1, 2, 1,
+                1, 1, 1
+            }),
+            new Structure("Wishing Well", 2, new ushort[8]
+            {
+                1, 1,
+                1, 1,
+                2, 1,
+                1, 1
+            }),
+            new Structure("Lighthouse", 2, new ushort[4]
+            {
+                1, 1,
+                1, 2
+            })
+        };
 
         public static ushort[] Furniture_IDs = new ushort[1102]
         {
@@ -24,21 +78,32 @@ namespace ACSE
         //Villager Houses are 50XX (Where XX is the Villager Identification Byte) Ex: Mitzi > 5002
         //0x580A = Train (Front) < Becomes invisible/is removed
         //0x580B = Train (Caboose) < Causes game to crash
+        //0x0089 = ?
+        //0x5854 = Player (1?) Model. Resets game after loading model.
 
+        //PLEASE SORT THIS LIST
         public static List<ushort> acreItemIDs = new List<ushort> {
+            0x0001, 0x0002, 0x0003, 0x0004,
             0x0005, 0x0006,
             0x0007, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F, 0x0010,
-            0x0011,
-            0x0800,
+            0x0011, 0x0012, 0x0013, 0x0014, 0x0020, 0x0028, 0x002A,
+            0x0030, 0x0038, 0x0040, 0x0048, 0x0050, 0x005C,
+            0x0800, 0x0862, 0x084E,
             0x0804, 0x080C, 0x0814, 0x081C, 0x0824, 0x082C, 0x085B,
             0x0861, 0x0867, 0x0868, 0x0079, 0x0802, 0x0078, 0x0069,
             0x005E, 0x007A, 0x0060, 0x0082, 0x005F,
             0x0845, 0x0846, 0x0847, 0x0848, 0x0849, 0x084A, 0x084B,
             0x084C, 0x084D,
             0x0008, 0x0009, 0x000A,
+            0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077,
+            0x007B, 0x007C, 0x007D, 0x007E, 0x007F, 0x0080, 0x0081, 0x0083,
+            0x0084, 0x0085, 0x0086, 0x0087, 0x0088, 0x00BF,
+            0x0805, 0x0806, 0x0807, 0x0808, 0x0831, 0x0836,
+            0x083B, 0x0834, 0x082D,
             0x5808, 0x583B, 0x5843, 0x5809, 0x5804, 0x5805, 0x5806, 0x5807,
             0x584A, 0x584D, 0x5825, 0x580C,
-            0x0063, 0x0064, 0x0065, 0x0066, 0x0067,
+            0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068,
+            0x006A, 0x006B, 0x006C, 0x006D, 0x006E, 0x006F,
             0x580D, 0x580E, 0x580F,
             0x5810, 0x5811, 0x5812, 0x5813, 0x5814, 0x5815, 0x5816,
             0x5817, 0x5818, 0x5819, 0x581A, 0x581B, 0x581C, 0x581D,
@@ -59,20 +124,28 @@ namespace ACSE
         }; //FE 1D || FE 1E = Possibly shows new bridge locations?
         public static List<string> acreItemNames = new List<string>
         {
+            "Tree Stump (Small)", "Tree Stump (Medium)", "Tree Stump (Large)", "Tree Stump (Fully Grown)",
             "Fence (Type 1)", "Fence (Type 2)",
             "Message Board (B)", "Message Board (A)", "Map Board (B)", "Map Board (A)", "Music Board (B)", "Music Board (A)", "Wooden Fence",
-            "Hole",
-            "Sapling (Stage 1)",
+            "Hole", "Hole (Angled Down)", "Hole (Angled Up)", "Hole (Angled Right)", "Hole (Bent & Angled Right)", "Hole (Bent & Angled Down)", "Buried Pitfall",
+            "Buried Pitfall (Angled Down-Right)", "Buried Pitfall (Angled)", "Buried Pitfall (Bent Left)", "Buried Pitfall (Bent Down-Left)", "Buried Pitfall (Bent Left & Slightly Down)", "Glowing Spot",
+            "Sapling", "Dead Sapling (2)", "Dead Sapling (1)",
             "Tree", "Apple Tree (Fruit)", "Orange Tree (Fruit)", "Peach Tree (Fruit)", "Pear Tree (Fruit)", "Cherry Tree(Fruit)", "Palm Tree (Fruit)",
             "Cedar Tree", "Golden Tree (Golden Shovel)", "Golden Tree", "Cedar Tree (Furniture)", "Tree (Growing)", "Cedar Tree (Bells)", "Tree (Bells)",
             "Tree (Bees)", "Cedar Tree (Bees)", "Tree (Festive Lights)", "Cedar Tree (Festive Lights)", "Tree (Furniture)",
             "White Pansies", "Purple Pansies", "Yellow Pansies", "Yellow Cosmos", "Purple Cosmos", "Blue Cosmos", "Red Tulips",
             "White Tulips", "Yellow Tulips",
             "Weed", "Weed", "Weed",
+            "Chopped Palm Tree (Small)", "Chopped Palm Tree (Medium)", "Chopped Palm Tree (Large)", "Chopped Palm Tree (Full)", "Chopped Cedar Tree (Small)", "Chopped Cedar Tree (Medium)", "Chopped Cedar Tree (Large)", "Chopped Cedar Tree (Full)",
+            "Chopped Tree (Small)", "Chopped Tree (Medium)", "Chopped Tree (Large)", "Chopped Tree (Full)", "Golden Tree w/ 100 Bells", "Golden Tree w/ Furniture", "Golden Tree w/ Bees", "Sapling (Doesn't Grow)",
+            "Small Tree (^)", "Medium Tree (^)", "Large Tree (^)", "Fully Grown Tree (^)", "Sapling (^)", "Flower Base",
+            "Apple Tree Sapling", "Small Apple Tree", "Medium Apple Tree", "Large Apple Tree", "Money Tree (1,000 Bells)", "Money Tree (10,000) Bells",
+            "Money Tree (30,000 Bells)", "Medium Tree", "Sapling",
             "Post Office", "Dump", "Train Station (Left)", "Train Station (Right)", "Nook's Cranny", "Nook 'n' Go", "Nookway", "Nookington's",
             "Museum", "Tailor's Shop", "Wishing Well", "Police Station",
-            "Rock (Type 1)", "Rock (Type 2)", "Rock (Type 3)", "Rock (Type 4)", "Rock (Type 5)",
-            "Waterfall", "Waterfall (Left)", "Waterfall (Right)",
+            "Rock (Type 1)", "Rock (Type 2)", "Rock (Type 3)", "Rock (Type 4)", "Rock (Type 5)", "Rock (Unused)",
+            "Red Rock (Type 1)", "Red Rock (Type 2)", "Red Rock (Type 3)", "Red Rock (Type 4)", "Red Rock (Type 5)", "Red Rock (Unused)",
+            "Waterfall", "Waterfall (Right)", "Waterfall (Left)",
             "Signboard (1)", "Signboard (2)", "Signboard (3)", "Signboard (4)", "Signboard (5)", "Signboard (6)", "Signboard (7)",
             "Signboard (8)", "Signboard (9)", "Signboard (10)", "Signboard (11)", "Signboard (12)", "Signboard (13)", "Signboard (14)",
             "Signboard (15)", "Signboard (16)", "Signboard (17)", "Signboard (18)", "Signboard (19)", "Signboard (20)", "Signboard (21)",
@@ -213,7 +286,7 @@ namespace ACSE
                 return "Weed";
             else if (ID >= 0x845 && ID <= 0x84D)
                 return "Flower";
-            else if (ID >= 0x2100 && ID <= 0x2103)
+            else if ((ID >= 0x2100 && ID <= 0x2103) || ID == 0x005C) //0x005C = Glowing Money/Shovel spot
                 return "Money";
             else if (ID >= 0x63 && ID <= 0x67)
                 return "Rock";
@@ -398,6 +471,39 @@ namespace ACSE
             }
             return itemName;
         }
+
+        //Position should be where the main item id goes
+        public static void Place_Structure(string Struct_Name, int Position, ref WorldItem[] Acre_Data)
+        {
+            Structure Struct_to_Place = null;
+            foreach (Structure Struct in World_Structures)
+                if (Struct.Structure_Name == Struct_Name)
+                {
+                    Struct_to_Place = Struct;
+                    break;
+                }
+            if (Struct_to_Place != null)
+            {
+                int Struct_ID_Position = Array.IndexOf(Struct_to_Place.Structure_World_Data, (ushort)2);
+                int Struct_ID_X_Pos = Struct_ID_Position % Struct_to_Place.Structure_Width;
+                int Struct_Rows = Struct_to_Place.Structure_World_Data.Length / Struct_to_Place.Structure_Width;
+                int World_X_Position = Position % 16;
+                if (World_X_Position <= 16 - Struct_ID_X_Pos && World_X_Position >= (Struct_to_Place.Structure_Width - Struct_ID_X_Pos)) //Fix Bounds checking
+                {
+                    int Starting_Position = Position - Struct_ID_X_Pos - 16 * (Struct_ID_Position / Struct_to_Place.Structure_Width); //Total Position - X-Pos - Y Pos
+                    int x = 0;
+                    for (int i = 0; i < Struct_Rows; i++)
+                    {
+                        for (int y = 0; y < Struct_to_Place.Structure_Width; y++)
+                        {
+                            int World_Pos = Starting_Position + y + i * 16;
+                            Acre_Data[World_Pos] = Struct_to_Place.Structure_World_Data[x] == 1 ? new WorldItem(0xFFFF, World_Pos) : Acre_Data[World_Pos];
+                            x++;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public class Item
@@ -469,6 +575,20 @@ namespace ACSE
         public Building(ushort itemId, int position) : base(itemId, position)
         {
 
+        }
+    }
+
+    public class Structure
+    {
+        public ushort[] Structure_World_Data;
+        public string Structure_Name;
+        public int Structure_Width;
+
+        public Structure(string Name, int Width, ushort[] World_Data)
+        {
+            Structure_Name = Name;
+            Structure_Width = Width;
+            Structure_World_Data = World_Data;
         }
     }
 }

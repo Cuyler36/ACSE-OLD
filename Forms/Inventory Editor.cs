@@ -85,7 +85,7 @@ namespace ACSE
             }
             else // Write
             {
-                if (pocket && comboBox1.SelectedValue != null)
+                if (pocket && comboBox1.SelectedValue != null && index < Pockets.Items.Length)
                 {
                     Pockets.Items[index] = new Item((ushort)comboBox1.SelectedValue);
                     Pockets.InventorySlots[index].Item = Pockets.Items[index];

@@ -464,9 +464,14 @@ namespace ACSE
                 Faces[1] = player2Face;
                 Faces[2] = player3Face;
                 Faces[3] = player4Face;
+                player1Catchables.Click += new EventHandler(Catchables_Clicked);
+                player2Catchables.Click += new EventHandler(Catchables_Clicked);
+                player3Catchables.Click += new EventHandler(Catchables_Clicked);
+                player4Catchables.Click += new EventHandler(Catchables_Clicked);
                 CanSetData = true;
                 if (Properties.Settings.Default.NookingtonsFlag)
                     DataConverter.WriteData(Nookingtons_Visitor_Flag, new byte[] { 0x01 });
+                DataConverter.ToBits(DataConverter.ReadDataRaw(0x118E, 1), true);
             }
             else
             {
@@ -590,6 +595,17 @@ namespace ACSE
                 e.Handled = true;
         }
 
+        private void Catchables_Clicked(object sender, EventArgs e)
+        {
+            if (CanSetData)
+            {
+                Button b = (Button)sender;
+                int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
+                if (Players[player - 1].Exists)
+                    Players[player - 1].Fill_Catchables();
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (CanSetData)
@@ -676,7 +692,7 @@ namespace ACSE
             if (CanSetData)
             {
                 ushort[] acreTileData = DataConverter.ReadRawUShort(AcreTile_Offset, AcreTile_Size);
-                Dictionary<int, Acre> tileData = AcreData.GetAcreTileData(acreTileData);
+                Dictionary<int, Acre> tileData = tileData = AcreData.GetAcreTileData(acreTileData);
                 if (editor == null || editor.IsDisposed)
                     editor = new AcreEditor(tileData);
                 editor.Show();

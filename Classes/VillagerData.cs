@@ -231,7 +231,7 @@ namespace ACSE
             //Beginning of Islanders
             {0xE0D8, "Maelle" },
             {0xE0D9, "O'Hare" },
-            {0xE0DA, "Bliss" },
+            {0xE0DA, "Bliss" }, //Aka Caroline
             {0xE0DB, "Drift" },
             {0xE0DC, "Bud" },
             {0xE0DD, "Boomer" },
@@ -245,7 +245,7 @@ namespace ACSE
             {0xE0E5, "Yodel" },
             {0xE0E6, "Rowan" },
             {0xE0E7, "June" },
-            {0xE0E8, "Cheri" },
+            {0xE0E8, "Cheri" }, //Cheri is a regular villager, not an islander
             {0xE0E9, "Pigleg" },
             {0xE0EA, "Ankha" },
             //End of Islanders

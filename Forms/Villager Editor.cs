@@ -51,7 +51,7 @@ namespace ACSE
                 Indexes[i].AutoSize = true;
                 House_Coords[i] = new Panel()
                 {
-                    Size = new Size(120, 20),
+                    Size = new Size(180, 20),
                     Location = new Point(442, (i * 22) + 32),
                 };
                 for (int x = 0; x < 4; x++)
@@ -60,7 +60,7 @@ namespace ACSE
                     House_Coord_Boxes[idx] = new TextBox()
                     {
                         Size = new Size(25, 20),
-                        Location = new Point(10 + x * 27, 0),
+                        Location = new Point(15 + x * 45, 0),
                         MaxLength = 2,
                         Text = Villagers[i].Exists ? Villagers[i].House_Coords[x].ToString() : "0"
                     };

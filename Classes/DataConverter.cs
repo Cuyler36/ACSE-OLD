@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections;
 
 namespace ACSE
 {
@@ -103,6 +104,31 @@ namespace ACSE
                         strBytes[i] = 0x20;
                 strBytes.CopyTo(MainForm.SaveBuffer, offset);
             }
+        }
+
+        public static byte[] ToBits(byte[] Byte_Buffer, bool Reverse = false)
+        {
+            byte[] Bits = new byte[8 * Byte_Buffer.Length];
+            for (int i = 0; i < Byte_Buffer.Length; i++)
+            {
+                BitArray Bit_Array = new BitArray(new byte[] { Byte_Buffer[i] });
+                for (int x = 0; x < Bit_Array.Length; x++)
+                    Bits[i * 8 + (Reverse ? 7 - x : x)] = Convert.ToByte(Bit_Array[x]);
+            }
+            return Bits;
+        }
+
+        public static byte ToBit(byte Bit_Byte, int Bit_Mask, bool Reverse = false)
+        {
+            return (byte)(Bit_Byte & (Reverse ? 1 >> Bit_Mask : 1 << Bit_Mask));
+        }
+
+        public static void SetBit(ref byte Bit_Byte, int Bit_Mask, bool Set, bool Reverse = false)
+        {
+            if (Set)
+                Bit_Byte = (byte)(Bit_Byte | (Reverse ? (1 >> Bit_Mask) : (1 << Bit_Mask)));
+            else
+                Bit_Byte = (byte)(Bit_Byte & ~(Reverse ? (1 >> Bit_Mask) : (1 << Bit_Mask)));
         }
     }
 }
