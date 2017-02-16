@@ -783,5 +783,16 @@ namespace ACSE
                     nEditor.Show();
                 }
         }
+
+        private void Catalog_Click(object sender, EventArgs e)
+        {
+            if (CanSetData)
+            {
+                Button b = (Button)sender;
+                int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
+                if (Players[player - 1].Exists)
+                    Players[player - 1].Fill_Catalog();
+            }
+        }
     }
 }

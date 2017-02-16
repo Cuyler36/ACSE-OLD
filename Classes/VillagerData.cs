@@ -579,7 +579,8 @@ namespace ACSE
         Met Town ID: 0x024 - 0x025
         Padding??: 0x026 - 0x027
         Unknown Data: 0x028 - 0x02F
-        Unknown Byte: 0x030 - 0x032
+        Friendship: 0x030 (Min = 0, Max = 7F (128))
+        Unknown Bytes: 0x031 - 0x032
         Padding??: 0x033 - 0x037
         Saved Message: 0x038 - 0x138
     */

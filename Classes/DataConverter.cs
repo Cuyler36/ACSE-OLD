@@ -85,6 +85,13 @@ namespace ACSE
             return uintArray;
         }
 
+        public static void WriteUInt(int offset, uint data)
+        {
+            byte[] UInt_Bytes = BitConverter.GetBytes(data);
+            Array.Reverse(UInt_Bytes);
+            WriteDataRaw(offset, UInt_Bytes);
+        }
+
         public static ACString ReadString(int offset, int maxSize)
         {
             byte[] data = new byte[maxSize];

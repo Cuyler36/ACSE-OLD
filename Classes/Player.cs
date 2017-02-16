@@ -97,6 +97,7 @@ namespace ACSE
         public byte Face;
         public byte Gender;
         public byte Tan;
+        public byte Cockroach_Count = 0;
         public uint Identifier;
         public int House_Number = 0;
         public int House_Data_Offset = 0;
@@ -133,7 +134,7 @@ namespace ACSE
             Held_Item = new Item(DataConverter.ReadRawUShort(offset + 0x4A4, 2)[0]);
             Inventory_Background = new Item(DataConverter.ReadRawUShort(offset + 0x1084, 2)[0]);
             Shirt = new Item(DataConverter.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
-            Reset = DataConverter.ReadRawUShort(offset + 0x10F6, 2)[0] > 0;
+            Reset = DataConverter.ReadUInt(offset + 0x10F4) > 0;
             Savings = DataConverter.ReadUInt(offset + 0x122C);
             Exists = Identifier != 0xFFFFFFFF;
 
@@ -142,6 +143,7 @@ namespace ACSE
             House_Number = GetHouse();
             House_Data_Offset = 0x9CF8 + (House_Number - 1) * 0x26B0 + 0x28;
             Last_Played_Date = new ACDate(Exists ? DataConverter.ReadDataRaw(House_Data_Offset + 0x2640, 8) : new byte[8]);
+            Cockroach_Count = DataConverter.ReadDataRaw(House_Data_Offset + 0x2648, 1)[0];
         }
 
         public void WriteName()
@@ -176,7 +178,7 @@ namespace ACSE
             DataConverter.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
 
             if (Properties.Settings.Default.StopResetti)
-                DataConverter.WriteUShort(new ushort[] { 0 }, offset + 0x10F6);
+                DataConverter.WriteUInt(offset + 0x10F4, 0);
 
             DataConverter.WriteData(offset + 0x122C, BitConverter.GetBytes(Savings));
 
@@ -199,6 +201,17 @@ namespace ACSE
             DataConverter.WriteDataRaw(offset + 0x1164, new byte[] { 0xFF, 0xFF });
             DataConverter.WriteDataRaw(offset + 0x1168, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF });
             DataConverter.WriteDataRaw(offset + 0x1173, new byte[] { 0xFF });
+        }
+
+        public void Fill_Catalog()
+        {
+            int offset = 0x20 + Index * Player_Length + 0x10F0;
+            for (int i = 0; i < 0x4; i++)
+                DataConverter.WriteDataRaw(offset + i, new byte[] { 0xFF });
+            for (int i = 0; i < 0xB0; i++)
+                DataConverter.WriteDataRaw(offset + 0x8 + i, new byte[] { 0xFF });
+            for (int i = 0; i < 0x28; i++)
+                DataConverter.WriteDataRaw(offset + 0xC4 + i, new byte[] { 0xFF });
         }
     }
 }

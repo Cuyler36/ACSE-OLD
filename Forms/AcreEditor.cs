@@ -41,6 +41,18 @@ namespace ACSE
                 label2.Text = acreExists ? AcreData.Acres[id] : "Unknown Acre";
                 currentlySelectedAcre = id;
                 label3.Text = "0x" + id.ToString("X4");
+                //treeView1.UpdateLayout();
+                foreach (TreeNode container in treeView1.Nodes)
+                {
+                    TreeNode[] Matches = container.Nodes.Find(id.ToString(), true);
+                    if (Matches.Length > 0)
+                    {
+                        container.Toggle();
+                        treeView1.SelectedNode = Matches[0];
+                        treeView1.Focus();
+                        break;
+                    }
+                }
             }
             else if (e.Button == MouseButtons.Left && acreSelected)
             {
@@ -66,7 +78,7 @@ namespace ACSE
                 imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
                 iconIndex.Add(i);
             }
-            for (int i = 70; i < 92; i++)
+            for (int i = 70; i < 95; i++)
             {
                 imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
                 iconIndex.Add(i);
@@ -235,11 +247,11 @@ namespace ACSE
             oceanAcres.ImageIndex = 67;
             oceanAcres.SelectedImageIndex = 67;
             TreeNode islandAcres = new TreeNode("Island Acres");
-            islandAcres.ImageIndex = 75;
-            islandAcres.SelectedImageIndex = 75;
+            islandAcres.ImageIndex = 80;
+            islandAcres.SelectedImageIndex = 80;
             TreeNode miscAcres = new TreeNode("Miscellaneous");
-            miscAcres.ImageIndex = 90;
-            miscAcres.SelectedImageIndex = 90;
+            miscAcres.ImageIndex = 93;
+            miscAcres.SelectedImageIndex = 93;
 
             treeView1.Nodes.Add(borderAcres);
             treeView1.Nodes.Add(grassAcres);
@@ -258,6 +270,7 @@ namespace ACSE
                 acreNode.ImageIndex = idx > -1 ? idx : 0;
                 acreNode.SelectedImageIndex = acreNode.ImageIndex;
                 acreNode.Tag = acre;
+                acreNode.Name = acre.Key.ToString();
 
                 if (acre.Value.Contains("Border"))
                     treeView1.Nodes[0].Nodes.Add(acreNode);

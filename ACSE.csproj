@@ -152,6 +152,9 @@
     <Content Include="Resources\Images\9.jpg" />
     <None Include="Resources\Images\90.jpg" />
     <None Include="Resources\Images\91.jpg" />
+    <None Include="Resources\Images\92.jpg" />
+    <None Include="Resources\Images\93.jpg" />
+    <None Include="Resources\Images\94.jpg" />
     <Content Include="Resources\Images\99.jpg" />
     <Content Include="Resources\Images\items_en.txt" />
   </ItemGroup>

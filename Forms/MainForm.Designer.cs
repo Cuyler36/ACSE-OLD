@@ -39,6 +39,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.townNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.player1Catalog = new System.Windows.Forms.Button();
+            this.player1Catchables = new System.Windows.Forms.Button();
             this.player1Savings = new System.Windows.Forms.TextBox();
             this.label34 = new System.Windows.Forms.Label();
             this.player1Face = new System.Windows.Forms.ComboBox();
@@ -63,7 +65,9 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.player2Catalog = new System.Windows.Forms.Button();
             this.player2Savings = new System.Windows.Forms.TextBox();
+            this.player2Catchables = new System.Windows.Forms.Button();
             this.player2Face = new System.Windows.Forms.ComboBox();
             this.label35 = new System.Windows.Forms.Label();
             this.player2Background = new System.Windows.Forms.ComboBox();
@@ -84,7 +88,9 @@
             this.label13 = new System.Windows.Forms.Label();
             this.player2Name = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.player3Catalog = new System.Windows.Forms.Button();
             this.player3Savings = new System.Windows.Forms.TextBox();
+            this.player3Catchables = new System.Windows.Forms.Button();
             this.player3Face = new System.Windows.Forms.ComboBox();
             this.label36 = new System.Windows.Forms.Label();
             this.player3Background = new System.Windows.Forms.ComboBox();
@@ -105,7 +111,9 @@
             this.label19 = new System.Windows.Forms.Label();
             this.player3Name = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.player4Catalog = new System.Windows.Forms.Button();
             this.player4Savings = new System.Windows.Forms.TextBox();
+            this.player4Catchables = new System.Windows.Forms.Button();
             this.player4Face = new System.Windows.Forms.ComboBox();
             this.label37 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
@@ -130,14 +138,6 @@
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.townDateLabel = new System.Windows.Forms.Label();
-            this.player1Catchables = new System.Windows.Forms.Button();
-            this.player1Catalog = new System.Windows.Forms.Button();
-            this.player2Catalog = new System.Windows.Forms.Button();
-            this.player2Catchables = new System.Windows.Forms.Button();
-            this.player3Catalog = new System.Windows.Forms.Button();
-            this.player3Catchables = new System.Windows.Forms.Button();
-            this.player4Catalog = new System.Windows.Forms.Button();
-            this.player4Catchables = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -241,6 +241,25 @@
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Player1";
+            // 
+            // player1Catalog
+            // 
+            this.player1Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player1Catalog.Name = "player1Catalog";
+            this.player1Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player1Catalog.TabIndex = 29;
+            this.player1Catalog.Text = "Fill Catalog";
+            this.player1Catalog.UseVisualStyleBackColor = true;
+            this.player1Catalog.Click += new System.EventHandler(this.Catalog_Click);
+            // 
+            // player1Catchables
+            // 
+            this.player1Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player1Catchables.Name = "player1Catchables";
+            this.player1Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player1Catchables.TabIndex = 28;
+            this.player1Catchables.Text = "Fill Catchables";
+            this.player1Catchables.UseVisualStyleBackColor = true;
             // 
             // player1Savings
             // 
@@ -595,6 +614,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Player2";
             // 
+            // player2Catalog
+            // 
+            this.player2Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player2Catalog.Name = "player2Catalog";
+            this.player2Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player2Catalog.TabIndex = 31;
+            this.player2Catalog.Text = "Fill Catalog";
+            this.player2Catalog.UseVisualStyleBackColor = true;
+            this.player2Catalog.Click += new System.EventHandler(this.Catalog_Click);
+            // 
             // player2Savings
             // 
             this.player2Savings.Enabled = false;
@@ -605,6 +634,15 @@
             this.player2Savings.TabIndex = 29;
             this.player2Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
             this.player2Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
+            // 
+            // player2Catchables
+            // 
+            this.player2Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player2Catchables.Name = "player2Catchables";
+            this.player2Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player2Catchables.TabIndex = 30;
+            this.player2Catchables.Text = "Fill Catchables";
+            this.player2Catchables.UseVisualStyleBackColor = true;
             // 
             // player2Face
             // 
@@ -915,6 +953,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Player3";
             // 
+            // player3Catalog
+            // 
+            this.player3Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player3Catalog.Name = "player3Catalog";
+            this.player3Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player3Catalog.TabIndex = 33;
+            this.player3Catalog.Text = "Fill Catalog";
+            this.player3Catalog.UseVisualStyleBackColor = true;
+            this.player3Catalog.Click += new System.EventHandler(this.Catalog_Click);
+            // 
             // player3Savings
             // 
             this.player3Savings.Enabled = false;
@@ -925,6 +973,15 @@
             this.player3Savings.TabIndex = 31;
             this.player3Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
             this.player3Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
+            // 
+            // player3Catchables
+            // 
+            this.player3Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player3Catchables.Name = "player3Catchables";
+            this.player3Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player3Catchables.TabIndex = 32;
+            this.player3Catchables.Text = "Fill Catchables";
+            this.player3Catchables.UseVisualStyleBackColor = true;
             // 
             // player3Face
             // 
@@ -1235,6 +1292,16 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Player4";
             // 
+            // player4Catalog
+            // 
+            this.player4Catalog.Location = new System.Drawing.Point(6, 313);
+            this.player4Catalog.Name = "player4Catalog";
+            this.player4Catalog.Size = new System.Drawing.Size(174, 23);
+            this.player4Catalog.TabIndex = 35;
+            this.player4Catalog.Text = "Fill Catalog";
+            this.player4Catalog.UseVisualStyleBackColor = true;
+            this.player4Catalog.Click += new System.EventHandler(this.Catalog_Click);
+            // 
             // player4Savings
             // 
             this.player4Savings.Enabled = false;
@@ -1245,6 +1312,15 @@
             this.player4Savings.TabIndex = 33;
             this.player4Savings.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.savings_KeyPress);
             this.player4Savings.LostFocus += new System.EventHandler(this.savings_TextChanged);
+            // 
+            // player4Catchables
+            // 
+            this.player4Catchables.Location = new System.Drawing.Point(6, 283);
+            this.player4Catchables.Name = "player4Catchables";
+            this.player4Catchables.Size = new System.Drawing.Size(174, 23);
+            this.player4Catchables.TabIndex = 34;
+            this.player4Catchables.Text = "Fill Catchables";
+            this.player4Catchables.UseVisualStyleBackColor = true;
             // 
             // player4Face
             // 
@@ -1558,78 +1634,6 @@
             this.townDateLabel.Size = new System.Drawing.Size(196, 13);
             this.townDateLabel.TabIndex = 17;
             this.townDateLabel.Text = "Last Town Date: 0:00:00 AM, 0/0/0000";
-            // 
-            // player1Catchables
-            // 
-            this.player1Catchables.Location = new System.Drawing.Point(6, 283);
-            this.player1Catchables.Name = "player1Catchables";
-            this.player1Catchables.Size = new System.Drawing.Size(174, 23);
-            this.player1Catchables.TabIndex = 28;
-            this.player1Catchables.Text = "Fill Catchables";
-            this.player1Catchables.UseVisualStyleBackColor = true;
-            // 
-            // player1Catalog
-            // 
-            this.player1Catalog.Location = new System.Drawing.Point(6, 313);
-            this.player1Catalog.Name = "player1Catalog";
-            this.player1Catalog.Size = new System.Drawing.Size(174, 23);
-            this.player1Catalog.TabIndex = 29;
-            this.player1Catalog.Text = "Fill Catalog";
-            this.player1Catalog.UseVisualStyleBackColor = true;
-            // 
-            // player2Catalog
-            // 
-            this.player2Catalog.Location = new System.Drawing.Point(6, 313);
-            this.player2Catalog.Name = "player2Catalog";
-            this.player2Catalog.Size = new System.Drawing.Size(174, 23);
-            this.player2Catalog.TabIndex = 31;
-            this.player2Catalog.Text = "Fill Catalog";
-            this.player2Catalog.UseVisualStyleBackColor = true;
-            // 
-            // player2Catchables
-            // 
-            this.player2Catchables.Location = new System.Drawing.Point(6, 283);
-            this.player2Catchables.Name = "player2Catchables";
-            this.player2Catchables.Size = new System.Drawing.Size(174, 23);
-            this.player2Catchables.TabIndex = 30;
-            this.player2Catchables.Text = "Fill Catchables";
-            this.player2Catchables.UseVisualStyleBackColor = true;
-            // 
-            // player3Catalog
-            // 
-            this.player3Catalog.Location = new System.Drawing.Point(6, 313);
-            this.player3Catalog.Name = "player3Catalog";
-            this.player3Catalog.Size = new System.Drawing.Size(174, 23);
-            this.player3Catalog.TabIndex = 33;
-            this.player3Catalog.Text = "Fill Catalog";
-            this.player3Catalog.UseVisualStyleBackColor = true;
-            // 
-            // player3Catchables
-            // 
-            this.player3Catchables.Location = new System.Drawing.Point(6, 283);
-            this.player3Catchables.Name = "player3Catchables";
-            this.player3Catchables.Size = new System.Drawing.Size(174, 23);
-            this.player3Catchables.TabIndex = 32;
-            this.player3Catchables.Text = "Fill Catchables";
-            this.player3Catchables.UseVisualStyleBackColor = true;
-            // 
-            // player4Catalog
-            // 
-            this.player4Catalog.Location = new System.Drawing.Point(6, 313);
-            this.player4Catalog.Name = "player4Catalog";
-            this.player4Catalog.Size = new System.Drawing.Size(174, 23);
-            this.player4Catalog.TabIndex = 35;
-            this.player4Catalog.Text = "Fill Catalog";
-            this.player4Catalog.UseVisualStyleBackColor = true;
-            // 
-            // player4Catchables
-            // 
-            this.player4Catchables.Location = new System.Drawing.Point(6, 283);
-            this.player4Catchables.Name = "player4Catchables";
-            this.player4Catchables.Size = new System.Drawing.Size(174, 23);
-            this.player4Catchables.TabIndex = 34;
-            this.player4Catchables.Text = "Fill Catchables";
-            this.player4Catchables.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
