@@ -1907,18 +1907,15 @@ namespace ACSE
                 }
         }
 
-        private int GetBuriedLocation(WorldItem item, int acre)
+        private int GetBuriedDataLocation(WorldItem item, int acre)
         {
-            int worldPosition = (acre * 256) + item.Location.X + item.Location.Y * 16;
-            int burriedDataOffset = worldPosition / 8;
-            if (item.Location.X > 7)
-                burriedDataOffset -= 2;
-            return burriedDataOffset;
+            int worldPosition = (acre * 256) + (15 - item.Location.X) + item.Location.Y * 16;//int worldPosition = (acre * 256) + (item.Location.X < 8 ? item.Location.X : -16 + item.Location.X) + item.Location.Y * 16; //Less ugly hack, but still needs to be cleaned up
+            return worldPosition / 8;
         }
 
         public void SetBuriedInMemory(WorldItem item, int acre, byte[] burriedItemData, bool buried)
         {
-            int buriedLocation = GetBuriedLocation(item, acre);
+            int buriedLocation = GetBuriedDataLocation(item, acre);
             if (buriedLocation > -1)
             {
                 DataConverter.SetBit(ref burriedItemData[buriedLocation], item.Location.X % 8, buried);
@@ -1930,7 +1927,7 @@ namespace ACSE
 
         private void SetBuried(WorldItem item, int acre, byte[] burriedItemData)
         {
-            int burriedDataOffset = GetBuriedLocation(item, acre);
+            int burriedDataOffset = GetBuriedDataLocation(item, acre);
             if (burriedDataOffset > -1 && burriedDataOffset < burriedItemData.Length)
                 item.Burried = DataConverter.ToBit(burriedItemData[burriedDataOffset], item.Location.X % 8) == 1;
         }

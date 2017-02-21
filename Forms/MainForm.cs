@@ -29,7 +29,7 @@ namespace ACSE
         public static int IslandData_Offset = 0x22554;
         public static int IslandData_Length = 0x400;
         public static int Islander_Offset = 0x23440;
-        public static int BurriedItems_Offset = 0x20F1D;  //Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
+        public static int BurriedItems_Offset = 0x20F1C;  //Each byte is 8 spaces. Stored in binary format (02) = 0000 00x0 (reversed)
         public static int BurriedItems_Length = 0x3C0;
         public static int IslandBurriedItems_Offset = 0x23DC9;
         public static int IslandBurriedItems_Length = 0x40;
