@@ -310,10 +310,10 @@ namespace ACSE
             {0xE124, "K.K. Slider" },
             {0xE125, "Timmy/Tommy" },
             {0xE126, "Joan" },
-            {0xE127, "Redd (shop stall)" },
-            {0xE128, "nook (raffle)" },
-            {0xE129, "nook (raffle)" },
-            {0xE12A, "nook (raffle)" },
+            {0xE127, "Redd (Shop Stall)" },
+            {0xE128, "Nook (Raffle)" },
+            {0xE129, "Nook (Raffle)" },
+            {0xE12A, "Nook (Raffle)" },
             {0xE12B, "Katrina" },
             {0xE12C, "Resetti" },
             {0xE12D, "K.K. Slider" },
@@ -465,13 +465,13 @@ namespace ACSE
         {
             Index = idx;
             Offset = Index == 16 ? MainForm.Islander_Offset : MainForm.VillagerData_Offset + (Index - 1) * 0x988;
-            ID = DataConverter.ReadRawUShort(Offset, 2)[0];
-            TownIdentifier = DataConverter.ReadRawUShort(Offset + 2, 2)[0];
+            ID = DataConverter.ReadUShort(Offset);
+            TownIdentifier = DataConverter.ReadUShort(Offset + 2);
             Name = VillagerData.GetVillagerName(ID);
             PersonalityID = DataConverter.ReadDataRaw(Offset + 0xD, 1)[0];
             Personality = VillagerData.GetVillagerPersonality(PersonalityID);
             Catchphrase = DataConverter.ReadString(Offset + 0x89D, 10).Trim();
-            Shirt = new Item(DataConverter.ReadRawUShort(Offset + 0x8E4, 2)[0]);
+            Shirt = new Item(DataConverter.ReadUShort(Offset + 0x8E4));
             House_Coords = DataConverter.ReadDataRaw(Offset + 0x899, 4); //Could make this WorldCoords class if used for other things
             House_Coords[2] = (byte)(House_Coords[2] + 1);
             //House_Coords[3] = (byte)(House_Coords[3] + 1); //X-Position is the position of the Villager Name Sign, which is to the left of the house object, so we add one.
@@ -489,14 +489,14 @@ namespace ACSE
         {
             House_Coords[2] = (byte)(House_Coords[2] - 1);
             //House_Coords[3] = (byte)(House_Coords[3] - 1);
-            DataConverter.WriteUShort(new ushort[] { ID }, Offset);
-            DataConverter.WriteUShort(new ushort[] { TownIdentifier }, Offset + 2);
+            DataConverter.WriteUShortArray(new ushort[] { ID }, Offset);
+            DataConverter.WriteUShortArray(new ushort[] { TownIdentifier }, Offset + 2);
             DataConverter.WriteDataRaw(Offset + 0xC, new byte[] { Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF) }); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.
             DataConverter.WriteDataRaw(Offset + 0xD, new byte[] { PersonalityID });
             DataConverter.WriteString(Offset + 0x89D, Catchphrase, 10);
             DataConverter.WriteDataRaw(Offset + 0x899, House_Coords);
             if (Shirt != null)
-                DataConverter.WriteUShort(new ushort[] { Shirt.ItemID }, Offset + 0x8E4);
+                DataConverter.WriteUShortArray(new ushort[] { Shirt.ItemID }, Offset + 0x8E4);
             if (!Exists && Modified)
             {
                 DataConverter.WriteString(Offset + 4, DataConverter.ReadString(MainForm.Town_Name_Offset, 8).Trim(), 8); //Set town name
@@ -530,7 +530,7 @@ namespace ACSE
         public void Remove_House()
         {
             ushort House_ID = BitConverter.ToUInt16(new byte[] { (byte)(ID & 0x00FF), 0x50 }, 0);
-            ushort[] World_Buffer = DataConverter.ReadRawUShort(MainForm.AcreData_Offset, MainForm.AcreData_Size);
+            ushort[] World_Buffer = DataConverter.ReadUShortArray(MainForm.AcreData_Offset, MainForm.AcreData_Size / 2);
             for (int i = 0; i < World_Buffer.Length; i++)
             {
                 if (World_Buffer[i] == House_ID)
@@ -545,13 +545,13 @@ namespace ACSE
                     //This is akin to actual game behavior
                 }
             }
-            DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
+            DataConverter.WriteUShortArray(World_Buffer, MainForm.AcreData_Offset);
         }
 
         public void Add_House()
         {
             ushort House_ID = BitConverter.ToUInt16(new byte[] { (byte)(ID & 0x00FF), 0x50 }, 0);
-            ushort[] World_Buffer = DataConverter.ReadRawUShort(MainForm.AcreData_Offset, MainForm.AcreData_Size);
+            ushort[] World_Buffer = DataConverter.ReadUShortArray(MainForm.AcreData_Offset, MainForm.AcreData_Size / 2);
             if (House_Coords[0] > 5 || House_Coords[1] > 6 || House_Coords[2] > 15 || House_Coords[3] > 15) //Houses can't be on edge of acres
                 return;
             int Position = (House_Coords[0] - 1) * 256 + (House_Coords[1] - 1) * 1280 + (House_Coords[2]) + (House_Coords[3] - 1) * 16; //X Acre + Y Acre + X Pos + Y Pos
@@ -566,11 +566,17 @@ namespace ACSE
             World_Buffer[Position] = House_ID;
             World_Buffer[Position + 15] = 0xA012; //Add Nameplate
 
-            DataConverter.WriteUShort(World_Buffer, MainForm.AcreData_Offset);
+            DataConverter.WriteUShortArray(World_Buffer, MainForm.AcreData_Offset);
+        }
+
+        public Villager_Player_Entry[] Get_Player_Entries(uint Matching_Player_ID)
+        {
+            return Villager_Player_Entries.Where(Entry => Entry.Player_ID == Matching_Player_ID).ToArray();
         }
     }
 
-    /*Villager Player Entry Structure (Size: 0x138):
+    /*
+        Villager Player Entry Structure (Size: 0x138):
         Player Name: 0x000 - 0x007
         Town Name: 0x008 - 0x00F
         Player ID: 0x010 - 0x013
@@ -579,7 +585,7 @@ namespace ACSE
         Met Town ID: 0x024 - 0x025
         Padding??: 0x026 - 0x027
         Unknown Data: 0x028 - 0x02F
-        Friendship: 0x030 (Min = 0, Max = 7F (128))
+        Friendship: 0x030 (Min = 0 (1), Max = 7F (128))
         Unknown Bytes: 0x031 - 0x032
         Padding??: 0x033 - 0x037
         Saved Message: 0x038 - 0x138
@@ -593,28 +599,36 @@ namespace ACSE
         public uint Player_ID;
         public ACDate Met_Date;
         public string Met_Town_Name;
-        public uint Met_Town_ID;
+        public ushort Met_Town_ID;
         public byte[] Garbage = new byte[8]; //I have no idea wtf these are for. Might investigate some day.
+        public sbyte Friendship;
         //
 
         public Villager_Player_Entry(byte[] entryData)
         {
             Exists = true;
-            byte[] playerNameBytes = new byte[8], playerTownName = new byte[8], metTownName = new byte[8], metDate = new byte[8], playerId = new byte[4];
+            byte[] playerNameBytes = new byte[8], playerTownName = new byte[8], metTownName = new byte[8], metDate = new byte[8], playerId = new byte[4], metTownId = new byte[2];
             Buffer.BlockCopy(entryData, 0, playerNameBytes, 0, 8);
             Buffer.BlockCopy(entryData, 8, playerTownName, 0, 8);
             Buffer.BlockCopy(entryData, 0x1C, metTownName, 0, 8);
             Buffer.BlockCopy(entryData, 0x10, playerId, 0, 4);
             Buffer.BlockCopy(entryData, 0x14, metDate, 0, 8);
+            Buffer.BlockCopy(entryData, 0x24, metTownId, 0, 2);
             Array.Reverse(playerId);
+            Array.Reverse(metTownId);
 
             Player_Name = new ACString(playerNameBytes).Trim();
             Player_Town_Name = new ACString(playerTownName).Trim();
             Met_Town_Name = new ACString(metTownName).Trim();
-
             Met_Date = new ACDate(metDate);
             Player_ID = BitConverter.ToUInt32(playerId, 0);
-            Met_Town_ID = BitConverter.ToUInt16(entryData, 0x24);
+            Met_Town_ID = BitConverter.ToUInt16(metTownId, 0);
+            Friendship = (sbyte)entryData[0x30];
+        }
+
+        public void Max_Friendship()
+        {
+            Friendship = 0x7F;
         }
     }
 }

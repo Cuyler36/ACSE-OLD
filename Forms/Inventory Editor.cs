@@ -102,7 +102,7 @@ namespace ACSE
         private void button1_Click(object sender, EventArgs e)
         {
             //for (int i = 0; i < 15; i++)
-                //form.WriteUShort(new ushort[1] { Pockets.Items[i].ItemID }, MainForm.Player1_Pockets + (i * 2));
+                //form.WriteUShortArray(new ushort[1] { Pockets.Items[i].ItemID }, MainForm.Player1_Pockets + (i * 2));
 
             //Interesting note about dresser storage:
             //The limitation when storing furniture in it is created by the actual stored location of the items.
@@ -110,7 +110,7 @@ namespace ACSE
             //Using the editor to place furniture inside of the dresser causes the stacked item glitch used by many speed runners.
 
             //for (int i = 0; i < 3; i++)
-                //form.WriteUShort(new ushort[1] { Dresser[i].ItemID }, MainForm.Player1_Dresser_Offsets[i]);
+                //form.WriteUShortArray(new ushort[1] { Dresser[i].ItemID }, MainForm.Player1_Dresser_Offsets[i]);
             this.Close();
         }
 

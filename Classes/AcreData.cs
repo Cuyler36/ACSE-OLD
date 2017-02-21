@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
+using ACSE.Properties;
+using System.Resources;
+using System.Globalization;
+using System.Collections;
 
 namespace ACSE
 {
@@ -1744,25 +1748,48 @@ namespace ACSE
             {0x05B8, 70},
         };
 
+        public static Dictionary<ushort, Image> Unique_Acre_Images = new Dictionary<ushort, Image>();
+
         public static string[] Acre_Height_Identifiers = new string[4]
         {
             "Lower", "Middle", "Upper", "Uppermost" //"Uppermost" subject to change
         };
 
+        public static void Parse_Unique_Images()
+        {
+            ResourceSet Resource_Set = Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
+            foreach (DictionaryEntry Resource in Resource_Set)
+                if (!(Resource.Key as string).Contains("_"))
+                {
+                    ushort Acre_ID_Out = 0xFFFF;
+                    ushort.TryParse(Resource.Key as string, NumberStyles.AllowHexSpecifier, null, out Acre_ID_Out);
+                    if (Acre_ID_Out != 0xFFFF)
+                        Unique_Acre_Images.Add(Acre_ID_Out, Resource.Value as Image);
+                }
+        }
+
         public static Bitmap ToAcrePicture(ushort Acre_ID)
         {
+            ushort Base_Acre_ID = (ushort)(Acre_ID - (Acre_ID % 4));
+            if ((Base_Acre_ID >= 0x03DC && Base_Acre_ID <= 0x03EC) || Base_Acre_ID == 0x049C || (Base_Acre_ID >= 0x04A8 && Base_Acre_ID <= 0x058C) || (Base_Acre_ID >= 0x05B4 && Base_Acre_ID <= 0x5B8))
+                return (Bitmap)Unique_Acre_Images[0x03DC];
+            if (Unique_Acre_Images.ContainsKey(Base_Acre_ID))
+                return (Bitmap)Unique_Acre_Images[Base_Acre_ID];
             if (Acre_Image_Index.ContainsKey(Acre_ID))
                 return (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + Acre_Image_Index[Acre_ID]); //Get Border acre images first!
-            ushort Base_Acre_ID = (ushort)(Acre_ID - (Acre_ID % 4));
             int Image_Idx = Acre_Image_Index.ContainsKey(Base_Acre_ID) ? Acre_Image_Index[Base_Acre_ID] : 99;
             return (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + Image_Idx);
         }
 
         public static int ToAcrePictureID(ushort Acre_ID)
         {
+            ushort Base_Acre_ID = (ushort)(Acre_ID - (Acre_ID % 4));
+            if ((Base_Acre_ID >= 0x03DC && Base_Acre_ID <= 0x03EC) || Base_Acre_ID == 0x049C || (Base_Acre_ID >= 0x04A8 && Base_Acre_ID <= 0x058C) || (Base_Acre_ID >= 0x05B4 && Base_Acre_ID <= 0x5B8))
+                return 0x03DC;
+            if (Unique_Acre_Images.ContainsKey(Base_Acre_ID))
+                return Base_Acre_ID;
             if (Acre_Image_Index.ContainsKey(Acre_ID))
                 return Acre_Image_Index[Acre_ID]; //Get Border acre images first!
-            ushort Base_Acre_ID = (ushort)(Acre_ID - (Acre_ID % 4));
             return Acre_Image_Index.ContainsKey(Base_Acre_ID) ? Acre_Image_Index[Base_Acre_ID] : 99;
         }
 
@@ -1875,17 +1902,17 @@ namespace ACSE
                 for (int i = 0; i < 256; i++)
                 {
                     Acre_Items[i] = new WorldItem(items[i], i);
-                    if (Acre_Items[i].ItemID != 0 && Acre_Items[i].ItemID != 0xFFFF && burriedItemData != null)
+                    if (burriedItemData != null)
                         SetBuried(Acre_Items[i], position - 1, burriedItemData);
                 }
         }
 
         private int GetBuriedLocation(WorldItem item, int acre)
         {
-            int worldPosition = (acre * 256) + item.Location.X % 8 + item.Location.Y * 16;
+            int worldPosition = (acre * 256) + item.Location.X + item.Location.Y * 16;
             int burriedDataOffset = worldPosition / 8;
             if (item.Location.X > 7)
-                burriedDataOffset -= 1;
+                burriedDataOffset -= 2;
             return burriedDataOffset;
         }
 
@@ -1894,88 +1921,18 @@ namespace ACSE
             int buriedLocation = GetBuriedLocation(item, acre);
             if (buriedLocation > -1)
             {
-                int mask = 1 << (item.Location.X % 8);
-                int isBuried = (burriedItemData[buriedLocation] >> item.Location.X % 8) & 1;
-                if (isBuried == 0 && buried)
-                {
-                    burriedItemData[buriedLocation] = (burriedItemData[buriedLocation] |= (byte)mask);
-                    item.Burried = true;
-                }
-                else if (isBuried == 1 && !buried)
-                {
-                    burriedItemData[buriedLocation] = (burriedItemData[buriedLocation] &= (byte)~mask);
-                    item.Burried = false;
-                }
+                DataConverter.SetBit(ref burriedItemData[buriedLocation], item.Location.X % 8, buried);
+                item.Burried = DataConverter.ToBit(burriedItemData[buriedLocation], item.Location.X % 8) == 1;
             }
             else
-            {
                 item.Burried = false;
-            }
         }
 
         private void SetBuried(WorldItem item, int acre, byte[] burriedItemData)
         {
-            if (item.ItemID == 0 || item.ItemID == 0xFFFF)
-                return;
             int burriedDataOffset = GetBuriedLocation(item, acre);
-            if (burriedDataOffset > -1)
-            {
-                int burried = (burriedItemData[burriedDataOffset] >> item.Location.X % 8) & 1;
-                item.Burried = burried == 1;
-            }
-        }
-    }
-
-    //Transparent Panel
-
-    public class TransparentPanel : Panel
-    {
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x00000020; // WS_EX_TRANSPARENT
-                return cp;
-            }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            e.Graphics.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
-        }
-    }
-
-    //Transparent PictureBox
-    public class TransparentPictureBox : PictureBox
-    {
-        protected override void OnPaintBackground(PaintEventArgs e)
-        // Paint background with underlying graphics from other controls
-        {
-            base.OnPaintBackground(e);
-            Graphics g = e.Graphics;
-
-            if (Parent != null)
-            {
-                // Take each control in turn
-                int index = Parent.Controls.GetChildIndex(this);
-                for (int i = Parent.Controls.Count - 1; i > index; i--)
-                {
-                    Control c = Parent.Controls[i];
-
-                    // Check it's visible and overlaps this control
-                    if (c.Bounds.IntersectsWith(Bounds) && c.Visible)
-                    {
-                        // Load appearance of underlying control and redraw it on this background
-                        Bitmap bmp = new Bitmap(c.Width, c.Height, g);
-                        c.DrawToBitmap(bmp, c.ClientRectangle);
-                        g.TranslateTransform(c.Left - Left, c.Top - Top);
-                        g.DrawImageUnscaled(bmp, Point.Empty);
-                        g.TranslateTransform(Left - c.Left, Top - c.Top);
-                        bmp.Dispose();
-                    }
-                }
-            }
+            if (burriedDataOffset > -1 && burriedDataOffset < burriedItemData.Length)
+                item.Burried = DataConverter.ToBit(burriedItemData[burriedDataOffset], item.Location.X % 8) == 1;
         }
     }
 }

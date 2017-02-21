@@ -88,7 +88,11 @@ namespace ACSE
                 imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
                 iconIndex.Add(i);
             }
-
+            foreach (ushort key in AcreData.Unique_Acre_Images.Keys)
+            {
+                imageList.Images.Add(AcreData.Unique_Acre_Images[key]);
+                iconIndex.Add(key);
+            }
             treeViewIconIndex = iconIndex.ToArray();
             iconIndex.Clear();
             populate_TreeView();
@@ -371,7 +375,7 @@ namespace ACSE
             foreach (KeyValuePair<int, Acre> acre in currentAcreData)
                 acreData[acre.Key - 1] = acre.Value.AcreID;
 
-            DataConverter.WriteUShort(acreData, MainForm.AcreTile_Offset);
+            DataConverter.WriteUShortArray(acreData, MainForm.AcreTile_Offset);
             this.Close();
         }
 

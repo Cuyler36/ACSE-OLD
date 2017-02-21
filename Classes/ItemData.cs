@@ -320,7 +320,7 @@ namespace ACSE
                 return "Fossil";
             else if ((ID >= 0x2200 && ID <= 0x225B) || ID == 0x251E)
                 return "Tool";  //0x251E = Signboard (not a 'tool', but it's still classified as one)
-            else if ((ID >= 0x005E && ID <= 0x0060) || (ID >= 0x0069 && ID <= 0x0082) || (ID >= 0x0800 && ID <= 0x0868))
+            else if ((ID >= 0x1 && ID <= 0x4) || (ID >= 0x005E && ID <= 0x0060) || (ID >= 0x0069 && ID <= 0x0082) || (ID >= 0x0800 && ID <= 0x0868))
                 return "Tree";
             else if ((ID >= 0x5 && ID <= 0x7) || (ID >= 0xB && ID <= 0x10) || (ID >= 0x5000 && ID <= 0xB000) || (ID == 0xFE1D || ID == 0xFE1E))
                 return "Building";
@@ -545,10 +545,12 @@ namespace ACSE
     {
         public ushort BaseItemID = 0;
         public int Rotation = 0;
+        public bool IsFurniture = false;
 
         public Furniture(ushort itemId) : base(itemId)
         {
             BaseItemID = (ushort)(ItemID - (ItemID % 4));
+            IsFurniture = ItemData.Furniture_IDs.Contains(BaseItemID);
             if (ItemData.Furniture_IDs.Contains(BaseItemID))
             {
                 Rotation = (ItemID % 4) * 90;
@@ -562,19 +564,6 @@ namespace ACSE
                 Rotation = degrees;
                 ItemID = (ushort)(BaseItemID + (degrees / 90));
             }
-        }
-
-        public bool IsFurniture()
-        {
-            return ItemData.Furniture_IDs.Contains(BaseItemID);
-        }
-    }
-
-    public class Building : WorldItem
-    {
-        public Building(ushort itemId, int position) : base(itemId, position)
-        {
-
         }
     }
 

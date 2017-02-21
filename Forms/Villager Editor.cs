@@ -158,7 +158,7 @@ namespace ACSE
             InitializeComponent();
             bs = new BindingSource(VillagerData.VillagerDatabase, null);
             Villagers = villagers;
-            TownIdentifier = DataConverter.ReadRawUShort(0x8, 2)[0];
+            TownIdentifier = DataConverter.ReadUShort(0x8);
             Setup_Villager_Editor();
             for (int i = 0; i < 16; i++)
                 VillagerBoxes[i].SelectedValue = Villagers[i].ID;
@@ -167,7 +167,10 @@ namespace ACSE
         private void button2_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < 16; i++)
+            {
                 Villagers[i].Write();
+                MainForm.Villagers = Villagers;
+            }
             Close();
         }
 

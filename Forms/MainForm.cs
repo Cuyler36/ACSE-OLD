@@ -121,6 +121,7 @@ namespace ACSE
             VillagerData.CreateVillagerDatabase();
             for (int i = 0; i < ItemData.Shirt_IDs.Length; i++)
                 Shirts.Add(new KeyValuePair<ushort, string>(ItemData.Shirt_IDs[i], ItemData.Shirt_Names[i]));
+            AcreData.Parse_Unique_Images();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -471,7 +472,11 @@ namespace ACSE
                 CanSetData = true;
                 if (Properties.Settings.Default.NookingtonsFlag)
                     DataConverter.WriteData(Nookingtons_Visitor_Flag, new byte[] { 0x01 });
-                DataConverter.ToBits(DataConverter.ReadDataRaw(0x118E, 1), true);
+                string bitString = "";
+                foreach (byte bit in DataConverter.ToBits(DataConverter.ReadDataRaw(0x211B7, 1), false))
+                    bitString += bit.ToString() + " ";
+                MessageBox.Show(bitString);
+                //DataConverter.ToBits(DataConverter.ReadDataRaw(0x118E, 1), true);
             }
             else
             {
@@ -634,13 +639,13 @@ namespace ACSE
                 int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
                 if (Players[player - 1].Exists)
                 {
-                    int firstFloorSize = HouseData.GetHouseSize(DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset, 0x114));
-                    ushort[] firstFloorLayer1 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1]);
-                    ushort[] firstFloorLayer2 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1]);
-                    ushort[] secondFloorLayer1 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0);
-                    ushort[] secondFloorLayer2 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC);
-                    ushort[] basementLayer1 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x1150, 0x114);
-                    ushort[] basementLayer2 = DataConverter.ReadRawUShort(Players[player - 1].House_Data_Offset + 0x139A, 0xF0);
+                    int firstFloorSize = HouseData.GetHouseSize(DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, 0x114 / 2));
+                    ushort[] firstFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1] / 2);
+                    ushort[] firstFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1] / 2);
+                    ushort[] secondFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0 / 2);
+                    ushort[] secondFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC / 2);
+                    ushort[] basementLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x1150, 0x114 / 2);
+                    ushort[] basementLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x139A, 0xF0 / 2);
 
                     if (hEditor == null || hEditor.IsDisposed)
                         hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, Players[player - 1].House_Data_Offset);
@@ -653,9 +658,9 @@ namespace ACSE
         {
             if (CanSetData)
             {
-                ushort[] acreRawData = DataConverter.ReadRawUShort(AcreData_Offset, AcreData_Size);
-                ushort[] islandRawData = DataConverter.ReadRawUShort(IslandData_Offset, IslandData_Length);
-                ushort[] acreTileData = DataConverter.ReadRawUShort(AcreTile_Offset, AcreTile_Size);
+                ushort[] acreRawData = DataConverter.ReadUShortArray(AcreData_Offset, AcreData_Size / 2);
+                ushort[] islandRawData = DataConverter.ReadUShortArray(IslandData_Offset, IslandData_Length / 2);
+                ushort[] acreTileData = DataConverter.ReadUShortArray(AcreTile_Offset, AcreTile_Size / 2);
                 byte[] burriedItemData = DataConverter.ReadDataRaw(BurriedItems_Offset, BurriedItems_Length);
                 byte[] islandBurriedItemData = DataConverter.ReadDataRaw(IslandBurriedItems_Offset, IslandBurriedItems_Length);
                 if (townEditorForm == null || townEditorForm.IsDisposed)
@@ -691,7 +696,7 @@ namespace ACSE
         {
             if (CanSetData)
             {
-                ushort[] acreTileData = DataConverter.ReadRawUShort(AcreTile_Offset, AcreTile_Size);
+                ushort[] acreTileData = DataConverter.ReadUShortArray(AcreTile_Offset, AcreTile_Size / 2);
                 Dictionary<int, Acre> tileData = tileData = AcreData.GetAcreTileData(acreTileData);
                 if (editor == null || editor.IsDisposed)
                     editor = new AcreEditor(tileData);

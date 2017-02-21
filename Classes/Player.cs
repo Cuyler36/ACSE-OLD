@@ -128,12 +128,12 @@ namespace ACSE
             Identifier = DataConverter.ReadUInt(offset + 0x10); //First two are player identifier bytes. Second two bytes are town identifier bytes.
             Gender = DataConverter.ReadData(offset + 0x14, 1)[0];
             Face = DataConverter.ReadData(offset + 0x15, 1)[0];
-            Inventory = new Inventory(DataConverter.ReadRawUShort(offset + 0x68, 0x1E));
+            Inventory = new Inventory(DataConverter.ReadUShortArray(offset + 0x68, 0x1E / 2));
             Bells = DataConverter.ReadUInt(offset + 0x8C);
             Debt = DataConverter.ReadUInt(offset + 0x90);
-            Held_Item = new Item(DataConverter.ReadRawUShort(offset + 0x4A4, 2)[0]);
-            Inventory_Background = new Item(DataConverter.ReadRawUShort(offset + 0x1084, 2)[0]);
-            Shirt = new Item(DataConverter.ReadRawUShort(offset + 0x1089 + 1, 2)[0]); //Research Patterns used as shirt.
+            Held_Item = new Item(DataConverter.ReadUShort(offset + 0x4A4));
+            Inventory_Background = new Item(DataConverter.ReadUShort(offset + 0x1084));
+            Shirt = new Item(DataConverter.ReadUShort(offset + 0x1089 + 1)); //Research Patterns used as shirt.
             Reset = DataConverter.ReadUInt(offset + 0x10F4) > 0;
             Savings = DataConverter.ReadUInt(offset + 0x122C);
             Exists = Identifier != 0xFFFFFFFF;
@@ -170,11 +170,11 @@ namespace ACSE
             DataConverter.WriteString(offset + 0x8, Town_Name, 8);
             DataConverter.WriteData(offset + 0x14, new byte[] { Gender });
             DataConverter.WriteData(offset + 0x15, new byte[] { Face });
-            DataConverter.WriteUShort(Inventory.GetItemIDs(), offset + 0x68);
+            DataConverter.WriteUShortArray(Inventory.GetItemIDs(), offset + 0x68);
             DataConverter.WriteData(offset + 0x8C, BitConverter.GetBytes(Bells));
             DataConverter.WriteData(offset + 0x90, BitConverter.GetBytes(Debt));
-            DataConverter.WriteUShort(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
-            DataConverter.WriteUShort(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
+            DataConverter.WriteUShortArray(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
+            DataConverter.WriteUShortArray(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
             DataConverter.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
 
             if (Properties.Settings.Default.StopResetti)

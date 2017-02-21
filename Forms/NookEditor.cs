@@ -36,7 +36,7 @@ namespace ACSE
 
         private void GetShopSize()
         {
-            ushort[] items = DataConverter.ReadRawUShort(MainForm.Nook_Items_Offset, 0x46);
+            ushort[] items = DataConverter.ReadUShortArray(MainForm.Nook_Items_Offset, 0x46 / 2);
             Item_Count = Array.IndexOf<ushort>(items, 0) > -1 ? Array.IndexOf<ushort>(items, 0) : items.Length;
             if (Item_Count > 24)
                 Shop_Size = 4;
@@ -87,7 +87,7 @@ namespace ACSE
         private void button1_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < Shop_Selection.Length; i++)
-                DataConverter.WriteUShort(new ushort[] { Shop_Selection[i].ItemID }, MainForm.Nook_Items_Offset + i * 2);
+                DataConverter.WriteUShortArray(new ushort[] { Shop_Selection[i].ItemID }, MainForm.Nook_Items_Offset + i * 2);
             if (textBox1.Text.Length > 0)
             {
                 int spentBells = -1;

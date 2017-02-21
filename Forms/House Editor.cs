@@ -103,7 +103,7 @@ namespace ACSE
             {
                 if (e.Button == MouseButtons.Right) // Read
                 {
-                    comboBox1.SelectedValue = Items[idx][index].IsFurniture() ? Items[idx][index].BaseItemID : Items[idx][index].ItemID;
+                    comboBox1.SelectedValue = Items[idx][index].IsFurniture ? Items[idx][index].BaseItemID : Items[idx][index].ItemID;
                     label1.Text = "0x" + ((ushort)comboBox1.SelectedValue).ToString("X4");
                 }
                 else if (comboBox1.SelectedValue != null) // Write
@@ -133,7 +133,7 @@ namespace ACSE
             {
                 HouseData.UpdateHouseData(Items[i], House_Data[i]);
                 if (i % 2 == 0)
-                    DataConverter.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
+                    DataConverter.WriteUShortArray(House_Data[i], House_Offset + house_Data_Offsets[i]);
                 else
                 {
                     int pos = 0;
@@ -143,7 +143,7 @@ namespace ACSE
                             House_Data[i][idx] = Items[i][pos].ItemID;
                             pos++;
                         }
-                    DataConverter.WriteUShort(House_Data[i], House_Offset + house_Data_Offsets[i]);
+                    DataConverter.WriteUShortArray(House_Data[i], House_Offset + house_Data_Offsets[i]);
                 }
             }
             this.Close();

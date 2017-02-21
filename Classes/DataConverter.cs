@@ -19,45 +19,9 @@ namespace ACSE
         public static byte[] ReadData(int offset, int size)
         {
             byte[] data = new byte[size];
-            for (int i = 0; i < size; i++)
-                data[i] = MainForm.SaveBuffer[offset + i];
+            Buffer.BlockCopy(MainForm.SaveBuffer, offset, data, 0, size);
             Array.Reverse(data);
             return data;
-        }
-
-        public static ushort[] ReadUShort(int offset, int size)
-        {
-            ushort[] data = new ushort[size];
-            byte[] byteData = ReadData(offset, size);
-            for (int i = 0; i < byteData.Length; i += 2)
-            {
-                ushort item = BitConverter.ToUInt16(byteData, i);
-                data[i / 2] = item;
-            }
-            return data;
-        }
-
-        public static ushort[] ReadRawUShort(int offset, int size)
-        {
-            ushort[] data = new ushort[size / 2];
-            byte[] rawData = ReadDataRaw(offset, size);
-            for (int i = 0; i < rawData.Length; i += 2)
-            {
-                byte[] udata = new byte[2] { rawData[i], rawData[i + 1] };
-                Array.Reverse(udata);
-                data[i / 2] = BitConverter.ToUInt16(udata, 0);
-            }
-            return data;
-        }
-
-        public static void WriteUShort(ushort[] buffer, int offset)
-        {
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                byte[] ushortBytes = BitConverter.GetBytes(buffer[i]);
-                Array.Reverse(ushortBytes);
-                ushortBytes.CopyTo(MainForm.SaveBuffer, offset + i * 2);
-            }
         }
 
         public static byte[] ReadDataRaw(int offset, int size)
@@ -70,6 +34,33 @@ namespace ACSE
         public static void WriteDataRaw(int offset, byte[] buffer)
         {
             buffer.CopyTo(MainForm.SaveBuffer, offset);
+        }
+
+        public static ushort ReadUShort(int offset)
+        {
+            byte[] ushortData = ReadData(offset, 2);
+            return BitConverter.ToUInt16(ushortData, 0);
+        }
+
+        public static ushort[] ReadUShortArray(int offset, int numUshorts)
+        {
+            ushort[] ushortArray = new ushort[numUshorts];
+            for (int i = 0; i < numUshorts; i++)
+                ushortArray[i] = ReadUShort(offset + i * 2);
+            return ushortArray;
+        }
+
+        public static void WriteUShort(ushort value, int offset)
+        {
+            byte[] ushortBytes = BitConverter.GetBytes(value);
+            Array.Reverse(ushortBytes);
+            ushortBytes.CopyTo(MainForm.SaveBuffer, offset);
+        }
+
+        public static void WriteUShortArray(ushort[] buffer, int offset)
+        {
+            for (int i = 0; i < buffer.Length; i++)
+                WriteUShort(buffer[i], offset + i * 2);
         }
 
         public static uint ReadUInt(int offset)
@@ -125,17 +116,18 @@ namespace ACSE
             return Bits;
         }
 
-        public static byte ToBit(byte Bit_Byte, int Bit_Mask, bool Reverse = false)
+        public static byte ToBit(byte Bit_Byte, int Bit_Index, bool Reverse = false)
         {
-            return (byte)(Bit_Byte & (Reverse ? 1 >> Bit_Mask : 1 << Bit_Mask));
+            return (byte)((Reverse ? Bit_Byte >> (7 - Bit_Index) : Bit_Byte >> Bit_Index) & 1);
         }
 
-        public static void SetBit(ref byte Bit_Byte, int Bit_Mask, bool Set, bool Reverse = false)
+        public static void SetBit(ref byte Bit_Byte, int Bit_Index, bool Set, bool Reverse = false)
         {
+            int Mask = 1 << (Reverse ? 7 - Bit_Index : Bit_Index);
             if (Set)
-                Bit_Byte = (byte)(Bit_Byte | (Reverse ? (1 >> Bit_Mask) : (1 << Bit_Mask)));
+                Bit_Byte = Bit_Byte |= (byte)Mask;
             else
-                Bit_Byte = (byte)(Bit_Byte & ~(Reverse ? (1 >> Bit_Mask) : (1 << Bit_Mask)));
+                Bit_Byte = Bit_Byte &= (byte)~Mask;
         }
     }
 }
