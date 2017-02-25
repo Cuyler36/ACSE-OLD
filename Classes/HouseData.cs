@@ -10,124 +10,62 @@ namespace ACSE
 {
     class HouseData
     {
-        private ItemData itemData = new ItemData { };
-        static public int[] House_Addresses = new int[4] { 0x2FD60, 0, 0, 0 };
-        static public int House1_DataSize = 0xB0;
-        static public ushort[] House_Identifiers = new ushort[10]
+        /*
+         * New Discovery:
+         *      Houses have four levels in them. These are layers you can store items on top of each other.
+         *      This is how dressers work in the game. Each layer is 0x228 bytes away from the beginning of the previous one.
+         *      So, a dresser with three items looks like this:
+         *          Fourth Layer: Item 3
+         *          Third Layer: Item 2
+         *          Second Layer: Item 1
+         *          Main Floor: Dresser
+         *          
+         *      This means that it's probably unnecessary to add "storage" to the inventory editor.
+         */
+        public static ushort[] House_Identifiers = new ushort[10]
         {
             0x0480, 0x2480, 0x4880, 0x24A0, 0x4890, 0x48A0, 0x6C90, 0x6C80, 0x7000, 0x0000 //StarterHouse, First Upgrade, Expanded Main Room (No Basement), First Upgrade + Basement, Expanded Room + Basement (From Basement), Expanded Room + Basement (From Expanded Room), 2nd Floor (From Expanded Room), 2nd Floor (From Basement), Statue (From Basement)
         };
 
-        static public int[] House_Data_Sizes = new int[8]
+        public static int[] House_Data_Sizes = new int[3]
         {
-            0, 0, 0, 0x8C, 0, 0xF0, 0, 0x114
+            0x8C, 0xF0, 0x114
         };
 
-        static public int[] House_Data_Layer2_Sizes = new int[8]
+        public static int[] House_Data_Layer2_Sizes = new int[3]
         {
-            0, 0, 0, 0x68, 0, 0xAC, 0, 0xF0
+            0x68, 0xAC, 0xF0
         };
 
-        public static int GetHouseSize (ushort[] houseBuffer)
+        //Rewrote all methods here to be significantly shorter. I originally wrote them when I had just started in C#.
+
+        public static int ReadHouseSize(ushort[] houseBuffer, bool includesPadding = true)
         {
-            //Gonna stick with this for now. Haven't determined what bytes determine what house level you have.
-            bool inbounds = false;
-            int y = 0;
-            int size = 0;
-            bool sizeSet = false;
-            for (int x = 0; x < houseBuffer.Length; x++)
-            {
+            int x;
+            for (x = (includesPadding ? 0x11 : 0x0); x < houseBuffer.Length; x++)
                 if (houseBuffer[x] == 0xFFFE)
-                {
-                    if (inbounds && houseBuffer[x + 1] == 0)
-                    {
-                        y++;
-                        inbounds = false;
-                        sizeSet = (size == 0) ? false : true;
-                        if (sizeSet)
-                            return size;
-                    }
-                    else if (!inbounds)
-                        inbounds = true;
-                }
-                else if (inbounds && y > 0)
-                {
-                    if (!sizeSet)
-                        size++;
-                }
-            }
-            return size;
+                    break;
+            return (x - (includesPadding ? 0x11 : 0x0));
         }
 
-        public static Furniture[] GetHouseData(ushort[] houseBuffer, int size = 0)
+        public static Furniture[] ReadHouseData(ushort[] houseBuffer, int size = 0, bool includesPadding = true)
         {
-            List<Furniture> items = new List<Furniture>();
-            bool inbounds = false;
-            int y = 0;
             if (size == 0)
-                size = GetHouseSize(houseBuffer);
-            int pos = 0;
-            for (int x = 0; x < houseBuffer.Length - 1; x++)
-            {
-                if (houseBuffer[x] == 0xFFFE)
-                {
-                    if (inbounds && x + 1 < houseBuffer.Length && houseBuffer[x + 1] == 0)
-                    {
-                        y++;
-                        inbounds = false;
-                    }
-                    else if(!inbounds)
-                        inbounds = true;
-                }
-                else if (inbounds && y > 0)
-                {
-                    pos++;
-                    if (houseBuffer[x] == 0)
-                        items.Add(new Furniture(0));
-                    else if (houseBuffer[x] != 0xFFFE && houseBuffer[x] != 0xFE1F && houseBuffer[x] != 0xFE1B)
-                        items.Add(new Furniture(houseBuffer[x]));
-                    else if (houseBuffer[x] == 0xFE1F) //0xFE1F = Barrier/Occupied Space. Left by multispace furniture!
-                    {
-                        ushort itemId = 0xFFFF;
-                        int index = pos - size;
+                size = ReadHouseSize(houseBuffer, includesPadding);
+            Furniture[] Furniture_Array = new Furniture[size * size];
 
-                        if (x > 0 && houseBuffer[x - 1] != 0xFFFE && items.Count >= pos && items[pos - 1].ItemID != 0)
-                            itemId = items[pos - 1].ItemID;
-                        else if (items.Count > index && index >= 0 && items[index].ItemID != 0)
-                            itemId = items[index].ItemID;
-                        else if (index > 0 && items.Count >= index - 1 && items[index - 1].ItemID != 0)
-                            itemId = items[index - 1].ItemID;
-                        items.Add(new Furniture(itemId));
-                    }
-                }
-            }
-            return items.ToArray();
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                    Furniture_Array[y * size + x] = new Furniture(houseBuffer[(includesPadding ? 0x11 : 0x0) + 0x10 * y + x]);
+
+            return Furniture_Array;
         }
 
-        public static void UpdateHouseData(Furniture[] houseItems, ushort[] houseBuffer)
+        public static void UpdateHouseData(Furniture[] houseItems, ushort[] houseBuffer, int size, bool includesPadding = true)
         {
-            int pos = 0;
-            bool inbounds = false;
-            int y = 0;
-            for (int x = 0; x < houseBuffer.Length; x++)
-            {
-                if (houseBuffer[x] == 0xFFFE)
-                {
-                    if (inbounds && x + 1 < houseBuffer.Length && houseBuffer[x + 1] == 0)
-                    {
-                        y++;
-                        inbounds = false;
-                    }
-                    else if (!inbounds)
-                        inbounds = true;
-                }
-                else if (inbounds && y > 0)
-                    if (houseBuffer[x] != 0xFFFE && houseBuffer[x] != 0xFE1B)
-                    {
-                        houseBuffer[x] = houseItems[pos].ItemID;
-                        pos++;
-                    }
-            }
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                    houseBuffer[(includesPadding ? 0x11 : 0x0) + 0x10 * y + x] = houseItems[y * size + x].ItemID;
         }
     }
 }

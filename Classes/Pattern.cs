@@ -152,7 +152,7 @@ namespace ACSE
                 pos += 2;
             }
             Pattern_Bitmap = new Bitmap(32, 32, PixelFormat.Format32bppArgb);
-            BitmapData bitmapData = Pattern_Bitmap.LockBits(new Rectangle(0, 0, 32, 32), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            BitmapData bitmapData = Pattern_Bitmap.LockBits(new Rectangle(0, 0, 32, 32), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb); //Should probably switch to 24bit rgb since alpha channel isn't used
             System.Runtime.InteropServices.Marshal.Copy(patternBitmapBuffer, 0, bitmapData.Scan0, patternBitmapBuffer.Length);
             Pattern_Bitmap.UnlockBits(bitmapData);
             rawPatternArray = buffer;
@@ -170,7 +170,7 @@ namespace ACSE
                     for (int x = 0; x < 4; x++)
                     {
                         int pos = (i % 4) * 4 + (i / 4) * 64 + x * 16;
-                        Array.ConstrainedCopy(rawPatternArray, pos, block, x * 4, 4);
+                        Buffer.BlockCopy(rawPatternArray, pos, block, x * 4, 4);
                     }
                     Block_Data.Add(block);
                 }
@@ -208,10 +208,10 @@ namespace ACSE
                 for (int block = 0; block < 32; block++)
                 {
                     byte[] Block = new byte[16];
-                    Array.ConstrainedCopy(patternRawData, block * 16, Block, 0, 16);
+                    Buffer.BlockCopy(patternRawData, block * 16, Block, 0, 16);
                     Block_Data.Add(Block);
                 }
-                List<byte[]> Sorted_Block_Data = new List<byte[]>()
+                List<byte[]> Sorted_Block_Data = new List<byte[]>() //Too lazy to derive the actual formula to decode it, so I'll sort it manually
                 {
                     Block_Data[0], Block_Data[2], Block_Data[4], Block_Data[6],
                     Block_Data[1], Block_Data[3], Block_Data[5], Block_Data[7],
@@ -254,9 +254,9 @@ namespace ACSE
         public void Write()
         {
             DataConverter.WriteString(Offset, Name, 0x10);
-            DataConverter.WriteData(Offset + 0x10, new byte[] { Palette });
+            DataConverter.WriteByte(Offset + 0x10, Palette);
             if (rawPatternArray != null)
-                DataConverter.WriteDataRaw(Offset + 0x20, ConvertImport());
+                DataConverter.WriteByteArray(Offset + 0x20, ConvertImport(), false);
         }
     }
 }

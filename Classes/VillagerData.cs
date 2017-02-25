@@ -481,7 +481,7 @@ namespace ACSE
                 int Entry_Offset = Offset + 0x10 + (i * 0x138); //Offet + 16 data bytes + entrynum * entrysize
                 uint Player_ID = DataConverter.ReadUInt(Entry_Offset + 0x10);
                 if (Player_ID < 0xFFFFFFFF && Player_ID >= 0xF0000000)
-                    Villager_Player_Entries[i] = new Villager_Player_Entry(DataConverter.ReadDataRaw(Entry_Offset, 0x138));
+                    Villager_Player_Entries[i] = new Villager_Player_Entry(DataConverter.ReadDataRaw(Entry_Offset, 0x138), Entry_Offset);
             }
         }
 
@@ -489,22 +489,25 @@ namespace ACSE
         {
             House_Coords[2] = (byte)(House_Coords[2] - 1);
             //House_Coords[3] = (byte)(House_Coords[3] - 1);
-            DataConverter.WriteUShortArray(new ushort[] { ID }, Offset);
-            DataConverter.WriteUShortArray(new ushort[] { TownIdentifier }, Offset + 2);
-            DataConverter.WriteDataRaw(Offset + 0xC, new byte[] { Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF) }); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.
-            DataConverter.WriteDataRaw(Offset + 0xD, new byte[] { PersonalityID });
+            DataConverter.Write(Offset, ID);
+            DataConverter.Write(Offset + 2, TownIdentifier);
+            DataConverter.WriteString(Offset + 4, DataConverter.ReadString(MainForm.Town_Name_Offset, 8).Trim(), 8); //Set town name
+            DataConverter.WriteByte(Offset + 0xC, Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF)); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.
+            DataConverter.WriteByte(Offset + 0xD, PersonalityID);
             DataConverter.WriteString(Offset + 0x89D, Catchphrase, 10);
-            DataConverter.WriteDataRaw(Offset + 0x899, House_Coords);
+            DataConverter.WriteByteArray(Offset + 0x899, House_Coords);
             if (Shirt != null)
-                DataConverter.WriteUShortArray(new ushort[] { Shirt.ItemID }, Offset + 0x8E4);
+                DataConverter.Write(Offset + 0x8E4, Shirt.ItemID);
             if (!Exists && Modified)
             {
-                DataConverter.WriteString(Offset + 4, DataConverter.ReadString(MainForm.Town_Name_Offset, 8).Trim(), 8); //Set town name
-                DataConverter.WriteDataRaw(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }); //This byte might be the met flag. Setting it just in case
+                DataConverter.WriteByteArray(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }); //This byte might be the met flag. Setting it just in case
                 Exists = true;
                 if (Index < 16)
                     Add_House();
             }
+            foreach (Villager_Player_Entry Entry in Villager_Player_Entries)
+                if (Entry != null && Entry.Exists)
+                    Entry.Write(); //Update Player Entries
             Modified = false;
             //Second byte here is always a random number. This could be responsible for the Villager's AI, but I'm not sure. Just writing it for good measure.
             //If the Villager's house location is out of bounds, (or just left 0xFFFF) the game will pick a random signboard as the new house location and write it on load.
@@ -545,7 +548,7 @@ namespace ACSE
                     //This is akin to actual game behavior
                 }
             }
-            DataConverter.WriteUShortArray(World_Buffer, MainForm.AcreData_Offset);
+            DataConverter.Write(MainForm.AcreData_Offset, World_Buffer);
         }
 
         public void Add_House()
@@ -566,7 +569,7 @@ namespace ACSE
             World_Buffer[Position] = House_ID;
             World_Buffer[Position + 15] = 0xA012; //Add Nameplate
 
-            DataConverter.WriteUShortArray(World_Buffer, MainForm.AcreData_Offset);
+            DataConverter.Write(MainForm.AcreData_Offset, World_Buffer);
         }
 
         public Villager_Player_Entry[] Get_Player_Entries(uint Matching_Player_ID)
@@ -587,12 +590,12 @@ namespace ACSE
         Unknown Data: 0x028 - 0x02F
         Friendship: 0x030 (Min = 0 (1), Max = 7F (128))
         Unknown Bytes: 0x031 - 0x032
-        Padding??: 0x033 - 0x037
-        Saved Message: 0x038 - 0x138
+        Saved Message: 0x033? - 0x138
     */
     public class Villager_Player_Entry
     {
         public bool Exists = false;
+        public int Offset;
         //Struct Start
         public string Player_Name;
         public string Player_Town_Name;
@@ -604,9 +607,10 @@ namespace ACSE
         public sbyte Friendship;
         //
 
-        public Villager_Player_Entry(byte[] entryData)
+        public Villager_Player_Entry(byte[] entryData, int offset)
         {
             Exists = true;
+            Offset = offset;
             byte[] playerNameBytes = new byte[8], playerTownName = new byte[8], metTownName = new byte[8], metDate = new byte[8], playerId = new byte[4], metTownId = new byte[2];
             Buffer.BlockCopy(entryData, 0, playerNameBytes, 0, 8);
             Buffer.BlockCopy(entryData, 8, playerTownName, 0, 8);
@@ -629,6 +633,14 @@ namespace ACSE
         public void Max_Friendship()
         {
             Friendship = 0x7F;
+        }
+
+        public void Write()
+        {
+            //Player Name is handled by renaming the player
+            DataConverter.WriteByteArray(Offset + 0x8, DataConverter.ReadDataRaw(MainForm.Town_Name_Offset, 8)); //Update Town Name
+            if (DataConverter.ReadUShort(8) == Met_Town_ID)
+                DataConverter.WriteByteArray(Offset + 0x1C, DataConverter.ReadDataRaw(MainForm.Town_Name_Offset, 8)); //Update Met Town Name
         }
     }
 }

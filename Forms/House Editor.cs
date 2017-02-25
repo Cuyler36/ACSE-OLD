@@ -22,7 +22,8 @@ namespace ACSE
             InitializeComponent();
             House_Offset = houseOffset;
             House_Data = houseData;
-            FirstFloorSize = HouseData.GetHouseSize(houseData[0]);
+            FirstFloorSize = HouseData.ReadHouseSize(houseData[0]);
+            HouseData.ReadHouseSize(houseData[0]);
             BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
             comboBox1.DataSource = bs;
             comboBox1.DisplayMember = "Value";
@@ -66,21 +67,8 @@ namespace ACSE
             }
 
             for (int i = 0; i < 6; i++)
-            {
-                if (i % 2 == 0)
-                    Items.Add(HouseData.GetHouseData(House_Data[i], Layers[i].Size.Width / 16));
-                else
-                {
-                    int z = 0;
-                    Items.Add(new Furniture[(Layers[i].Size.Width / 16) * (Layers[i].Size.Width / 16)]);
-                    for (int x = 0; x < House_Data[i].Length; x++)
-                        if (x % 16 < (Layers[i].Size.Width / 16) && z < Items[i].Length)
-                        {
-                            Items[i][z] = new Furniture(House_Data[i][x] == 0xFE1F ? (ushort)0xFFFF : House_Data[i][x]);
-                            z++;
-                        }
-                }
-            }
+                Items.Add(HouseData.ReadHouseData(House_Data[i], Layers[i].Size.Width / 16, i % 2 == 0));
+
             for (int i = 0; i < 6; i++)
                 Layers[i].Image = Inventory.GetItemPic(16, Layers[i].Size.Width / 16, Items[i]);
         }
@@ -104,7 +92,7 @@ namespace ACSE
                 if (e.Button == MouseButtons.Right) // Read
                 {
                     comboBox1.SelectedValue = Items[idx][index].IsFurniture ? Items[idx][index].BaseItemID : Items[idx][index].ItemID;
-                    label1.Text = "0x" + ((ushort)comboBox1.SelectedValue).ToString("X4");
+                    label1.Text = "0x" + (Items[idx][index].IsFurniture ? Items[idx][index].BaseItemID : Items[idx][index].ItemID).ToString("X4");
                 }
                 else if (comboBox1.SelectedValue != null) // Write
                 {
@@ -131,20 +119,8 @@ namespace ACSE
         {
             for (int i = 0; i < House_Data.Count; i++)
             {
-                HouseData.UpdateHouseData(Items[i], House_Data[i]);
-                if (i % 2 == 0)
-                    DataConverter.WriteUShortArray(House_Data[i], House_Offset + house_Data_Offsets[i]);
-                else
-                {
-                    int pos = 0;
-                    for (int idx = 0; idx < House_Data[i].Length; idx++)
-                        if (idx % 16 < (Layers[i].Size.Width / 16))
-                        {
-                            House_Data[i][idx] = Items[i][pos].ItemID;
-                            pos++;
-                        }
-                    DataConverter.WriteUShortArray(House_Data[i], House_Offset + house_Data_Offsets[i]);
-                }
+                HouseData.UpdateHouseData(Items[i], House_Data[i], Layers[i].Size.Width / 16, i % 2 == 0);
+                DataConverter.Write(House_Offset + house_Data_Offsets[i], House_Data[i]);
             }
             this.Close();
         }

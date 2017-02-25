@@ -87,13 +87,13 @@ namespace ACSE
         private void button1_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < Shop_Selection.Length; i++)
-                DataConverter.WriteUShortArray(new ushort[] { Shop_Selection[i].ItemID }, MainForm.Nook_Items_Offset + i * 2);
+                DataConverter.Write(MainForm.Nook_Items_Offset + i * 2, Shop_Selection[i].ItemID);
             if (textBox1.Text.Length > 0)
             {
                 int spentBells = -1;
                 int.TryParse(textBox1.Text, out spentBells);
                 if (spentBells > 1)
-                    DataConverter.WriteData(MainForm.Nook_Spent_Bells_Offset, BitConverter.GetBytes(spentBells));
+                    DataConverter.Write(MainForm.Nook_Spent_Bells_Offset, spentBells);
             }
             Close();
         }

@@ -30,13 +30,22 @@ namespace ACSE
 
         public ACDate(byte[] dateData)
         {
-            Second = dateData[0];
-            Minute = dateData[1];
-            Hour = dateData[2];
-            Day = dateData[3];
-            Day_of_Week = dateData[4];
-            Month = dateData[5];
-            Year = BitConverter.ToUInt16(new byte[] { dateData[7], dateData[6] }, 0);
+            if (dateData.Length == 0x8)
+            {
+                Second = dateData[0];
+                Minute = dateData[1];
+                Hour = dateData[2];
+                Day = dateData[3];
+                Day_of_Week = dateData[4];
+                Month = dateData[5];
+                Year = BitConverter.ToUInt16(new byte[] { dateData[7], dateData[6] }, 0);
+            }
+            else if (dateData.Length == 0x4)
+            {
+                Year = BitConverter.ToUInt16(new byte[] { dateData[1], dateData[0] }, 0);
+                Month = dateData[2];
+                Day = dateData[3];
+            }
 
             Is_PM = Hour >= 12;
             Date_Time_String = string.Format("{0}:{1}:{2} {3}, {4}/{5}/{6}", (Hour % 12) == 0 ? 12 : Hour % 12,

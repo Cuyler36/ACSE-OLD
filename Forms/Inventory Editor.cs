@@ -85,9 +85,9 @@ namespace ACSE
             }
             else // Write
             {
-                if (pocket && comboBox1.SelectedValue != null && index < Pockets.Items.Length)
+                if (pocket && index < Pockets.Items.Length)
                 {
-                    Pockets.Items[index] = new Item((ushort)comboBox1.SelectedValue);
+                    Pockets.Items[index] = new Item(string.IsNullOrEmpty(textBox1.Text) ? (ushort)comboBox1.SelectedValue : ushort.Parse(textBox1.Text, System.Globalization.NumberStyles.AllowHexSpecifier, null));
                     Pockets.InventorySlots[index].Item = Pockets.Items[index];
                     pictureBox1.Image = Inventory.GetItemPic(16, 5, Pockets.Items);
                 }

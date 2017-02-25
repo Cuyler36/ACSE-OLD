@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Collections;
 
 namespace ACSE
 {
@@ -40,6 +41,7 @@ namespace ACSE
         #endregion Offsets
 
         #region Variables
+        public static readonly string Assembly_Location = Directory.GetCurrentDirectory();
         static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         //static readonly int Date_Offset = 946684799; //Date at 12/31/1999 @ 11:59:59PM
         private FileStream fs;
@@ -122,6 +124,7 @@ namespace ACSE
             for (int i = 0; i < ItemData.Shirt_IDs.Length; i++)
                 Shirts.Add(new KeyValuePair<ushort, string>(ItemData.Shirt_IDs[i], ItemData.Shirt_Names[i]));
             AcreData.Parse_Unique_Images();
+            AcreData.Parse_Images();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -471,12 +474,7 @@ namespace ACSE
                 player4Catchables.Click += new EventHandler(Catchables_Clicked);
                 CanSetData = true;
                 if (Properties.Settings.Default.NookingtonsFlag)
-                    DataConverter.WriteData(Nookingtons_Visitor_Flag, new byte[] { 0x01 });
-                string bitString = "";
-                foreach (byte bit in DataConverter.ToBits(DataConverter.ReadDataRaw(0x211B7, 1), false))
-                    bitString += bit.ToString() + " ";
-                MessageBox.Show(bitString);
-                //DataConverter.ToBits(DataConverter.ReadDataRaw(0x118E, 1), true);
+                    DataConverter.WriteByte(Nookingtons_Visitor_Flag, 0x01);
             }
             else
             {
@@ -620,12 +618,7 @@ namespace ACSE
                 if (Players[player - 1].Exists)
                 {
                     if (iEditor == null || iEditor.IsDisposed)
-                    {
-                        /*Item[] dresserItems = new Item[3];
-                        for (int i = 0; i < 3; i++)
-                            dresserItems[i] = new Item(ReadRawUShort(Player1_Dresser_Offsets[i], 2)[0]);*/
                         iEditor = new Inventory_Editor(Players[player - 1].Inventory, this);
-                    }
                     iEditor.Show();
                 }
             }
@@ -639,9 +632,9 @@ namespace ACSE
                 int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
                 if (Players[player - 1].Exists)
                 {
-                    int firstFloorSize = HouseData.GetHouseSize(DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, 0x114 / 2));
-                    ushort[] firstFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[firstFloorSize - 1] / 2);
-                    ushort[] firstFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[firstFloorSize - 1] / 2);
+                    int firstFloorSize = HouseData.ReadHouseSize(DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, 0x114 / 2));
+                    ushort[] firstFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[(firstFloorSize / 2) - 2] / 2);
+                    ushort[] firstFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[(firstFloorSize / 2) - 2] / 2);
                     ushort[] secondFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0 / 2);
                     ushort[] secondFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC / 2);
                     ushort[] basementLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x1150, 0x114 / 2);

@@ -73,20 +73,15 @@ namespace ACSE
             imageList = new ImageList();
             imageList.ImageSize = new Size(24, 24);
             List<int> iconIndex = new List<int>();
-            for (int i = 1; i < 68; i++)
+            foreach (KeyValuePair<string, Image> pair in AcreData.Acre_Resource_Images)
             {
-                imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
-                iconIndex.Add(i);
-            }
-            for (int i = 70; i < 95; i++)
-            {
-                imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
-                iconIndex.Add(i);
-            }
-            for (int i = 99; i < 101; i++)
-            {
-                imageList.Images.Add((Image)Properties.Resources.ResourceManager.GetObject("_" + i));
-                iconIndex.Add(i);
+                uint valueOut = 0;
+                uint.TryParse(pair.Key, out valueOut);
+                if (valueOut != 0)
+                {
+                    imageList.Images.Add(pair.Value);
+                    iconIndex.Add((int)valueOut);
+                }
             }
             foreach (ushort key in AcreData.Unique_Acre_Images.Keys)
             {
@@ -128,7 +123,7 @@ namespace ACSE
                         House_Picturebox.Location = new Point(Math.Min(X_Position * 4 - 8, 56), Math.Min(Y_Position * 4 - 8, 56));
                         House_Picturebox.SizeMode = PictureBoxSizeMode.StretchImage;
                         House_Picturebox.BackColor = Color.Transparent;
-                        House_Picturebox.Image = (Image)Properties.Resources.ResourceManager.GetObject("_VillagerHouse");
+                        House_Picturebox.Image = AcreData.Acre_Resource_Images["VillagerHouse"];
                         Acre_Picturebox.Controls.Add(House_Picturebox);
                         House_Picturebox.BringToFront();
                         Villager_Houses.Add(House_Picturebox);
@@ -375,7 +370,7 @@ namespace ACSE
             foreach (KeyValuePair<int, Acre> acre in currentAcreData)
                 acreData[acre.Key - 1] = acre.Value.AcreID;
 
-            DataConverter.WriteUShortArray(acreData, MainForm.AcreTile_Offset);
+            DataConverter.Write(MainForm.AcreTile_Offset, acreData);
             this.Close();
         }
 

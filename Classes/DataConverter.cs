@@ -5,15 +5,71 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace ACSE
 {
-    class DataConverter
+    public static class DataConverter
     {
-        public static void WriteData(int offset, byte[] data)
+        private static byte ConvertByte(BitArray b)
         {
-            Array.Reverse(data);
+            byte value = 0;
+            for (byte i = 0; i < b.Count; i++)
+                if (b[i])
+                    value |= (byte)(1 << i);
+            return value;
+        }
+
+        public static Dictionary<Type, Delegate> typeMap = new Dictionary<Type, Delegate>
+        {
+            {typeof(byte[]), new Func<byte[], byte>
+                (b => {
+                    return ConvertByte(new BitArray(b));
+                })
+            },
+            {typeof(BitArray), new Func<BitArray, byte>
+                (b => {
+                    return ConvertByte(b);
+                })
+            }
+        };
+
+        public static void WriteByte(int offset, byte data)
+        {
+            MainForm.SaveBuffer[offset] = data;
+        }
+
+        public static void WriteByteArray(int offset, byte[] data, bool reverse = true)
+        {
+            if (reverse)
+                Array.Reverse(data);
             data.CopyTo(MainForm.SaveBuffer, offset);
+        }
+
+        public static void Write(int offset, object data, bool reverse = true)
+        {
+            Type type = data.GetType();
+            if (type.IsArray && typeof(byte[]) != type)
+            {
+                object[] arr = ((Array)data).Cast<object>().ToArray();
+                int objSize = Marshal.SizeOf(arr[0]);
+                Type t = type.GetElementType();
+                for (int i = 0; i < arr.Length; i++)
+                    WriteByteArray(offset + i * objSize,
+                        (byte[])typeof(BitConverter).GetMethod("GetBytes", new Type[] { type.GetElementType() }).Invoke(null, new object[] { arr[i] }),
+                        reverse);
+            }
+            else if (type.IsArray && typeof(byte[]) == type)
+                WriteByteArray(offset, (byte[])data, reverse);
+            else if (typeof(byte) == type)
+                WriteByte(offset, (byte)data);
+            else
+            {
+                var convertedData = Convert.ChangeType(data, type);
+                WriteByteArray(offset, (byte[])typeof(BitConverter)
+                        .GetMethod("GetBytes", new Type[] { convertedData.GetType() })
+                        .Invoke(null, new object[] { convertedData }), reverse);
+            }
         }
 
         public static byte[] ReadData(int offset, int size)
@@ -31,15 +87,9 @@ namespace ACSE
             return data;
         }
 
-        public static void WriteDataRaw(int offset, byte[] buffer)
-        {
-            buffer.CopyTo(MainForm.SaveBuffer, offset);
-        }
-
         public static ushort ReadUShort(int offset)
         {
-            byte[] ushortData = ReadData(offset, 2);
-            return BitConverter.ToUInt16(ushortData, 0);
+            return BitConverter.ToUInt16(ReadData(offset, 2), 0);
         }
 
         public static ushort[] ReadUShortArray(int offset, int numUshorts)
@@ -48,19 +98,6 @@ namespace ACSE
             for (int i = 0; i < numUshorts; i++)
                 ushortArray[i] = ReadUShort(offset + i * 2);
             return ushortArray;
-        }
-
-        public static void WriteUShort(ushort value, int offset)
-        {
-            byte[] ushortBytes = BitConverter.GetBytes(value);
-            Array.Reverse(ushortBytes);
-            ushortBytes.CopyTo(MainForm.SaveBuffer, offset);
-        }
-
-        public static void WriteUShortArray(ushort[] buffer, int offset)
-        {
-            for (int i = 0; i < buffer.Length; i++)
-                WriteUShort(buffer[i], offset + i * 2);
         }
 
         public static uint ReadUInt(int offset)
@@ -74,13 +111,6 @@ namespace ACSE
             for (int i = 0; i < numInts; i++)
                 uintArray[i] = ReadUInt(offset + i * 4);
             return uintArray;
-        }
-
-        public static void WriteUInt(int offset, uint data)
-        {
-            byte[] UInt_Bytes = BitConverter.GetBytes(data);
-            Array.Reverse(UInt_Bytes);
-            WriteDataRaw(offset, UInt_Bytes);
         }
 
         public static ACString ReadString(int offset, int maxSize)
@@ -128,6 +158,11 @@ namespace ACSE
                 Bit_Byte = Bit_Byte |= (byte)Mask;
             else
                 Bit_Byte = Bit_Byte &= (byte)~Mask;
+        }
+
+        public static byte ToByte(object Variant)
+        {
+            return (byte)typeMap[Variant.GetType()].DynamicInvoke(Variant);
         }
     }
 }

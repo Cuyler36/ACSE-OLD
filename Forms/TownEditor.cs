@@ -24,8 +24,6 @@ namespace ACSE
         byte[] buriedData;
         byte[] islandBuriedData;
         WorldItem Last_Hovered_Item;
-        bool Clicking = false;
-        PictureBox LastPictureBox;
 
         public string[] X_Acre_Names =
         {
@@ -120,8 +118,14 @@ namespace ACSE
             int X = e.X / (4 * scale);
             int Y = e.Y / (4 * scale);
             int index = X + Y * 16;
-            ushort Item_ID = comboBox1.SelectedValue == null ? (ushort)0 : (ushort)comboBox1.SelectedValue;
-            if (comboBox1.SelectedValue == null || index < 0 || index > 255 || (ushort)comboBox1.SelectedValue == Selected_Acre.Acre_Items[index].ItemID)
+            ushort Item_ID = 0;
+
+            if (!string.IsNullOrEmpty(textBox1.Text))
+                ushort.TryParse(textBox1.Text, NumberStyles.AllowHexSpecifier, null, out Item_ID);
+            else if (comboBox1.SelectedValue != null)
+                Item_ID = (ushort)comboBox1.SelectedValue;
+
+            if (index < 0 || index > 255 || Item_ID == Selected_Acre.Acre_Items[index].ItemID)
                 return;
             if (e.Button == MouseButtons.Left)
             {
@@ -277,12 +281,12 @@ namespace ACSE
         {
             for (int i = 0; i < Acres.Length; i++)
                 for (int x = 0; x < 256; x++)
-                    DataConverter.WriteUShortArray(new ushort[1] { Acres[i].Acre_Items[x].ItemID }, MainForm.AcreData_Offset + (i * 512) + x * 2);
+                    DataConverter.Write(MainForm.AcreData_Offset + (i * 512) + x * 2, Acres[i].Acre_Items[x].ItemID);
             for (int i = 0; i < 2; i++)
                 for (int x = 0; x < 256; x++)
-                    DataConverter.WriteUShortArray(new ushort[1] { Island_Acres[i].Acre_Items[x].ItemID }, MainForm.IslandData_Offset + (i * 512) + x * 2);
-            DataConverter.WriteDataRaw(MainForm.BurriedItems_Offset, buriedData);
-            DataConverter.WriteDataRaw(MainForm.IslandBurriedItems_Offset, islandBuriedData);
+                    DataConverter.Write(MainForm.IslandData_Offset + (i * 512) + x * 2, Island_Acres[i].Acre_Items[x].ItemID);
+            DataConverter.WriteByteArray(MainForm.BurriedItems_Offset, buriedData, false);
+            DataConverter.WriteByteArray(MainForm.IslandBurriedItems_Offset, islandBuriedData, false);
             Close();
         }
 
@@ -351,6 +355,8 @@ namespace ACSE
                 ushort Replacing_Item_ID = 0;
                 ushort.TryParse(textBox2.Text, NumberStyles.AllowHexSpecifier, null, out Replaced_Item_ID);
                 ushort.TryParse(textBox3.Text, NumberStyles.AllowHexSpecifier, null, out Replacing_Item_ID);
+                if (Replaced_Item_ID == Replacing_Item_ID)
+                    return;
                 string Item_Name = ItemData.GetItemName(Replacing_Item_ID);
 
                 int Number_Replaced = 0;

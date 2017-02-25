@@ -168,19 +168,19 @@ namespace ACSE
             //DataConverter.WriteString(offset + 0, Name, 8);
             WriteName();
             DataConverter.WriteString(offset + 0x8, Town_Name, 8);
-            DataConverter.WriteData(offset + 0x14, new byte[] { Gender });
-            DataConverter.WriteData(offset + 0x15, new byte[] { Face });
-            DataConverter.WriteUShortArray(Inventory.GetItemIDs(), offset + 0x68);
-            DataConverter.WriteData(offset + 0x8C, BitConverter.GetBytes(Bells));
-            DataConverter.WriteData(offset + 0x90, BitConverter.GetBytes(Debt));
-            DataConverter.WriteUShortArray(new ushort[] { Held_Item.ItemID }, offset + 0x4A4);
-            DataConverter.WriteUShortArray(new ushort[] { Inventory_Background.ItemID }, offset + 0x1084);
-            DataConverter.WriteDataRaw(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
+            DataConverter.Write(offset + 0x14, Gender);
+            DataConverter.Write(offset + 0x15, Face);
+            DataConverter.Write(offset + 0x68, Inventory.GetItemIDs());
+            DataConverter.Write(offset + 0x8C, Bells);
+            DataConverter.Write(offset + 0x90, Debt);
+            DataConverter.Write(offset + 0x4A4, Held_Item.ItemID);
+            DataConverter.Write(offset + 0x1084, Inventory_Background.ItemID);
+            DataConverter.Write(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
 
             if (Properties.Settings.Default.StopResetti)
-                DataConverter.WriteUInt(offset + 0x10F4, 0);
+                DataConverter.Write(offset + 0x10F4, 0);
 
-            DataConverter.WriteData(offset + 0x122C, BitConverter.GetBytes(Savings));
+            DataConverter.Write(offset + 0x122C, Savings);
 
             foreach (Pattern p in Patterns)
                 p.Write();
@@ -198,20 +198,20 @@ namespace ACSE
         {
             //This will add some items to Nook's Catalog as well (They're stored in binary again for space saving)
             int offset = 0x20 + Index * Player_Length;
-            DataConverter.WriteDataRaw(offset + 0x1164, new byte[] { 0xFF, 0xFF });
-            DataConverter.WriteDataRaw(offset + 0x1168, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF });
-            DataConverter.WriteDataRaw(offset + 0x1173, new byte[] { 0xFF });
+            DataConverter.WriteByteArray(offset + 0x1164, new byte[] { 0xFF, 0xFF }, false);
+            DataConverter.WriteByteArray(offset + 0x1168, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, false);
+            DataConverter.WriteByte(offset + 0x1173, 0xFF);
         }
 
         public void Fill_Catalog()
         {
             int offset = 0x20 + Index * Player_Length + 0x10F0;
             for (int i = 0; i < 0x4; i++)
-                DataConverter.WriteDataRaw(offset + i, new byte[] { 0xFF });
+                DataConverter.WriteByte(offset + i, 0xFF);
             for (int i = 0; i < 0xB0; i++)
-                DataConverter.WriteDataRaw(offset + 0x8 + i, new byte[] { 0xFF });
+                DataConverter.WriteByte(offset + 0x8 + i, 0xFF);
             for (int i = 0; i < 0x28; i++)
-                DataConverter.WriteDataRaw(offset + 0xC4 + i, new byte[] { 0xFF });
+                DataConverter.WriteByte(offset + 0xC4 + i, 0xFF);
         }
     }
 }

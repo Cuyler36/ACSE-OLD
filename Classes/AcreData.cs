@@ -1749,6 +1749,7 @@ namespace ACSE
         };
 
         public static Dictionary<ushort, Image> Unique_Acre_Images = new Dictionary<ushort, Image>();
+        public static Dictionary<string, Image> Acre_Resource_Images = new Dictionary<string, Image>();
 
         public static string[] Acre_Height_Identifiers = new string[4]
         {
@@ -1757,28 +1758,36 @@ namespace ACSE
 
         public static void Parse_Unique_Images()
         {
-            ResourceSet Resource_Set = Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
-            foreach (DictionaryEntry Resource in Resource_Set)
-                if (!(Resource.Key as string).Contains("_"))
+            if (Directory.Exists(MainForm.Assembly_Location + "\\Resources")
+                 && Directory.Exists(MainForm.Assembly_Location + "\\Resources\\Images"))
+                foreach (string file in Directory.GetFiles(MainForm.Assembly_Location + "\\Resources\\Images\\Acre_Images", "*.jpg"))
                 {
                     ushort Acre_ID_Out = 0xFFFF;
-                    ushort.TryParse(Resource.Key as string, NumberStyles.AllowHexSpecifier, null, out Acre_ID_Out);
+                    ushort.TryParse(Path.GetFileNameWithoutExtension(file), NumberStyles.AllowHexSpecifier, null, out Acre_ID_Out);
                     if (Acre_ID_Out != 0xFFFF)
-                        Unique_Acre_Images.Add(Acre_ID_Out, Resource.Value as Image);
+                        Unique_Acre_Images.Add(Acre_ID_Out, Image.FromFile(file));
                 }
+        }
+
+        public static void Parse_Images()
+        {
+            if (Directory.Exists(MainForm.Assembly_Location + "\\Resources")
+                && Directory.Exists(MainForm.Assembly_Location + "\\Resources\\Images"))
+                foreach (string file in Directory.GetFiles(MainForm.Assembly_Location + "\\Resources\\Images"))
+                    Acre_Resource_Images.Add(Path.GetFileNameWithoutExtension(file), Image.FromFile(file));
         }
 
         public static Bitmap ToAcrePicture(ushort Acre_ID)
         {
             ushort Base_Acre_ID = (ushort)(Acre_ID - (Acre_ID % 4));
-            if ((Base_Acre_ID >= 0x03DC && Base_Acre_ID <= 0x03EC) || Base_Acre_ID == 0x049C || (Base_Acre_ID >= 0x04A8 && Base_Acre_ID <= 0x058C) || (Base_Acre_ID >= 0x05B4 && Base_Acre_ID <= 0x5B8))
+            if (((Base_Acre_ID >= 0x03DC && Base_Acre_ID <= 0x03EC) || Base_Acre_ID == 0x049C || (Base_Acre_ID >= 0x04A8 && Base_Acre_ID <= 0x058C) || (Base_Acre_ID >= 0x05B4 && Base_Acre_ID <= 0x5B8)) && Unique_Acre_Images.ContainsKey(0x03DC))
                 return (Bitmap)Unique_Acre_Images[0x03DC];
             if (Unique_Acre_Images.ContainsKey(Base_Acre_ID))
                 return (Bitmap)Unique_Acre_Images[Base_Acre_ID];
             if (Acre_Image_Index.ContainsKey(Acre_ID))
-                return (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + Acre_Image_Index[Acre_ID]); //Get Border acre images first!
+                return (Bitmap)Acre_Resource_Images[Acre_Image_Index[Acre_ID].ToString()]; //Get Border acre images first!
             int Image_Idx = Acre_Image_Index.ContainsKey(Base_Acre_ID) ? Acre_Image_Index[Base_Acre_ID] : 99;
-            return (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + Image_Idx);
+            return Acre_Resource_Images.ContainsKey(Image_Idx.ToString()) ? (Bitmap)Acre_Resource_Images[Image_Idx.ToString()] : (Bitmap)Acre_Resource_Images["99"];
         }
 
         public static int ToAcrePictureID(ushort Acre_ID)
@@ -1880,18 +1889,6 @@ namespace ACSE
         }
     }
 
-    public class A_Acre : Acre
-    {
-        public WorldItem[] Acre_Items = new WorldItem[12 * 16];
-
-        public A_Acre(ushort acreId, int position, ushort[] items = null) : base(acreId, position)
-        {
-            if (items != null)
-                for (int i = 0; i < 192; i++)
-                    Acre_Items[i] = new WorldItem(items[i], i);
-        }
-    }
-
     public class Normal_Acre : Acre
     {
         public WorldItem[] Acre_Items = new WorldItem[16 * 16];
@@ -1909,7 +1906,7 @@ namespace ACSE
 
         private int GetBuriedDataLocation(WorldItem item, int acre)
         {
-            int worldPosition = (acre * 256) + (15 - item.Location.X) + item.Location.Y * 16;//int worldPosition = (acre * 256) + (item.Location.X < 8 ? item.Location.X : -16 + item.Location.X) + item.Location.Y * 16; //Less ugly hack, but still needs to be cleaned up
+            int worldPosition = (acre * 256) + (15 - item.Location.X) + item.Location.Y * 16;
             return worldPosition / 8;
         }
 
