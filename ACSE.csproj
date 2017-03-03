@@ -45,6 +45,7 @@
     <ApplicationIcon>Resources\AC Save Editor Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -497,6 +498,7 @@
   <ItemGroup>
     <Compile Include="Classes\AcreData.cs" />
     <Compile Include="Classes\DateUtil.cs" />
+    <Compile Include="Classes\Save.cs" />
     <Compile Include="Forms\AcreEditor.cs">
       <SubType>Form</SubType>
     </Compile>

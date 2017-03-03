@@ -473,7 +473,7 @@ namespace ACSE
             Catchphrase = DataConverter.ReadString(Offset + 0x89D, 10).Trim();
             Shirt = new Item(DataConverter.ReadUShort(Offset + 0x8E4));
             House_Coords = DataConverter.ReadDataRaw(Offset + 0x899, 4); //Could make this WorldCoords class if used for other things
-            House_Coords[2] = (byte)(House_Coords[2] + 1);
+            //House_Coords[2] = (byte)(House_Coords[2] + 1);
             //House_Coords[3] = (byte)(House_Coords[3] + 1); //X-Position is the position of the Villager Name Sign, which is to the left of the house object, so we add one.
             Exists = ID != 0x0000 && ID != 0xFFFF;
             for (int i = 0; i < 7; i++)
@@ -487,7 +487,7 @@ namespace ACSE
 
         public void Write()
         {
-            House_Coords[2] = (byte)(House_Coords[2] - 1);
+            //House_Coords[2] = (byte)(House_Coords[2] - 1);
             //House_Coords[3] = (byte)(House_Coords[3] - 1);
             DataConverter.Write(Offset, ID);
             DataConverter.Write(Offset + 2, TownIdentifier);
@@ -495,12 +495,12 @@ namespace ACSE
             DataConverter.WriteByte(Offset + 0xC, Index == 16 ? (byte)0xFF : (byte)(ID & 0x00FF)); //Normally same as villager identifier, but is 0xFF for islanders. This is likely the byte for what AI the villager will use.
             DataConverter.WriteByte(Offset + 0xD, PersonalityID);
             DataConverter.WriteString(Offset + 0x89D, Catchphrase, 10);
-            DataConverter.WriteByteArray(Offset + 0x899, House_Coords);
+            DataConverter.WriteByteArray(Offset + 0x899, House_Coords, false);
             if (Shirt != null)
                 DataConverter.Write(Offset + 0x8E4, Shirt.ItemID);
             if (!Exists && Modified)
             {
-                DataConverter.WriteByteArray(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }); //This byte might be the met flag. Setting it just in case
+                DataConverter.WriteByteArray(Offset + 0x8EB, new byte[] { 0xFF, 0x01 }, false); //This byte might be the met flag. Setting it just in case
                 Exists = true;
                 if (Index < 16)
                     Add_House();
@@ -605,6 +605,7 @@ namespace ACSE
         public ushort Met_Town_ID;
         public byte[] Garbage = new byte[8]; //I have no idea wtf these are for. Might investigate some day.
         public sbyte Friendship;
+        public Mail Saved_Letter; //Going to have to change this to a custom class, as it strips most mail header data (Length is 0x100? Message part is still 0xF8)
         //
 
         public Villager_Player_Entry(byte[] entryData, int offset)

@@ -97,13 +97,13 @@ namespace ACSE
         public byte Face;
         public byte Gender;
         public byte Tan;
-        public byte Cockroach_Count = 0;
         public uint Identifier;
         public int House_Number = 0;
-        public int House_Data_Offset = 0;
+        public House House;
         public uint Savings = 0;
         public byte[] Bugs_and_Fish_Caught = new byte[11]; //Contains some furntiure set as well
         public Pattern[] Patterns = new Pattern[8];
+        public Mail[] Letters = new Mail[10];
         public bool Reset = false;
         public bool Exists = false;
         public ACDate Last_Played_Date;
@@ -116,6 +116,7 @@ namespace ACSE
 
         //Town Identifier is: 0x30 0x??
         //Player Identifier is: 0xF0 0x??
+        //Villager Model Identifier is: 0xD0 ??
         //Villager Identifier is: 0xE0 0x??
         //Can Look up resetti values, if wanted.
         //Documented ones: 0x250C | 0xAE8A | 0x85A6
@@ -140,10 +141,12 @@ namespace ACSE
 
             for (int i = 0; i < 8; i++)
                 Patterns[i] = new Pattern(offset + 0x1240 + i * 0x220);
-            House_Number = GetHouse();
-            House_Data_Offset = 0x9CF8 + (House_Number - 1) * 0x26B0 + 0x28;
-            Last_Played_Date = new ACDate(Exists ? DataConverter.ReadDataRaw(House_Data_Offset + 0x2640, 8) : new byte[8]);
-            Cockroach_Count = DataConverter.ReadDataRaw(House_Data_Offset + 0x2648, 1)[0];
+            if (Exists)
+            {
+                House_Number = GetHouse();
+                House = new House(0x9CE8 + (House_Number - 1) * 0x26B0);
+                Last_Played_Date = new ACDate(Exists ? DataConverter.ReadDataRaw(House.Offset + 0x2640, 8) : new byte[8]);
+            }
         }
 
         public void WriteName()
@@ -175,7 +178,7 @@ namespace ACSE
             DataConverter.Write(offset + 0x90, Debt);
             DataConverter.Write(offset + 0x4A4, Held_Item.ItemID);
             DataConverter.Write(offset + 0x1084, Inventory_Background.ItemID);
-            DataConverter.Write(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) });
+            DataConverter.WriteByteArray(offset + 0x1089, new byte[] { (byte)(Shirt.ItemID & 0xFF), 0x24, (byte)(Shirt.ItemID & 0xFF) }, false);
 
             if (Properties.Settings.Default.StopResetti)
                 DataConverter.Write(offset + 0x10F4, 0);

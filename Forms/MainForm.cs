@@ -187,16 +187,24 @@ namespace ACSE
             if (f.FileName != null)
             {
                 Image fileImage = Image.FromFile(f.FileName);
-                if (fileImage.Width == 32 && fileImage.Height == 32 && (fileImage.PixelFormat == PixelFormat.Format32bppRgb || fileImage.PixelFormat == PixelFormat.Format32bppArgb))
+                if (fileImage.Width == 32 && fileImage.Height == 32 && (fileImage.PixelFormat == PixelFormat.Format24bppRgb
+                    || fileImage.PixelFormat == PixelFormat.Format32bppRgb
+                    || fileImage.PixelFormat == PixelFormat.Format32bppArgb))
                 {
-                    byte[] bitmapBytes = new byte[4096];
-                    Array.ConstrainedCopy((byte[])(new ImageConverter().ConvertTo((Bitmap)fileImage, typeof(byte[]))), 54, bitmapBytes, 0, 4096);
+                    bool hasAlphaChannel = fileImage.PixelFormat != PixelFormat.Format24bppRgb;
+                    byte[] bitmapBytes = new byte[hasAlphaChannel ? 4096 : 3072];
+                    Buffer.BlockCopy((byte[])(new ImageConverter().ConvertTo((Bitmap)fileImage, typeof(byte[]))), 54, bitmapBytes, 0, hasAlphaChannel ?  4096 : 3072);
                     byte[] convertedBytes = new byte[512]; //32bit argb > 2 Nibble palette
                     byte[] reversedBuffer = new byte[512];
                     int x = 0;
-                    for (int i = 0; i < bitmapBytes.Length; i += 8)
+                    for (int i = 0; i < bitmapBytes.Length; i += (hasAlphaChannel ? 8 : 6))
                     {
-                        convertedBytes[x] = (byte)((PatternData.ClosestColor(BitConverter.ToUInt32(bitmapBytes, i), p.Palette) << 4) + PatternData.ClosestColor(BitConverter.ToUInt32(bitmapBytes, i + 4), p.Palette));
+                        byte[] bufferLeft = new byte[hasAlphaChannel ? 8 : 6];
+                        byte[] bufferRight = new byte[hasAlphaChannel ? 8 : 6];
+                        Buffer.BlockCopy(bitmapBytes, i, bufferLeft, 0, bufferLeft.Length / 2);
+                        Buffer.BlockCopy(bitmapBytes, i + (hasAlphaChannel ? 4 : 3), bufferRight, 0, bufferRight.Length / 2);
+                        convertedBytes[x] = (byte)((PatternData.ClosestColor(BitConverter.ToUInt32(bufferLeft, 0), p.Palette) << 4)
+                            + PatternData.ClosestColor(BitConverter.ToUInt32(bufferRight, 0), p.Palette));
                         x++;
                     }
                     for (int i = 0; i < 512; i += 16)
@@ -208,7 +216,7 @@ namespace ACSE
                     box.Image = p.Pattern_Bitmap;
                 }
                 else
-                    MessageBox.Show("Imported images can only be 32x32, 32-bit Bitmaps. The supported formats are 32bppArgb and 32bppRgb.");
+                    MessageBox.Show("Imported images can only be 32x32, 24-bit or 32-bit Bitmaps. The supported formats are 24bppRgb, 32bppArgb, and 32bppRgb.");
             }
         }
 
@@ -475,6 +483,11 @@ namespace ACSE
                 CanSetData = true;
                 if (Properties.Settings.Default.NookingtonsFlag)
                     DataConverter.WriteByte(Nookingtons_Visitor_Flag, 0x01);
+                /*for (int i = 0; i < 15; i++)
+                    new Messageboard_Post(0x912C + i * 0xC8);*/
+                //Save Test = new Save("C:\\Users\\olsen\\Documents\\Project64 2.3\\Save\\DOUBUTSUNOMORI.fla");
+                //Test.Write(0x26040, (byte)0x25, true);
+                //Test.Flush();
             }
             else
             {
@@ -618,7 +631,7 @@ namespace ACSE
                 if (Players[player - 1].Exists)
                 {
                     if (iEditor == null || iEditor.IsDisposed)
-                        iEditor = new Inventory_Editor(Players[player - 1].Inventory, this);
+                        iEditor = new Inventory_Editor(Players[player - 1].Inventory);
                     iEditor.Show();
                 }
             }
@@ -632,16 +645,14 @@ namespace ACSE
                 int player = int.Parse(new string(b.Name.Where(char.IsDigit).ToArray()));
                 if (Players[player - 1].Exists)
                 {
-                    int firstFloorSize = HouseData.ReadHouseSize(DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, 0x114 / 2));
-                    ushort[] firstFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset, HouseData.House_Data_Sizes[(firstFloorSize / 2) - 2] / 2);
-                    ushort[] firstFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x24A, HouseData.House_Data_Layer2_Sizes[(firstFloorSize / 2) - 2] / 2);
-                    ushort[] secondFloorLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x8A8, 0xF0 / 2);
-                    ushort[] secondFloorLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0xAF2, 0xAC / 2);
-                    ushort[] basementLayer1 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x1150, 0x114 / 2);
-                    ushort[] basementLayer2 = DataConverter.ReadUShortArray(Players[player - 1].House_Data_Offset + 0x139A, 0xF0 / 2);
-
                     if (hEditor == null || hEditor.IsDisposed)
-                        hEditor = new House_Editor(new List<ushort[]>() { firstFloorLayer1, firstFloorLayer2, secondFloorLayer1, secondFloorLayer2, basementLayer1, basementLayer2 }, Players[player - 1].House_Data_Offset);
+                    {
+                        Furniture[][] LayerData = new Furniture[12][];
+                        for (int i = 0; i < 3; i++)
+                            for (int x = 0; x < 4; x++)
+                                LayerData[i * 4 + x] = Players[player - 1].House.Rooms[i].Layers[x].Furniture;
+                        hEditor = new House_Editor(Players[player - 1].House, LayerData);
+                    }
                     hEditor.Show();
                 }
             }

@@ -131,8 +131,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(57, 20);
             this.textBox1.TabIndex = 12;
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
-            this.textBox1.LostFocus += new System.EventHandler(this.textBox1_LostFocus);
             // 
             // label1
             // 

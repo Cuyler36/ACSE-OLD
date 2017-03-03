@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace ACSE
 {
@@ -186,6 +187,12 @@ namespace ACSE
         public string Trim()
         {
             return String.Trim(' ');
+        }
+
+        public string Clean()
+        {
+            string Cleaned_String = Regex.Replace(String, "[\n]{3,}", "\n\n");
+            return Regex.Replace(Cleaned_String.Trim(' '), "[ ]{2,}", " ");
         }
     }
 }

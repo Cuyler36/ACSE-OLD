@@ -72,6 +72,11 @@ namespace ACSE
             }
         }
 
+        public static byte ReadByte(int offset)
+        {
+            return MainForm.SaveBuffer[offset];
+        }
+
         public static byte[] ReadData(int offset, int size)
         {
             byte[] data = new byte[size];

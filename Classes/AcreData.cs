@@ -58,7 +58,7 @@ namespace ACSE
             {0x0070, "River w/ Train Track Bridge (1) (Lowest)" },
             {0x0071, "River w/ Train Track Bridge (1) (Lower)" },
             {0x0072, "River w/ Train Track Bridge (1) (Middle)" },
-            {0x0073, "River River w/ Train Track Bridge (1) (Upper)" },
+            {0x0073, "River w/ Train Track Bridge (1) (Upper)" },
             //0x0074 (Glitched Beta Acre (Grass))
             //0x0078 (Glitched Beta Acre (Ramp))
             //0x007C (Glitched Beta Acre (Lake))
@@ -1910,6 +1910,7 @@ namespace ACSE
             return worldPosition / 8;
         }
 
+        //Fix unburying objects. Seems to be broken right now (Nvm it's working??)
         public void SetBuriedInMemory(WorldItem item, int acre, byte[] burriedItemData, bool buried)
         {
             int buriedLocation = GetBuriedDataLocation(item, acre);

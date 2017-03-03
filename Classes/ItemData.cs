@@ -531,6 +531,20 @@ namespace ACSE
         }
     }
 
+    public class Gyroid_Item : Item
+    {
+        public uint Price;
+        public byte Sale_Type;
+        public bool Free;
+
+        public Gyroid_Item(ushort itemId, uint price, byte sellType) : base(itemId)
+        {
+            Price = price;
+            Sale_Type = sellType;
+            Free = sellType == 0;
+        }
+    }
+
     public class Structure
     {
         public ushort[] Structure_World_Data;

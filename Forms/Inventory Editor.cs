@@ -12,22 +12,14 @@ namespace ACSE
 {
     public partial class Inventory_Editor : Form
     {
-        //ushort[] InventoryData;
-        MainForm form;
         Inventory Pockets;
-        //Item[] Dresser;
 
-        public Inventory_Editor(Inventory inventory, MainForm form1)
+        public Inventory_Editor(Inventory inventory)
         {
             InitializeComponent();
-            //InventoryData = inventoryData;
-            form = form1;
-            //Dresser = dresserItems;
             Pockets = inventory;
             pictureBox1.Image = Inventory.GetItemPic(16, 5, Pockets.Items);
-           // pictureBox2.Image = Inventory.getItemPic(16, 3, dresserItems);
-            BindingSource bs = new BindingSource(ItemData.ItemDatabase, null);
-            comboBox1.DataSource = bs;
+            comboBox1.DataSource = new BindingSource(ItemData.ItemDatabase, null);
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
             pictureBox1.MouseClick += new MouseEventHandler(clickCustom);
@@ -52,7 +44,6 @@ namespace ACSE
             {
                 Item item = Pockets.Items[index];
                 label1.Text = string.Format("0x{0} - {1}", item.ItemID.ToString("X4"), item.Name);
-                //MessageBox.Show("Hi");
             }
             else
             {
@@ -63,39 +54,24 @@ namespace ACSE
         //Thanks NLSE!
         private void clickCustom(object sender, MouseEventArgs e)
         {
-            int width = (sender as PictureBox).Width / 16; // 16pixels per item
+            int width = (sender as PictureBox).Width / 16;
 
             int X = e.X / (16);
             int Y = e.Y / (16);
-
-            // Get Base Acre
             int index = width * Y + X;
-            //MessageBox.Show("Index: " + index.ToString());
 
             var s = (sender as PictureBox);
-            bool pocket = s == pictureBox1;
-            //bool dresser = false;//s == pictureBox2;
 
-            if (e.Button == MouseButtons.Right) // Read
+            if (e.Button == MouseButtons.Right)
+                comboBox1.SelectedValue = Pockets.Items[index].ItemID;
+            else
             {
-                if (pocket)
-                    comboBox1.SelectedValue = Pockets.Items[index].ItemID;
-                //else if (dresser)
-                    //comboBox1.SelectedValue = Dresser[index].ItemID;
-            }
-            else // Write
-            {
-                if (pocket && index < Pockets.Items.Length)
+                if (index < Pockets.Items.Length)
                 {
                     Pockets.Items[index] = new Item(string.IsNullOrEmpty(textBox1.Text) ? (ushort)comboBox1.SelectedValue : ushort.Parse(textBox1.Text, System.Globalization.NumberStyles.AllowHexSpecifier, null));
                     Pockets.InventorySlots[index].Item = Pockets.Items[index];
                     pictureBox1.Image = Inventory.GetItemPic(16, 5, Pockets.Items);
                 }
-                /*else if (dresser)
-                {
-                    Dresser[index] = new Item((ushort)comboBox1.SelectedValue);
-                    //pictureBox2.Image = Inventory.getItemPic(16, 3, Dresser);
-                }*/
             }
         }
 

@@ -28,7 +28,7 @@ namespace ACSE
         public string Date_Time_String = "";
         public bool Is_PM = false;
 
-        public ACDate(byte[] dateData)
+        public ACDate(byte[] dateData, bool reversed = false)
         {
             if (dateData.Length == 0x8)
             {
@@ -42,9 +42,9 @@ namespace ACSE
             }
             else if (dateData.Length == 0x4)
             {
-                Year = BitConverter.ToUInt16(new byte[] { dateData[1], dateData[0] }, 0);
-                Month = dateData[2];
-                Day = dateData[3];
+                Year = BitConverter.ToUInt16(new byte[] { dateData[reversed ? 3 : 1], dateData[reversed ? 2 : 0] }, 0);
+                Month = dateData[reversed ? 1 : 2];
+                Day = dateData[reversed ? 0 : 3];
             }
 
             Is_PM = Hour >= 12;
