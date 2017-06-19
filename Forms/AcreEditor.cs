@@ -123,7 +123,7 @@ namespace ACSE
                         House_Picturebox.Location = new Point(Math.Min(X_Position * 4 - 8, 56), Math.Min(Y_Position * 4 - 8, 56));
                         House_Picturebox.SizeMode = PictureBoxSizeMode.StretchImage;
                         House_Picturebox.BackColor = Color.Transparent;
-                        House_Picturebox.Image = AcreData.Acre_Resource_Images["VillagerHouse"];
+                        House_Picturebox.Image = AcreData.Acre_Resource_Images.ContainsKey("VillagerHouse") ? AcreData.Acre_Resource_Images["VillagerHouse"] : null;
                         Acre_Picturebox.Controls.Add(House_Picturebox);
                         House_Picturebox.BringToFront();
                         Villager_Houses.Add(House_Picturebox);

@@ -1787,7 +1787,10 @@ namespace ACSE
             if (Unique_Acre_Images.ContainsKey(Base_Acre_ID))
                 return (Bitmap)Unique_Acre_Images[Base_Acre_ID];
             if (Acre_Image_Index.ContainsKey(Acre_ID))
-                return (Bitmap)Acre_Resource_Images[Acre_Image_Index[Acre_ID].ToString()]; //Get Border acre images first!
+            {
+                string Acre_ID_Str = Acre_Image_Index[Acre_ID].ToString();
+                return Acre_Resource_Images.ContainsKey(Acre_ID_Str) ? (Bitmap)Acre_Resource_Images[Acre_ID_Str] : null; //Get Border acre images first!
+            }
             int Image_Idx = Acre_Image_Index.ContainsKey(Base_Acre_ID) ? Acre_Image_Index[Base_Acre_ID] : 99;
             return Acre_Resource_Images.ContainsKey(Image_Idx.ToString()) ? (Bitmap)Acre_Resource_Images[Image_Idx.ToString()]
                 : (Acre_Resource_Images.ContainsKey("99") ? (Bitmap)Acre_Resource_Images["99"] : null);
