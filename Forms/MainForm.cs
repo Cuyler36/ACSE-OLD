@@ -713,7 +713,7 @@ namespace ACSE
             if (CanSetData)
             {
                 if (vEditor == null || vEditor.IsDisposed)
-                    vEditor = new Villager_Editor(Villagers);
+                    vEditor = new Villager_Editor();
                 vEditor.Show();
             }
         }

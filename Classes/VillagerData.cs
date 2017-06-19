@@ -408,9 +408,9 @@ namespace ACSE
                 VillagerDatabase.Add(k);
         }
 
-        public static string[] Personalities = new string[6]
+        public static string[] Personalities = new string[7]
         {
-            "Lazy", "Normal", "Peppy", "Jock", "Cranky", "Snooty"
+            "Normal", "Peppy", "Lazy", "Jock", "Cranky", "Snooty", "Not Set"
         };
 
         public static string GetVillagerName(ushort villagerId)
@@ -422,7 +422,7 @@ namespace ACSE
 
         public static string GetVillagerPersonality(int type)
         {
-            return type < 6 ? Personalities[type] : "Lazy";
+            return type < 7 ? Personalities[type] : "Not Set";
         }
 
         public static int GetVillagerPersonalityID(string personality)

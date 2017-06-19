@@ -1775,6 +1775,8 @@ namespace ACSE
                 && Directory.Exists(MainForm.Assembly_Location + "\\Resources\\Images"))
                 foreach (string file in Directory.GetFiles(MainForm.Assembly_Location + "\\Resources\\Images"))
                     Acre_Resource_Images.Add(Path.GetFileNameWithoutExtension(file), Image.FromFile(file));
+            else
+                MessageBox.Show("The Resources folder does not exist in the same directory as the application. Please make sure you also copied the Resource folder to the same place as the application! Town Editor and Acre Editor will be somewhat broken until then!");
         }
 
         public static Bitmap ToAcrePicture(ushort Acre_ID)
@@ -1787,7 +1789,8 @@ namespace ACSE
             if (Acre_Image_Index.ContainsKey(Acre_ID))
                 return (Bitmap)Acre_Resource_Images[Acre_Image_Index[Acre_ID].ToString()]; //Get Border acre images first!
             int Image_Idx = Acre_Image_Index.ContainsKey(Base_Acre_ID) ? Acre_Image_Index[Base_Acre_ID] : 99;
-            return Acre_Resource_Images.ContainsKey(Image_Idx.ToString()) ? (Bitmap)Acre_Resource_Images[Image_Idx.ToString()] : (Bitmap)Acre_Resource_Images["99"];
+            return Acre_Resource_Images.ContainsKey(Image_Idx.ToString()) ? (Bitmap)Acre_Resource_Images[Image_Idx.ToString()]
+                : (Acre_Resource_Images.ContainsKey("99") ? (Bitmap)Acre_Resource_Images["99"] : null);
         }
 
         public static int ToAcrePictureID(ushort Acre_ID)

@@ -17,9 +17,8 @@ namespace ACSE
         private TextBox[] Catchphrases = new TextBox[16];
         private Label[] Indexes = new Label[16];
         private Panel[] House_Coords = new Panel[16];
+        private Villager[] Villagers = MainForm.Villagers;
         private TextBox[] House_Coord_Boxes = new TextBox[16 * 4];
-        public Villager[] Villagers;
-        private BindingSource bs;
         private ushort TownIdentifier = 0;
 
         private void Setup_Villager_Editor()
@@ -30,7 +29,6 @@ namespace ACSE
                 VillagerBoxes[i] = new ComboBox();
                 VillagerBoxes[i].Items.AddRange(Villager_Names);
                 VillagerBoxes[i].Text = Villagers[i].Name;
-                VillagerBoxes[i].Name = Villagers[i].ID.ToString();
                 VillagerBoxes[i].Size = new Size(200, 20);
                 VillagerBoxes[i].Location = new Point(32, (i * 22) + 32);
                 VillagerBoxes[i].DropDownStyle = ComboBoxStyle.DropDownList;
@@ -73,7 +71,7 @@ namespace ACSE
                 Controls.Add(Catchphrases[i]);
                 Controls.Add(House_Coords[i]);
                 VillagerBoxes[i].SelectedValueChanged += new EventHandler(Villager_Changed);
-                Personalities[i].SelectedValueChanged += new EventHandler(Personality_Changed);
+                Personalities[i].SelectedIndexChanged += new EventHandler(Personality_Changed);
                 Catchphrases[i].TextChanged += new EventHandler(Catchphrase_Changed);
             }
         }
@@ -109,11 +107,12 @@ namespace ACSE
                         v.Modified = true;
                         v.Shirt = new Item(0x2400);
                     }
-                    if (Properties.Settings.Default.ModifyVillagerHouse && v.Index < 16)
-                        v.Remove_House(); //Cleanup old house(s)
+                    else
+                        if (Properties.Settings.Default.ModifyVillagerHouse && v.Index < 16)
+                            v.Remove_House(); //Cleanup old house(s)
                     v.ID = VillagerData.GetVillagerID(c.Text);
                     v.Name = c.Text;
-                    v.Name = v.ID.ToString();
+                    
                     if (Properties.Settings.Default.ModifyVillagerHouse && v.Index < 16)
                         v.Add_House();
                 }
@@ -125,7 +124,7 @@ namespace ACSE
         private void Personality_Changed(object sender, EventArgs e)
         {
             ComboBox c = (ComboBox)sender;
-            int x = Array.IndexOf(VillagerBoxes, c);
+            int x = Array.IndexOf(Personalities, c);
             if (c.SelectedIndex != -1 && x > -1)
             {
                 Villagers[x].Personality = c.Text;
@@ -153,11 +152,9 @@ namespace ACSE
                 Villagers[Array.IndexOf(Catchphrases, b)].Catchphrase = b.Text;
         }
 
-        public Villager_Editor(Villager[] villagers)
+        public Villager_Editor()
         {
             InitializeComponent();
-            bs = new BindingSource(VillagerData.VillagerDatabase, null);
-            Villagers = villagers;
             TownIdentifier = DataConverter.ReadUShort(0x8);
             Setup_Villager_Editor();
             for (int i = 0; i < 16; i++)
